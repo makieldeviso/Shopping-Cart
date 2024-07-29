@@ -2,8 +2,8 @@
 import { useContext, useState, useRef } from "react";
 import { NavLink, Outlet, useLoaderData, useOutletContext, useParams, useNavigate } from "react-router-dom";
 
-// Components
-import { CartContext } from "./App";
+
+import { ShoppingContext } from "./App";
 
 // Scripts
 import { capitalizeString } from "../utilities/utilities";
@@ -76,7 +76,7 @@ const ShopCatalog = function () {
  // Render a specific item page (start)
  const ItemPage = function () {
   const {products, categories, id} = useOutletContext();
-  const cartData = useContext(CartContext);
+  const { cartData } = useContext(ShoppingContext);
 
   const preCartRef = useRef(null);
  
@@ -126,8 +126,6 @@ const ShopCatalog = function () {
         // if item is newly added add new item to cartData array
         cartData.current = [ ...cartData.current, newItem ];
       }
-      
-      console.log(cartData)
       handleClose();
     }
 

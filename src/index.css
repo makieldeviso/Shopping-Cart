@@ -151,3 +151,66 @@
   height: 100px;
   object-fit: contain;
 }
+
+/* For Shipping (start) */
+.to-ship-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--margin);
+  padding: var(--padding);
+  align-items: center;
+}
+
+.batch-date {
+  padding: var(--padding);
+}
+
+.batch-total {
+  align-self: end;
+  padding: var(--padding)
+}
+
+.order-batch {
+  border: 1px solid black;
+  width: 800px;
+  display: flex;
+  flex-direction: column;
+}
+
+.order-list {
+  display: grid;
+  border: 1px solid gray;
+  padding: var(--padding);
+  grid-template-columns: max-content 1fr;
+  grid-template-areas: 
+    "img title"
+    "img unit-price"
+    "img quantity"
+    "img total-price";
+  align-items: center;
+  column-gap: var(--margin);
+}
+
+.order-img {
+  grid-area: img;
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+}
+
+.order-title {
+  grid-area: title;
+}
+
+.order-unit-price {
+  grid-area: unit-price;
+}
+
+.order-quantity {
+  grid-area: quantity;
+}
+
+.order-total-price {
+  grid-area: total-price;
+  color: orangered;
+}

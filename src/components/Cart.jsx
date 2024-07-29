@@ -1,13 +1,11 @@
 import { createContext, useContext, useEffect, useState, useRef } from "react"
 import { NavLink } from "react-router-dom"
 
-import { CartContext } from "./App"
-
-const CheckoutAmountContext = createContext(0);
+import { ShoppingContext } from "./App"
 
 const CartItems = function ({handleQuantityChange, handleAddForCheckout}) {
-  const cartData = useContext(CartContext);
-
+  const { cartData } = useContext(ShoppingContext);
+  
   const products = cartData.current.map(item => {
     return (
       <div 
@@ -50,12 +48,14 @@ const CartItems = function ({handleQuantityChange, handleAddForCheckout}) {
   )
 }
 
-const CheckOutBtn = function ({handleCheckout}) {
-
+const CheckOutBtn = function ({itemsForCheckout, checkoutAmount, handleCheckout}) {
   return (
     <div className='checkout-cont'>
-      <p>Total: {}</p>
-      <button onClick = { handleCheckout } >
+      <p>Total: ${checkoutAmount}</p>
+      <button 
+        onClick = { handleCheckout } 
+        disabled = {itemsForCheckout.length <= 0 ? true : false}
+      >
         Checkout
       </button>
     </div>
@@ -65,7 +65,7 @@ const CheckOutBtn = function ({handleCheckout}) {
 
 const Cart = function () {
 
-  const cartData = useContext(CartContext);
+  const { cartData, forShipData } = useContext(ShoppingContext);
 
   const [itemsForCheckout, setItemsForCheckout] = useState([]);
   const [checkoutAmount, setCheckoutAmount] = useState(0);
@@ -87,39 +87,53 @@ const Cart = function () {
     if (itemIsForCheckout) {
       const itemIndex = itemsForCheckout.findIndex(item => item.id === productId);
       const modifiedCheckOutArray = itemsForCheckout.toSpliced(itemIndex, 1, cartData.current[itemTargetIndex]);
+      
+      const amount = modifiedCheckOutArray.reduce((acc, curr) => {
+        return ((acc) + (curr.price * curr.quantity))
+      }, 0);
+
       setItemsForCheckout(i => i = modifiedCheckOutArray);
+      setCheckoutAmount(a => a = amount);
     }
     
-    const amount = itemsForCheckout.reduce((acc, curr) => {
-      return ((acc) + (curr.price * curr.quantity))
-    }, 0);
-
-    setCheckoutAmount(a => a = amount);
-
     setDataChange(d => d + 1);
   }
 
   const handleAddForCheckout = function (event) {
     const productId = Number(event.target.dataset.product)
     const checkoutItem = cartData.current.find(item => item.id === productId);
-   
+    
+    let newItemsForCheckout = [];
     if (event.target.checked) {
-      console.log('check')
-      setItemsForCheckout(i => i = [...itemsForCheckout, checkoutItem])
+      newItemsForCheckout = [...itemsForCheckout, checkoutItem];
 
     } else {
-      console.log('uncheck')
       const removeItemIndex = itemsForCheckout.findIndex(item => item.id === productId);
       const itemRemovedArray = itemsForCheckout.toSpliced(removeItemIndex, 1);
-
-      setItemsForCheckout(i => i = itemRemovedArray)
+      newItemsForCheckout = itemRemovedArray;
     }
+
+    const amount = newItemsForCheckout.reduce((acc, curr) => {
+      return ((acc) + (curr.price * curr.quantity))
+    }, 0);
+    
+    // Update item checkout and total amount
+    setItemsForCheckout(i => i = newItemsForCheckout);
+    setCheckoutAmount(a => a = amount);
   }
 
   const handleCheckout = function () {
-    console.log(checkoutAmount);
-    console.log(itemsForCheckout);
-    
+    if (itemsForCheckout.length === 0) return
+
+    forShipData.current = [...forShipData.current, 
+      {
+        items: itemsForCheckout,
+        totalAmount: checkoutAmount,
+        timeStamp: (new Date()).valueOf()
+      }
+  ]
+
+    console.log(forShipData.current)
   }
 
   return (
@@ -130,7 +144,11 @@ const Cart = function () {
         handleQuantityChange = { handleQuantityChange }
         handleAddForCheckout = { handleAddForCheckout }
       />
-      <CheckOutBtn handleCheckout = { handleCheckout }/>
+      <CheckOutBtn 
+        itemsForCheckout = { itemsForCheckout }
+        checkoutAmount = { checkoutAmount }
+        handleCheckout = { handleCheckout } 
+      />
     </div>
   )
 }
