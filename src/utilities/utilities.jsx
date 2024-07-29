@@ -10,4 +10,8 @@ const capitalizeString = function (string) {
   return newStringArray.join(' ');
 }
 
-export { capitalizeString }
+const amountFormat = function (amount) {
+  return `$${Number.parseFloat(amount).toFixed(2)}`;
+}
+
+export { capitalizeString, amountFormat }

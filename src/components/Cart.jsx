@@ -1,7 +1,11 @@
 import { createContext, useContext, useEffect, useState, useRef } from "react"
 import { NavLink } from "react-router-dom"
 
+import { amountFormat } from "../utilities/utilities";
+
 import { ShoppingContext } from "./App"
+
+const deliveryFee = 50;
 
 const CartItems = function ({handleQuantityChange, handleAddForCheckout}) {
   const { cartData } = useContext(ShoppingContext);
@@ -14,44 +18,60 @@ const CartItems = function ({handleQuantityChange, handleAddForCheckout}) {
       >
         <input type="checkbox" onChange={handleAddForCheckout} data-product = {item.id}/>
         <img src={item.image} alt={`${item.id} preview`} />
-        <p>{item.title}</p>
-        <p>{item.price}</p>
+        <p className='cart-title'>{item.title}</p>
+        <p className='cart-price'>{amountFormat(item.price)}</p>
 
         <div className='qty-controller'>
+          <div className='qty-buttons'>
+            <button 
+              value = 'decrease' 
+              disabled = { item.quantity <= 1 ? true : false }
+              onClick = { handleQuantityChange }
+              data-product = {item.id}
+            >-</button>
 
-            <div className='qty-buttons'>
-              <button 
-                value = 'decrease' 
-                disabled = { item.quantity <= 1 ? true : false }
-                onClick = { handleQuantityChange }
-                data-product = {item.id}
-              >-</button>
+            <p>{item.quantity}</p>
 
-              <p>{item.quantity}</p>
-
-              <button 
-                value='increase'
-                onClick = { handleQuantityChange }
-                data-product = {item.id}
-              >+</button>
-            </div>
+            <button 
+              value='increase'
+              onClick = { handleQuantityChange }
+              data-product = {item.id}
+            >+</button>
           </div>
+        </div>
 
+        <p className="item-total">{amountFormat(item.quantity * item.price)}</p>
       </div>
     )
   })
 
   return (
-    <div>
+    <div className='cart-content'>
       {products}
     </div>
   )
 }
 
 const CheckOutBtn = function ({itemsForCheckout, checkoutAmount, handleCheckout}) {
+  
+  let deliveryCheck;
+  let totalCheck;
+  if (checkoutAmount === 0) {
+    deliveryCheck = amountFormat(0);
+    totalCheck = amountFormat(checkoutAmount);
+  } else if (checkoutAmount < 300) {
+    deliveryCheck = amountFormat(deliveryFee);
+    totalCheck = amountFormat(checkoutAmount + deliveryFee);
+  } else if (checkoutAmount >= 300) {
+    deliveryCheck = 'Free'
+    totalCheck = amountFormat(checkoutAmount);
+  }
+
   return (
     <div className='checkout-cont'>
-      <p>Total: ${checkoutAmount}</p>
+      <p><span>Subtotal:</span><span>{amountFormat(checkoutAmount)}</span></p>
+      <p><span>Delivery:</span><span>{deliveryCheck}</span></p>
+      <p className='cart-total'><span>Total:</span><span>{totalCheck}</span></p>
       <button 
         onClick = { handleCheckout } 
         disabled = {itemsForCheckout.length <= 0 ? true : false}
@@ -128,7 +148,9 @@ const Cart = function () {
     forShipData.current = [...forShipData.current, 
       {
         items: itemsForCheckout,
-        totalAmount: checkoutAmount,
+        subAmount: checkoutAmount,
+        delivery: checkoutAmount > 300 ? 0 : deliveryFee,
+        totalAmount: checkoutAmount + this.delivery,
         timeStamp: (new Date()).valueOf()
       }
   ]
@@ -137,18 +159,22 @@ const Cart = function () {
   }
 
   return (
-    <div>
-      <NavLink to='/'>Home</NavLink>
-      <h2>Cart</h2>
-      <CartItems 
-        handleQuantityChange = { handleQuantityChange }
-        handleAddForCheckout = { handleAddForCheckout }
-      />
-      <CheckOutBtn 
-        itemsForCheckout = { itemsForCheckout }
-        checkoutAmount = { checkoutAmount }
-        handleCheckout = { handleCheckout } 
-      />
+    <div className='cart-page'>
+      {/* <NavLink to='/'>Home</NavLink> */}
+      <h2>Your Cart</h2>
+
+      <div className="cart-display">
+        <CartItems 
+          handleQuantityChange = { handleQuantityChange }
+          handleAddForCheckout = { handleAddForCheckout }
+        />
+        <CheckOutBtn 
+          itemsForCheckout = { itemsForCheckout }
+          checkoutAmount = { checkoutAmount }
+          handleCheckout = { handleCheckout } 
+        />
+      </div>
+      
     </div>
   )
 }
