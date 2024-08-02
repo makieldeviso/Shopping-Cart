@@ -8,7 +8,7 @@ import ErrorPage from './ErrorPage';
 
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 
-import { itemsLoader } from './DataFetch';
+import { itemsLoader, profileLoader } from './DataFetch';
 
 const router = createBrowserRouter([
   {
@@ -26,7 +26,8 @@ const router = createBrowserRouter([
             children: [
               {
                 path: 'profile',
-                element: <Profile/>
+                element: <Profile/>,
+                loader: profileLoader
               },
               {
                 path: 'shop',

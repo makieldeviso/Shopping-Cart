@@ -1,8 +1,10 @@
 import { useContext, useRef, useState } from "react"
-import { NavLink } from "react-router-dom"
+import { NavLink, useLoaderData } from "react-router-dom"
 
 import { ShoppingContext } from "./App"
 import { format } from "date-fns";
+import { amountFormat, capitalizeString, updateProfile } from "../utilities/utilities";
+import { NewIcon } from "./Icons";
 
 const ForShip = function () {
   const { forShipData } = useContext(ShoppingContext);
@@ -16,18 +18,42 @@ const ForShip = function () {
         <div key={item.id} className="order-list">
           <img className='order-img' src={item.image} alt={`${item.id} preview`} width={100} />
           <p className="order-title">{item.title}</p>
-          <p className="order-unit-price">${item.price}</p>
+          <p className="order-unit-price">{amountFormat(item.price)}</p>
           <p className="order-quantity">x{item.quantity}</p>
-          <p className="order-total-price">${item.quantity * item.price}</p>
+          <p className="order-total-price">{amountFormat(item.quantity * item.price)}</p>
         </div>
       )
     })
 
     return (
       <div key={crypto.randomUUID()} className="order-batch">
-        <p className="batch-date">{format(new Date(batch.timeStamp), 'd-MMM-yyyy')}</p>
+        <p className="batch-date">Ordered {format(new Date(batch.timeStamp), 'd-MMM-yyyy')}</p>
         {batchItems}
-        <p className="batch-total">Order Total: ${batch.totalAmount}</p>
+        
+        <div className="batch-details">
+          <div className='batch-mailing'>
+            <p>{batch.mailing.name} | {batch.mailing.phone}</p>
+            <p>{batch.mailing.address}</p>
+          </div>
+
+          <div className='batch-calculate'>
+            <p className="batch-amount sub">
+              <span>Sub-total:</span>
+              <span className="batch-price">{amountFormat(batch.subAmount)}</span>
+            </p>
+            <p className="batch-amount delivery">
+              <span>Delivery Fee:</span>
+              <span className="batch-price">
+                {batch.delivery === 0 ? 'Free' :amountFormat(batch.delivery)}
+              </span>
+            </p>
+            <p className="batch-amount total">
+              <span>Order Total:</span>
+              <span className="batch-price">{amountFormat(batch.totalAmount)}</span>
+            </p>
+          </div>
+        </div>
+        
       </div>
     )
   })
@@ -39,75 +65,128 @@ const ForShip = function () {
   )
 }
 
-const UserProfile = function () {
-  const [name, setName] = useState('John Doe');
-  const [address, setAddress] = useState('Maharlika Highway, Tacloban, Philippines');
-  const [phone, setPhone] = useState('01234567890');
+const UserProfile = function ({userProfile}) {
+  const [name, setName] = useState(userProfile.name);
+  const [address, setAddress] = useState(userProfile.address);
+  const [phone, setPhone] = useState(userProfile.phone);
 
-  const nameInputRef = useRef(null);
-  const addressInputRef = useRef(null);
+  const editDialogRef = useRef(null);
 
-  const handleUserChange = function (event) {
-    const targetState = event.target.dataset.class;
+  const EditDialog = function () {
+
+    const [tempName, setTempName] = useState(name);
+    const [tempAddress, setTempAddress] = useState(address);
+    const [tempPhone, setTempPhone] = useState(phone);
+
+    const handleSaveProfileChange = function (event) {
+      const btnAction = event.target.value;
+
+      if (btnAction === 'save') {
+        updateProfile({
+          name: tempName,
+          address: tempAddress,
+          phone: tempPhone,
+        })
+
+        // Update main states with the temporary states
+        setName(tempName);
+        setAddress(tempAddress);
+        setPhone(tempPhone);
+
+      } else if (btnAction === 'cancel') {
+        setTempName(name);
+        setTempAddress(address);
+        setTempPhone(phone);
+      }
     
-    let stateSetter;
-    if (targetState === 'name') {
-      stateSetter = setName;
-    } else if (targetState === 'address') {
-      stateSetter = setAddress
+      editDialogRef.current.close();
     }
 
-    stateSetter(event.target.value);
+    return (
+      <dialog className="edit-profile-dialog" ref={editDialogRef}>
+        <div className="dialog-cont">
+
+          <div className='dialog-header'>
+            <h3 >Update your profile</h3>
+            <button 
+              className="close-dialog-btn"
+              type='button' 
+              title='Close'
+              aria-label="Close edit dialog"
+              onClick={() => editDialogRef.current.close()}>
+              <NewIcon assignClass={'close'}/>
+            </button>
+          </div>
+        
+          <div className={`profile-name input-cont`}>
+            <label htmlFor={`user-name`}>Name</label>
+            <input type="text" data-class='name' id={`user-name`} name={`user-name`}
+              onChange = {(event) => setTempName(event.target.value)}
+              value = {tempName}
+            />
+          </div>
+
+          <div className={`profile-address input-cont`}>
+            <label htmlFor={`user-address`}>Address</label>
+            <textarea data-class='address' id={`user-address`} name={`user-address`}
+              style = {{resize: 'none'}}
+              rows = '2'
+              onChange = {(event) => setTempAddress(event.target.value)}
+              value = {tempAddress}
+            />
+          </div>
+
+          <div className={`profile-phone input-cont`}>
+            <label htmlFor={`user-phone`}>Phone</label>
+            <input type="text" data-class='phone' id={`user-phone`} name={`user-phone`}
+              onChange = {(event) => {
+                const eventData = event.nativeEvent.data;
+                const numberRegex = /[0-9]/;
+                const validateInput = numberRegex.test(eventData);
+                if (validateInput || eventData === null) {
+                  setTempPhone(event.target.value);
+                }
+              }}
+              value = {tempPhone}
+            />
+          </div>
+          
+          <div className="action-btns">
+            <button className='cancel-btn' value='cancel' type='button' onClick={handleSaveProfileChange}>Cancel</button>
+            <button className='save-btn' value='save' type='button' onClick={handleSaveProfileChange}>Save</button>
+          </div>
+          
+        </div>
+        
+      </dialog>
+    )
   }
-
-  const handleEnableEdit = function (event) {
-    const targetState = event.target.dataset.class;
-
-    let inputElement;
-    if (targetState === 'name') {
-      inputElement = nameInputRef.current;
-    } else if (targetState === 'address') {
-      inputElement = addressInputRef.current;
-    }
-
-    inputElement.disabled = false;
-    inputElement.focus();
-  }
-
-  const handleDisableInput = function (event) {
-    event.target.disabled = true;
+  
+  const ProfileInfo = function ({assignLabel, assignState}) {
+    return (
+      <div className='profile'>
+        <p className='profile-label'>{capitalizeString(assignLabel)}</p>
+        <p className='profile-info'>{assignState}</p>
+      </div>
+    )
   }
 
   return (
     <div className='user-profile'>
-      <div className="profile-name">
-        <label htmlFor="user-name">Name:</label>
-        <input
-          ref={nameInputRef}
-          disabled
-          data-class='name'
-          type="text"
-          id='user-name'
-          name='user-name'
-          onChange={handleUserChange}
-          onBlur={handleDisableInput}
-          value={name}/>
-          <button data-class='name' onClick={handleEnableEdit}>Edit</button>
+      <div className='user-details-cont'>
+        <ProfileInfo assignLabel={'name'} assignState={name}/>
+        <ProfileInfo assignLabel={'phone'} assignState={phone}/>
+        <ProfileInfo assignLabel={'address'} assignState={address}/>
       </div>
-
-      <div className="profile-address">
-        <label htmlFor="user-name">Address:</label>
-        <textarea
-          ref={addressInputRef}
-          disabled
-          data-class='address'
-          id='user-address'
-          name='user-address'
-          onChange={handleUserChange}
-          onBlur={handleDisableInput}
-          value={address}/>
-        <button data-class='address' onClick={handleEnableEdit}>Edit</button>
-      </div>
+      <button 
+        className="edit-profile-btn" 
+        aria-label="Edit Profile Information"
+        title="Edit Profile Information"
+        onClick = {() => editDialogRef.current.showModal()}
+      >
+        <NewIcon assignClass={'edit'}/>
+      </button>
+      <EditDialog/>
     </div>
   )
 }
@@ -115,21 +194,19 @@ const UserProfile = function () {
 
 const Profile = function () {
   const { forShipData } = useContext(ShoppingContext);
-
+  const userProfile = useLoaderData();
+  
   return (
-    <div>
+    <div className="profile-page">
       
       <h2>Profile</h2>
 
-      <UserProfile/>
+      <UserProfile userProfile={userProfile}/>
 
-      <ForShip/>
-
-
-
-
-
-      <NavLink to='/'>Home</NavLink>
+      <div className='purchase-display'>
+        <ForShip/>
+      </div>
+      
       <button type="button" onClick={() => console.log(forShipData.current)}>
         Check profile
       </button>

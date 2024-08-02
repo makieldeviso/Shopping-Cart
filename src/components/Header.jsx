@@ -1,4 +1,5 @@
 import { NavLink } from "react-router-dom"
+import { NewIcon } from "./Icons"
 
 const PageBanner = function () {
   return (
@@ -14,9 +15,9 @@ const PageNav = function () {
   return(
     <nav className="page-nav">
       <ul>
-        <li><NavLink to='main/pages/profile'>Profile</NavLink></li>
-        <li><NavLink to='main/pages/shop'>Shop</NavLink></li>
-        <li><NavLink to='main/pages/cart'>Cart</NavLink></li>
+        <li title='Profile'><NavLink to='main/pages/profile'><NewIcon assignClass={'profile'}/></NavLink></li>
+        <li title='Shop'><NavLink to='main/pages/shop'><NewIcon assignClass={'shop'}/></NavLink></li>
+        <li title='Cart'><NavLink to='main/pages/cart'><NewIcon assignClass={'cart'}/></NavLink></li>
       </ul>
     </nav>
   )

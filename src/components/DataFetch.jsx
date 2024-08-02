@@ -43,4 +43,21 @@ const itemsLoader = async function () {
   return {products, categories}
 } 
 
-export { itemsLoader }
+const profileLoader = async function () {
+  let savedProfile = localStorage.getItem('shoppingByMakieldeviso');
+
+  if (!savedProfile) {
+    const placeholderProfile = {
+      name: 'John Doe',
+      address: 'Tacloban, Leyte, Philippines',
+      phone: '12346789'
+    }
+
+    localStorage.setItem('shoppingByMakieldeviso', JSON.stringify(placeholderProfile))
+    savedProfile = localStorage.getItem('shoppingByMakieldeviso');
+  }
+ 
+  return JSON.parse(savedProfile);
+}
+
+export { itemsLoader, profileLoader }
