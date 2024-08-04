@@ -7,7 +7,6 @@ import { ShoppingContext } from "./App";
 
 // Scripts
 import { amountFormat, capitalizeString } from "../utilities/utilities";
-import { addToCart } from "./DataFetch";
 import { NewIcon } from "./Icons";
 
 // Render the Shop catalog
@@ -121,7 +120,7 @@ const ItemPage = function () {
 
     const handleFinalizeCart = function () {
       // /////////////////////////////////////////////?????????
-      addToCart();
+  
 
       // Check if item is already in the cart
       const itemInCart = cartData.current.find(item => item.id === itemData.id);

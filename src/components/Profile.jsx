@@ -194,14 +194,14 @@ const UserProfile = function ({userProfile}) {
 
 const Profile = function () {
   const { forShipData } = useContext(ShoppingContext);
-  const userProfile = useLoaderData();
+  const { profile } = useLoaderData();
   
   return (
     <div className="profile-page">
       
       <h2>Profile</h2>
 
-      <UserProfile userProfile={userProfile}/>
+      <UserProfile userProfile={profile}/>
 
       <div className='purchase-display'>
         <ForShip/>

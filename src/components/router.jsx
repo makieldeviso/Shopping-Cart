@@ -8,13 +8,14 @@ import ErrorPage from './ErrorPage';
 
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 
-import { itemsLoader, profileLoader } from './DataFetch';
+import { itemsLoader, profileLoader, pageLoader } from '../utilities/DataFetch';
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <App/>,
     errorElement: <ErrorPage/>,
+    loader: pageLoader,
     children: [
       {
         path: 'main',
