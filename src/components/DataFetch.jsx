@@ -1,14 +1,26 @@
+import dataAddOns from "../utilities/products";
+
 const getAllProducts = async function () {
   try {
-    const url = encodeURI('https://fakestoreapi.com/products')
+    const url = encodeURI('https://www.cheapshark.com/api/1.0/deals?storeID=1&title=goat')
     const itemFetched = await fetch(url, {
       method: 'GET',
       mode: 'cors'
+    }).then(item => item.json())
+
+    // Filter items to exact with items in the dataAddOns
+    // Add more properties to items
+    const filteredItems = await itemFetched.filter(item => Object.hasOwn(dataAddOns, item.gameID));
+    const modifiedItems = filteredItems.map(item => {
+      return (
+        {...item, ...dataAddOns[item.gameID]}
+      )
     })
 
-    return await itemFetched.json();
+    return modifiedItems
 
   } catch (err) {
+    console.log('error')
     return ([])
 
   }  
@@ -39,8 +51,7 @@ const loadingScreen = function () {
 
 const itemsLoader = async function () {
   const products = await getAllProducts();
-  const categories = await getCategories();
-  return {products, categories}
+  return {products}
 } 
 
 const profileLoader = async function () {
@@ -60,4 +71,31 @@ const profileLoader = async function () {
   return JSON.parse(savedProfile);
 }
 
-export { itemsLoader, profileLoader }
+
+// Adds items to cart
+const addToCart = async function () {
+  const cartItem = await fetch('https://fakestoreapi.com/carts',{
+    method:"POST",
+    body:JSON.stringify(
+        {
+            userId:1,
+            date: new Date(),
+            products:[{productId:5,quantity:1},{productId:1,quantity:5}]
+        }
+    )
+  })
+
+  console.log(await cartItem.json());
+}
+
+// Loads cart
+const cartLoader = async function () {
+
+}
+
+
+
+
+
+
+export { itemsLoader, profileLoader, addToCart }

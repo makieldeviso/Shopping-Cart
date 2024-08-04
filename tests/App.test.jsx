@@ -11,6 +11,4 @@ describe('App', () => {
     expect(screen.getByRole('heading').textContent).toMatch('Shopping Cart')
   })
 
-
-
 })
