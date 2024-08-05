@@ -8,7 +8,7 @@ import ErrorPage from './ErrorPage';
 
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 
-import { shopLoader, profileLoader, pageLoader } from '../utilities/DataFetch';
+import { shopLoader, cartLoader, profileLoader, pageLoader } from '../utilities/DataFetch';
 
 const router = createBrowserRouter([
   {
@@ -53,7 +53,8 @@ const router = createBrowserRouter([
               },
               {
                 path: 'cart',
-                element: <Cart/>
+                element: <Cart/>,
+                loader: cartLoader
               },
             ]
           }

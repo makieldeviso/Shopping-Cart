@@ -1,20 +1,22 @@
 import { createContext, useContext, useEffect, useState, useRef } from "react"
-import { NavLink } from "react-router-dom"
+import { NavLink, useLoaderData } from "react-router-dom"
 
 import { amountFormat } from "../utilities/utilities";
 
 import { ShoppingContext } from "./App"
 import { NewIcon } from "./Icons";
 
-const deliveryFee = 50;
+import { addCheckoutItems, addToCartData, changeCartItemQuantity, getProfileData } from "../utilities/DataFetch";
 
-const CartItems = function ({handleQuantityChange, handleAddForCheckout, handleRemoveItemFromCart}) {
-  const { cartData } = useContext(ShoppingContext);
+const deliveryFee = 50;
+const freeDeliveryMin = 300;
+
+const CartItems = function ({cartData, handleQuantityChange, handleAddForCheckout, handleRemoveItemFromCart}) {
   
-  const products = cartData.current.map(item => {
+  const products = cartData.map(item => {
     return (
       <div 
-        key={item.id}
+        key={item.gameID}
         className="cart-item"
       >
         <div className="cart-action">
@@ -23,7 +25,7 @@ const CartItems = function ({handleQuantityChange, handleAddForCheckout, handleR
             className="add-checkbox"
             type = "checkbox" 
             onChange = {handleAddForCheckout} 
-            data-product = {item.id}
+            data-productid = {item.gameID}
             title = 'Ready item for checkout'
           />
     
@@ -31,16 +33,16 @@ const CartItems = function ({handleQuantityChange, handleAddForCheckout, handleR
             onClick = {handleRemoveItemFromCart}
             className="cart-remove" 
             aria-label="Remove item from your cart"
-            data-product = {item.id}
+            data-productid = {item.gameID}
             title = 'Remove item from your cart'
           >{<NewIcon assignClass={'delete'}/>}
           </button>
         </div>
 
        
-        <img src={item.image} alt={`${item.id} preview`} />
+        <img src={item.header} alt={`${item.gameID} preview`} />
         <p className='cart-title'>{item.title}</p>
-        <p className='cart-price'>{amountFormat(item.price)}</p>
+        <p className='cart-price'>{amountFormat(item.salePrice)}</p>
 
         <div className='qty-controller'>
           <div className='qty-buttons'>
@@ -48,7 +50,7 @@ const CartItems = function ({handleQuantityChange, handleAddForCheckout, handleR
               value = 'decrease' 
               disabled = { item.quantity <= 1 ? true : false }
               onClick = { handleQuantityChange }
-              data-product = {item.id}
+              data-productid = {item.gameID}
             >-</button>
 
             <p>{item.quantity}</p>
@@ -56,12 +58,12 @@ const CartItems = function ({handleQuantityChange, handleAddForCheckout, handleR
             <button 
               value='increase'
               onClick = { handleQuantityChange }
-              data-product = {item.id}
+              data-productid = {item.gameID}
             >+</button>
           </div>
         </div>
 
-        <p className="item-total">{amountFormat(item.quantity * item.price)}</p>
+        <p className="item-total">{amountFormat(item.quantity * item.salePrice)}</p>
       </div>
     )
   })
@@ -74,9 +76,6 @@ const CartItems = function ({handleQuantityChange, handleAddForCheckout, handleR
 }
 
 const CheckOutCounter = function ({itemsForCheckout, checkoutAmount, handleCheckout}) {
-
-  
-
   let deliveryCheck;
   let totalCheck;
   if (checkoutAmount === 0) {
@@ -116,56 +115,64 @@ const CheckOutCounter = function ({itemsForCheckout, checkoutAmount, handleCheck
 
 
 const Cart = function () {
+  const [profileData, productsData] = useLoaderData();
 
-  const { cartData, forShipData } = useContext(ShoppingContext);
+  const [profile, setProfile] = useState(profileData);
+
+  const cartData = profile.cart;
+  let toShipData = profile.toShip;
 
   const [itemsForCheckout, setItemsForCheckout] = useState([]);
   const [checkoutAmount, setCheckoutAmount] = useState(0);
 
-  const [dataChange, setDataChange] = useState(0);
-
   // Update checkout amount whenever itemsForCheckout is changed
   useEffect(() => {
     const amount = itemsForCheckout.reduce((acc, curr) => {
-      return ((acc) + (curr.price * curr.quantity))
+      return ((acc) + (curr.salePrice * curr.quantity))
     }, 0);
 
     setCheckoutAmount(amount);
   }, [itemsForCheckout])
 
-  const handleQuantityChange = function (event) {
-    const productId = Number(event.target.dataset.product);
-    const itemTargetIndex = cartData.current.findIndex(item => item.id === productId);
-    const itemIsForCheckout = itemsForCheckout.some(item => item.id === productId);
+  const handleQuantityChange = async function (event) {
+    const productId = event.target.dataset.productid;
+    const itemTargetIndex = cartData.findIndex(item => item.gameID === productId);
+    const itemIsForCheckout = itemsForCheckout.some(item => item.gameID === productId);
 
-    if (event.target.value === 'increase') {
-      cartData.current[itemTargetIndex].quantity ++ ;
-
-    } else if (event.target.value === 'decrease') {
-      cartData.current[itemTargetIndex].quantity -- ;
+    const action = event.target.value;
+    
+    if (action === 'increase') {
+      cartData[itemTargetIndex].quantity++;
+  
+    } else if (action === 'decrease') {
+      cartData[itemTargetIndex].quantity--;
     }
 
     if (itemIsForCheckout) {
-      const itemIndex = itemsForCheckout.findIndex(item => item.id === productId);
-      const modifiedCheckOutArray = itemsForCheckout.toSpliced(itemIndex, 1, cartData.current[itemTargetIndex]);
-      
+      const itemIndex = itemsForCheckout.findIndex(item => item.gameID === productId);
+      const modifiedCheckOutArray = itemsForCheckout.toSpliced(itemIndex, 1, cartData[itemTargetIndex]);
+
+      // Replace old item with modifiedCheckOutArray, which has the quantity changed
       setItemsForCheckout(i => i = modifiedCheckOutArray);
     }
-    
-    setDataChange(d => d + 1);
+
+    // Update profile in the storage
+    changeCartItemQuantity(cartData);
+
+    setProfile({...profile, cart: cartData});
   }
 
   // Add/ ready item for checkout
   const handleAddForCheckout = function (event) {
-    const productId = Number(event.target.dataset.product);
-    const checkoutItem = cartData.current.find(item => item.id === productId);
+    const productId = event.target.dataset.productid;
+    const checkoutItem = cartData.find(item => item.gameID === productId);
     
     let newItemsForCheckout = [];
     if (event.target.checked) {
       newItemsForCheckout = [...itemsForCheckout, checkoutItem];
 
     } else {
-      const removeItemIndex = itemsForCheckout.findIndex(item => item.id === productId);
+      const removeItemIndex = itemsForCheckout.findIndex(item => item.gameID === productId);
       const itemRemovedArray = itemsForCheckout.toSpliced(removeItemIndex, 1);
       newItemsForCheckout = itemRemovedArray;
     }
@@ -173,32 +180,38 @@ const Cart = function () {
     setItemsForCheckout(i => i = newItemsForCheckout);
   }
 
-  // Remove item from yoy cart
-  const handleRemoveItemFromCart = function (event) {
-    const productId = Number(event.target.dataset.product);
-    const forRemovalIndex = cartData.current.findIndex(item => item.id === productId);
+  // Remove item from your cart
+  const handleRemoveItemFromCart = async function (event) {
+    const productId = event.target.dataset.productid;
+    const forRemovalIndex = cartData.findIndex(item => item.gameID === productId);
 
     // Update cart data
-    cartData.current.splice(forRemovalIndex, 1);
+    cartData.splice(forRemovalIndex, 1);
 
     // If item for removal is currently readied for checkout, update itemsForCheckout
-    const itemIsForCheckout = itemsForCheckout.some(item => item.id === productId);
+    const itemIsForCheckout = itemsForCheckout.some(item => item.gameID === productId);
     if (itemIsForCheckout) {
-      const removeItemCheckoutIndex = itemsForCheckout.findIndex(item => item.id === productId);
+      const removeItemCheckoutIndex = itemsForCheckout.findIndex(item => item.gameID === productId);
       const newCheckoutItems = itemsForCheckout.toSpliced(removeItemCheckoutIndex, 1);
       setItemsForCheckout(newCheckoutItems);
     }
+
+    // Update profile in the storage
+    console.log('loading');
+    await changeCartItemQuantity(cartData);
+    console.log('done');
+
   }
 
   // Checkout readied items
-  const handleCheckout = function () {
+  const handleCheckout = async function () {
     if (itemsForCheckout.length === 0) return
 
     // Calculate eligibility for free delivery
-    const delivery = checkoutAmount > 300 ? 0 : deliveryFee;
+    const delivery = checkoutAmount > freeDeliveryMin ? 0 : deliveryFee;
 
-    // Update forShipData context -> forShipDataRef
-    forShipData.current = [...forShipData.current, 
+    // Update toShipData
+    toShipData = [...toShipData, 
       {
         items: itemsForCheckout,
         subAmount: checkoutAmount,
@@ -208,16 +221,20 @@ const Cart = function () {
       }
     ]
 
-    // Remove checkout items from cart
+    // Remove checkout items from cartData
     itemsForCheckout.forEach(item => {
-      const itemIndex = cartData.current.findIndex(product => product.id === item.id);
-      cartData.current.splice(itemIndex, 1)
+      const itemIndex = cartData.findIndex(product => product.gameID === item.gameID);
+      cartData.splice(itemIndex, 1);
     })
+
+    // Update profile from storage
+    // Note: update cart and forShip properties
+    console.log('loading');
+    await addCheckoutItems(cartData, toShipData);
+    console.log('done');
 
     // Empty items for checkout upon successful checkout
     setItemsForCheckout(i => i = []);
-
-    console.log(cartData.current);
   }
 
   return (
@@ -227,6 +244,7 @@ const Cart = function () {
 
       <div className="cart-display">
         <CartItems 
+          cartData = {cartData}
           handleQuantityChange = { handleQuantityChange }
           handleAddForCheckout = { handleAddForCheckout }
           handleRemoveItemFromCart = { handleRemoveItemFromCart }

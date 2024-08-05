@@ -28,12 +28,23 @@ const getProductsData = async function () {
   }  
 }
 
+let controller = null;
+
 // Mock a user profile fetch
 const getProfileData = async function () {
+
+  if (controller) {
+    controller.abort({message: 'Request overwritten'});
+  }
+
+  controller = new AbortController();
+  const signal = controller.signal;
+
   try {
     const url = encodeURI('https://jsonplaceholder.typicode.com/users/1');
     const mockData = await fetch(url, 
       {
+        signal,
         method: 'GET',
         mode: 'cors'
       }
@@ -49,6 +60,7 @@ const getProfileData = async function () {
       userData.phone = '1234567890';
       userData.username = 'Agent_LSmith';
       userData.cart = [];
+      userData.toShip = [];
 
       localStorage.setItem(localStorageName, JSON.stringify(userData));
       savedProfile = localStorage.getItem(localStorageName);
@@ -57,9 +69,10 @@ const getProfileData = async function () {
     return JSON.parse(savedProfile);
 
   } catch (error) {
-    console.log(error)
+    console.log(error.message)
   }
 }
+
 
 // Add to Cart script
 // Note: Mock a fetch PATCH to modify cart array in the user profile data
@@ -68,10 +81,18 @@ const addToCartData = async function (profileData, newCart) {
   // destructure profile, modify cart property
   const modifiedProfile = {...profileData, cart: newCart};
 
+  if (controller) {
+    controller.abort({message: 'Request overwritten'});
+  }
+
+  controller = new AbortController();
+  const signal = controller.signal;
+
   try {
     const url = encodeURI(`https://jsonplaceholder.typicode.com/users/${profileData.id}`)
     const updateCart = await fetch(url, 
       {
+        signal,
         method: 'PATCH',
         body: JSON.stringify(modifiedProfile),
         headers: {'Content-type': 'application/json; charset=UTF-8'}
@@ -83,9 +104,46 @@ const addToCartData = async function (profileData, newCart) {
     localStorage.setItem(localStorageName, JSON.stringify(cartData));
 
   } catch (error) {
-    console.log(error)
+    console.log(error.message)
   }
 }
+
+// Edit Cart 
+const changeCartItemQuantity = async function (cartData) {
+
+  const profileData = await getProfileData();
+  
+  // Note: addToCartData function updates the profile
+  addToCartData(profileData, cartData);
+  return profileData;
+}
+
+// Checkout Items, Move selected cart items to toShip, then add new details
+const addCheckoutItems = async function (cartData, toShipData ) {
+  const profileData = await getProfileData();
+
+  const modifiedProfile = {...profileData, cart: cartData, toShip: toShipData}
+  
+  try {
+    const url = encodeURI(`https://jsonplaceholder.typicode.com/users/${profileData.id}`)
+    const updateProfile = await fetch(url, 
+      {
+        method: 'PATCH',
+        body: JSON.stringify(modifiedProfile),
+        headers: {'Content-type': 'application/json; charset=UTF-8'}
+      }
+    );
+
+    const newProfileData = await updateProfile.json();
+    // Mock successful patch, save to local storage
+    localStorage.setItem(localStorageName, JSON.stringify(newProfileData));
+
+  } catch (error) {
+    console.log(error.message)
+  }
+}
+
+
 
 
 // Loaders -------------
@@ -97,6 +155,17 @@ const shopLoader = async function () {
   );
  
   return [ productsData ];
+}
+
+const cartLoader = async function () {
+  const [profileData, productsData] = await Promise.all(
+    [
+      await getProfileData(),
+      await getProductsData()
+    ]
+  );
+ 
+  return [ profileData, productsData ];
 }
 
 
@@ -120,9 +189,11 @@ const pageLoader = async function () {
 
 export { 
   // scripts
-  addToCartData,
   getProfileData,
+  addToCartData,
+  changeCartItemQuantity,
+  addCheckoutItems,
 
   // loaders
-  shopLoader, profileLoader, pageLoader 
+  shopLoader, cartLoader, profileLoader, pageLoader 
 }

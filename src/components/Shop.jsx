@@ -8,16 +8,6 @@ import { amountFormat, capitalizeString } from "../utilities/utilities";
 import { NewIcon } from "./Icons";
 import { addToCartData, getProfileData } from "../utilities/DataFetch";
 
-const Shop = function () {
-  const { id='catalog' } = useParams();
-  
-  return (
-    <div className="shop-page">
-      <Outlet context={{id}}/>
-    </div>
-  )
-}
-
 // Render the Shop catalog
 const ShopCatalog = function () {
   const { id } = useOutletContext();
@@ -129,7 +119,7 @@ const ItemPage = function () {
     // Finalize Add to cart
     const handleFinalizeCart = async function () {
       const profileData = await getProfileData();
-      console.log(profileData)
+      
       let currentCart = profileData.cart;
       
       // Check if item is already in the cart
@@ -150,7 +140,10 @@ const ItemPage = function () {
         currentCart = [ ...currentCart, newItem ];
       }
 
-      addToCartData( profileData, currentCart );
+      // Add item to cart by updating profile
+      console.log('loading');
+      await addToCartData( profileData, currentCart );
+      console.log('done');
       handleClose();
     }
 
@@ -249,4 +242,13 @@ const ItemPage = function () {
 }
  // Render a specific item page (end)
 
+const Shop = function () {
+  const { id='catalog' } = useParams();
+
+  return (
+    <div className="shop-page">
+      <Outlet context={{id}}/>
+    </div>
+  )
+}
 export { Shop, ShopCatalog, ItemPage}
