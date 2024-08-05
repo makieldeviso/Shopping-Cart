@@ -8,7 +8,7 @@ import ErrorPage from './ErrorPage';
 
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 
-import { itemsLoader, profileLoader, pageLoader } from '../utilities/DataFetch';
+import { shopLoader, profileLoader, pageLoader } from '../utilities/DataFetch';
 
 const router = createBrowserRouter([
   {
@@ -33,7 +33,6 @@ const router = createBrowserRouter([
               {
                 path: 'shop',
                 element: <Shop/>,
-                loader: itemsLoader,
                 children: [
                   {
                     index: true,
@@ -41,11 +40,13 @@ const router = createBrowserRouter([
                   },
                   {
                     path: 'catalog',
-                    element: <ShopCatalog/>
+                    element: <ShopCatalog/>,
+                    loader: shopLoader,
                   },
                   {
                     path: 'catalog/:id',
-                    element: <ItemPage/>
+                    element: <ItemPage/>,
+                    loader: shopLoader,
                   }
                     
                 ]

@@ -320,11 +320,13 @@ p.item-desc, .item-desc p {
 .item-desc.developer {
   grid-area: dev;
   margin-bottom: 0;
+  align-self: end;
 }
 
 .item-desc.publisher {
   grid-area: pub;
   margin-top: 0;
+  align-self: start;
 }
 
 .item-desc.counter {

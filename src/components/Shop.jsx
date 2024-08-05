@@ -1,18 +1,28 @@
 // Hooks
-import { useContext, useState, useRef } from "react";
+import { useContext, useState, useRef, useEffect } from "react";
 import { NavLink, Outlet, useLoaderData, useOutletContext, useParams, useNavigate } from "react-router-dom";
 import { format, formatDate } from "date-fns";
-
-import { ShoppingContext } from "./App";
 
 // Scripts
 import { amountFormat, capitalizeString } from "../utilities/utilities";
 import { NewIcon } from "./Icons";
+import { addToCartData, getProfileData } from "../utilities/DataFetch";
+
+const Shop = function () {
+  const { id='catalog' } = useParams();
+  
+  return (
+    <div className="shop-page">
+      <Outlet context={{id}}/>
+    </div>
+  )
+}
 
 // Render the Shop catalog
 const ShopCatalog = function () {
-  const {products, id} = useOutletContext();
-  const [shopItems, setShopItems] = useState(products);
+  const { id } = useOutletContext();
+  const [productsData] = useLoaderData();
+  const [shopItems, setShopItems] = useState(productsData);
   const navigate = useNavigate();
 
   // Filter items
@@ -83,12 +93,11 @@ const ShopCatalog = function () {
 
  // Render a specific item page (start)
 const ItemPage = function () {
-  const {products, id} = useOutletContext();
-  const { cartData } = useContext(ShoppingContext);
-
+  const {id} = useOutletContext();
+  const [productsData] = useLoaderData();
   const preCartRef = useRef(null);
- 
-  const itemData = products.find(item => Number(item.gameID) === Number(id));
+
+  const itemData = productsData.find(item => Number(item.gameID) === Number(id));
 
   // Open add to cart dialog (pre-cart)
   const handlePreAddCart = function () {
@@ -97,7 +106,6 @@ const ItemPage = function () {
 
   // Pre-cart
   const CartDialog = function () {
-
     const [itemQuantity, setItemQuantity] = useState(0);
 
     const handleQuantityChange = function (event) {
@@ -118,27 +126,31 @@ const ItemPage = function () {
       preCartRef.current.close();
     }
 
-    const handleFinalizeCart = function () {
-      // /////////////////////////////////////////////?????????
-  
-
-      // Check if item is already in the cart
-      const itemInCart = cartData.current.find(item => item.id === itemData.id);
+    // Finalize Add to cart
+    const handleFinalizeCart = async function () {
+      const profileData = await getProfileData();
+      console.log(profileData)
+      let currentCart = profileData.cart;
       
+      // Check if item is already in the cart
+      const itemInCart = currentCart.find(item => item.gameID === itemData.gameID);
+     
+      // Create new cart item with conditional quantity according to itemInCart check
       const newItem = {...itemData, quantity: !itemInCart 
         ? itemQuantity
         : itemInCart.quantity + itemQuantity }
 
-      
       if (itemInCart) {
-        // if item exist in the cart add quantity
-        const itemIndex = cartData.current.findIndex(item => item.id === itemData.id);
-        cartData.current[itemIndex].quantity = cartData.current[itemIndex].quantity + itemQuantity
+        // if item exist in the cart, add quantity
+        const itemIndex = currentCart.findIndex(item => item.gameID === itemData.gameID);
+        currentCart[itemIndex].quantity = currentCart[itemIndex].quantity + itemQuantity
 
       } else {
         // if item is newly added add new item to cartData array
-        cartData.current = [ ...cartData.current, newItem ];
+        currentCart = [ ...currentCart, newItem ];
       }
+
+      addToCartData( profileData, currentCart );
       handleClose();
     }
 
@@ -230,23 +242,11 @@ const ItemPage = function () {
         </button>
      </div>
       
-      
-      <CartDialog/>
+      <CartDialog/> {/* Modal hidden on render */}
 
     </div>
   )
 }
  // Render a specific item page (end)
-
-const Shop = function () {
-  const { products } = useLoaderData();
-  const { id='catalog' } = useParams();
-  
-  return (
-    <div className="shop-page">
-      <Outlet context={{products, id}}/>
-    </div>
-  )
-}
 
 export { Shop, ShopCatalog, ItemPage}
