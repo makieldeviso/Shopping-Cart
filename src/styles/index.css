@@ -19,7 +19,7 @@
 
   --black: #092532;
 
-  --comp-color-1: #DF2E38;
+  --comp-color-1: #FF0000;
   --comp-color-2: #FF6464;
 
   --triad-color-1: #40A2E3;
@@ -589,45 +589,48 @@ p.item-desc, .item-desc p {
   color: var(--lightest-color);
 }
 
-.cart-display {
-  max-width: 1024px;
-  padding: var(--padding);
-  display: grid;
-  grid-template-columns: 1fr max-content;
-  grid-template-areas: 
-    "items checkout-counter";
-  margin: auto;
-  gap: calc(var(--margin) * 2);
+.cart p {
+  color: var(--lightest-color);
 }
 
-.cart-content {
-  grid-area: items;
-  display: flex;
-  flex-direction: column;
+.cart.prices p:not(.cart-title) {
+  letter-spacing: 0.1rem;
+}
+
+.cart-display {
+  display: grid;
+  grid-template-columns: 1fr max-content;
+  max-width: 1024px;
+  margin: auto;
   gap: var(--margin);
 }
 
-.cart-item {
-  border: 1px solid var(--lightest-color);
+.cart-content {
   border-radius: 5px;
-  padding: var(--padding);
-  display: grid;
-  grid-template-columns: max-content max-content 1fr max-content;
-  grid-template-rows: max-content max-content 1fr;
-  grid-template-areas: 
-    "action img title controller"
-    "action img price ."
-    "action img . total";
-  column-gap: var(--margin);
-}
-
-.cart-action  {
-  grid-area: action;
-  position: relative;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
+  /* gap: var(--margin); */
+}
+
+.cart.container {
+  background-color: rgba(65, 176, 110, 0.1);
+  padding: var(--padding);
+  gap: calc(var(--margin) * 0.5);
+
+  display: grid;
   align-items: center;
-  justify-content: space-around;
+  grid-template-columns: max-content max-content 1fr max-content max-content;
+  grid-template-areas: 
+    'checkbox img title title title'
+    'checkbox img prices delete qty'
+    'total total total total total';
+}
+
+.cart.add-checkbox {
+  grid-area: checkbox;
+  justify-self: center;
+  margin: 5px;
 }
 
 input[type='checkbox'] {
@@ -637,8 +640,8 @@ input[type='checkbox'] {
 
   width: 25px;
   height: 25px;
-  border: 2px solid var(--base-color);
-  background-color: var(--lightest-color);
+  border: 3px solid var(--comp-color-1);
+  background-color: transparent;
   position: relative;
 }
 
@@ -650,7 +653,7 @@ input[type='checkbox']:checked:before {
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
-  background-color: var(--darker-color);
+  background-color: var(--comp-color-1);
   position: absolute;
   top: 0;
   left: 0;
@@ -660,68 +663,98 @@ input[type='checkbox']:hover {
   cursor: pointer;
 }
 
-.cart-remove {
-  width: 30px;
-  height: 30px;
+.cart.preview {
+  grid-area: img;
+  width: 200px;
+  align-self: start;
+}
+
+.cart.title {
+  grid-area: title;
+  font-size: 1em;
+  line-height: 1.2rem;
+  max-height: 2.4rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cart.remove-btn {
+  grid-area: delete;
+  justify-self: center;
+  width: 25px;
+  height: 25px;
+  margin: 0 20px;
   border: none;
   background-color: transparent;
   color: var(--lightest-color);
+  filter: opacity(0.3);
+  transition: 200ms;
+}
+
+.cart.remove-btn:hover {
+  color: var(--base-color);
+  filter: opacity(1);
+}
+
+.cart.prices {
+  grid-area: prices;
+  display: flex;
+  align-items: center;
+}
+
+.cart.prices .disc-price {
+  font-size: 1.2rem;
+  color: var(--base-color);
+  margin-right: var(--margin);
+}
+
+.cart.prices .normal-price {
+  text-decoration: line-through;
+  font-size: 0.8rem;
+  padding: 0 3px;
   filter: opacity(0.8);
 }
 
-.cart-remove:hover {
-  color: var(--base-color);
+.cart.prices .discount {
+  font-size: 0.8rem;
+  color: var(--darker-color);
+  padding: 0 3px;
+  background-color: rgba(141, 236, 180, 0.1);
 }
 
-.cart-item img {
-  grid-area: img;
-  width: 100px;
-  height: 100px;
-  object-fit: contain;
-  background-color: white;
+.cart.qty-controller {
+  grid-area: qty;
 }
 
-.cart-item p {
-  color: var(--lightest-color);
+.cart.qty-controller .qty-buttons {
+  display: flex;
+  border: 1px solid var(--base-color);
+  padding: 3px;
+  gap: calc(var(--margin)* 0.5);
 }
 
-.cart-item p:not(.cart-title) {
-  letter-spacing: 0.1rem;
-}
-
-.cart-item p.cart-price {
-  filter: brightness(0.7);
-}
-
-.cart-title {
- grid-area: title;
- overflow: hidden;
- text-wrap: nowrap;
- text-overflow: ellipsis;
-}
-
-.cart-price {
- grid-area: price;
-}
-
-.cart-item .qty-controller {
-  grid-area: controller;
-}
-
-.cart-item .item-total {
+.cart.item-total {
   grid-area: total;
-  align-self: end;
+  font-size: 1.2rem;
+  letter-spacing: 0.1rem;
+  color: var(--comp-color-2);
   justify-self: end;
-  font-size: 1.3rem;
-  color: var(--base-color);
+  text-align: end;
+  width: 100%;
+  padding: 3px;
+  background: linear-gradient(0.25turn, transparent, rgb(255, 245, 224, 0.1));
 }
 
 .checkout-cont {
-  grid-area: checkout-counter;
+  /* grid-area: checkout-counter; */
   width: 300px;
-  border: 1px solid var(--base-color);
-  border-radius: 10px;
-  background-color: var(--base-color);
+  /* border: 1px solid var(--base-color); */
+  border-radius: 5px;
+  background-color: rgba(141, 236, 180, 0.3);
   padding: var(--padding);
   height: max-content;
   display: flex;
@@ -732,6 +765,7 @@ input[type='checkbox']:hover {
 .checkout-cont p {
   display: flex;
   justify-content: space-between;
+  color: var(--lightest-color);
 }
 
 .cart-amount {
@@ -739,9 +773,11 @@ input[type='checkbox']:hover {
 }
 
 .cart-total {
-  border-top: 1px solid black;
+  border-top: 1px solid rgba(255, 245, 224, 0.3);
   padding: var(--padding) 0;
-  font-size: 1.3rem;
+  font-size: 1.2rem;
+
+  /* background-color: var(--darkest-color); */
 }
 
 .cart-total .cart-amount {
@@ -751,14 +787,19 @@ input[type='checkbox']:hover {
 .checkout-cont button {
   padding: var(--padding);
   width: max-content;
-  background-color: var(--darkest-color);
+  color: var(--lightest-color);
+  background-color: var(--triad-color-1);
+  text-shadow: 0 1px 3px var(--darkest-color);
   align-self: center;
   font-family: var(--title-font);
-  font-size: 1.3rem;
-  border-radius: 10px;
-  color: var(--lightest-color);
-  border: 3px solid var(--lightest-color);
+  font-size: 1rem;
+  border-radius: 5px;
+  border: 1px solid transparent;
   transition: filter 0.2s ease-in-out;
+}
+
+.checkout-cont button:hover {
+  filter: brightness(1.1);
 }
 
 button:hover {

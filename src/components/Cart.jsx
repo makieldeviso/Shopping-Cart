@@ -14,37 +14,42 @@ const freeDeliveryMin = 300;
 const CartItems = function ({cartData, handleQuantityChange, handleAddForCheckout, handleRemoveItemFromCart}) {
   
   const products = cartData.map(item => {
+
+    const isOnSale = item.isOnSale === '1';
+
     return (
       <div 
         key={item.gameID}
-        className="cart-item"
+        className="cart container"
       >
-        <div className="cart-action">
 
-          <input
-            className="add-checkbox"
-            type = "checkbox" 
-            onChange = {handleAddForCheckout} 
-            data-productid = {item.gameID}
-            title = 'Ready item for checkout'
-          />
-    
-          <button 
-            onClick = {handleRemoveItemFromCart}
-            className="cart-remove" 
-            aria-label="Remove item from your cart"
-            data-productid = {item.gameID}
-            title = 'Remove item from your cart'
+        <input
+          className="cart add-checkbox"
+          type = "checkbox" 
+          onChange = {handleAddForCheckout} 
+          data-productid = {item.gameID}
+          title = 'Ready item for checkout'
+        />
+
+        <button 
+          onClick = {handleRemoveItemFromCart}
+          className="cart remove-btn" 
+          aria-label="Remove item from your cart"
+          data-productid = {item.gameID}
+          title = 'Remove item from your cart'
           >{<NewIcon assignClass={'delete'}/>}
-          </button>
+        </button>
+ 
+        <img src={item.header} alt={`${item.gameID} preview`} className="cart preview" />
+        <p className='cart title'>{item.title}</p>
+
+        <div className={`cart prices ${isOnSale ? 'sale' : ''}`}>
+          <p className='disc-price'>{amountFormat(item.salePrice)}</p>
+          {isOnSale && <p className='normal-price'>{amountFormat(item.normalPrice)}</p>}
+          {isOnSale && <p className='discount'>{`-${Number.parseFloat(item.savings).toPrecision(2)}%`}</p>}
         </div>
 
-       
-        <img src={item.header} alt={`${item.gameID} preview`} />
-        <p className='cart-title'>{item.title}</p>
-        <p className='cart-price'>{amountFormat(item.salePrice)}</p>
-
-        <div className='qty-controller'>
+        <div className='cart qty-controller'>
           <div className='qty-buttons'>
             <button 
               value = 'decrease' 
@@ -63,7 +68,7 @@ const CartItems = function ({cartData, handleQuantityChange, handleAddForCheckou
           </div>
         </div>
 
-        <p className="item-total">{amountFormat(item.quantity * item.salePrice)}</p>
+        <p className="cart item-total">{amountFormat(item.quantity * item.salePrice)}</p>
       </div>
     )
   })
@@ -131,7 +136,7 @@ const Cart = function () {
       return ((acc) + (curr.salePrice * curr.quantity))
     }, 0);
 
-    setCheckoutAmount(amount);
+    setCheckoutAmount(Number(Number.parseFloat(amount).toFixed(2)));
   }, [itemsForCheckout])
 
   const handleQuantityChange = async function (event) {
