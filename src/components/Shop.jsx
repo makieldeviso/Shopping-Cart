@@ -11,7 +11,7 @@ import { addToCartData, getProfileData } from "../utilities/DataFetch";
 // Render the Shop catalog
 const ShopCatalog = function () {
   const { id } = useOutletContext();
-  const [productsData] = useLoaderData();
+  const {productsData} = useLoaderData();
   const [shopItems, setShopItems] = useState(productsData);
   const navigate = useNavigate();
 
@@ -84,7 +84,7 @@ const ShopCatalog = function () {
  // Render a specific item page (start)
 const ItemPage = function () {
   const {id} = useOutletContext();
-  const [productsData] = useLoaderData();
+  const {productsData} = useLoaderData();
   const preCartRef = useRef(null);
 
   const itemData = productsData.find(item => Number(item.gameID) === Number(id));

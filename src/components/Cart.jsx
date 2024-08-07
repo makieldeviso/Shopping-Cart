@@ -1,11 +1,9 @@
 import { createContext, useContext, useEffect, useState, useRef } from "react"
 import { NavLink, useLoaderData } from "react-router-dom"
 
-import { amountFormat } from "../utilities/utilities";
-
-import { ShoppingContext } from "./App"
 import { NewIcon } from "./Icons";
 
+import { amountFormat } from "../utilities/utilities";
 import { addCheckoutItems, addToCartData, changeCartItemQuantity, getProfileData } from "../utilities/DataFetch";
 
 const deliveryFee = 50;
@@ -13,10 +11,9 @@ const freeDeliveryMin = 300;
 
 const CartItems = function ({cartData, handleQuantityChange, handleAddForCheckout, handleRemoveItemFromCart}) {
   
+  // // CartItems reiterated components
   const products = cartData.map(item => {
-
     const isOnSale = item.isOnSale === '1';
-
     return (
       <div 
         key={item.gameID}
@@ -73,6 +70,7 @@ const CartItems = function ({cartData, handleQuantityChange, handleAddForCheckou
     )
   })
 
+  // // CartItems return
   return (
     <div className='cart-content'>
       {products}
@@ -97,8 +95,8 @@ const CheckOutCounter = function ({profileData, itemsForCheckout, checkoutAmount
     totalCheck = amountFormat(checkoutAmount);
   }
 
+  // // CheckoutCounter component
   const Mailing = function () {
-
     const [name,  setName] = useState(mailingRef.current.name);
     const [phone,  setPhone] = useState(mailingRef.current.phone);
     const [address,  setAddress] = useState(mailingRef.current.address);
@@ -116,9 +114,8 @@ const CheckOutCounter = function ({profileData, itemsForCheckout, checkoutAmount
 
     return (
       <div className='mailing-container'>
-        <p>
-          <NewIcon assignClass={'location'}/>
-        </p>
+        <p><NewIcon assignClass={'location'}/></p>
+
         <div className="mailing input-field">
           <label htmlFor="mail-name">Name:</label>
           <input
@@ -156,6 +153,7 @@ const CheckOutCounter = function ({profileData, itemsForCheckout, checkoutAmount
     )
   }
 
+  // // CheckoutCounter component
   const OrderComputation = function () {
     return (
       <div className="order-computation">
@@ -166,6 +164,7 @@ const CheckOutCounter = function ({profileData, itemsForCheckout, checkoutAmount
     )
   }
 
+  // // CheckoutCounter return
   return (
     <div className='checkout-cont'>
       <Mailing/>
@@ -183,8 +182,7 @@ const CheckOutCounter = function ({profileData, itemsForCheckout, checkoutAmount
 
 
 const Cart = function () {
-  const [profileData, productsData] = useLoaderData();
-
+  const { profileData } = useLoaderData();
   const [profile, setProfile] = useState(profileData);
 
   const cartData = profile.cart;
@@ -308,9 +306,9 @@ const Cart = function () {
     setItemsForCheckout(i => i = []);
   }
 
+  // // Cart return
   return (
     <div className='cart-page'>
-     
       <h2>Your Cart</h2>
 
       <div className="cart-display">
@@ -327,7 +325,6 @@ const Cart = function () {
           handleCheckout = { handleCheckout } 
         />
       </div>
-      
     </div>
   )
 }

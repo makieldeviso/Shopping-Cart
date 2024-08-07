@@ -154,7 +154,7 @@ const shopLoader = async function () {
     ]
   );
  
-  return [ productsData ];
+  return { productsData } ;
 }
 
 const cartLoader = async function () {
@@ -165,7 +165,7 @@ const cartLoader = async function () {
     ]
   );
  
-  return [ profileData, productsData ];
+  return { profileData, productsData };
 }
 
 
@@ -184,7 +184,7 @@ const pageLoader = async function () {
     ]
   );
  
-  return [ profileData, productsData ];
+  return { profileData, productsData };
 }
 
 export { 

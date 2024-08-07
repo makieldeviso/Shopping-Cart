@@ -1,23 +1,22 @@
 import { useContext, useRef, useState } from "react"
 import { NavLink, useLoaderData } from "react-router-dom"
 
-import { ShoppingContext } from "./App"
 import { format } from "date-fns";
 import { amountFormat, capitalizeString, updateProfile } from "../utilities/utilities";
 import { NewIcon } from "./Icons";
 
-const ForShip = function ({profileData}) {
+const ToShip = function ({profileData}) {
 
   const toShipData = profileData.toShip;
 
   // Reiterate for ship items by batch
   const toShipItems = toShipData.map(batch => {
-
+   
     // Reiterate the items per batch
     const batchItems = batch.items.map( item => {
       const isOnSale = item.isOnSale === '1';
       return (
-        <div key={item.id} className="order-list">
+        <div key={item.gameID} className="order-list">
           <img className='order preview' src={item.header} alt={`${item.gameID} preview`}/>
           <p className="order title">{item.title}</p>
 
@@ -74,9 +73,6 @@ const ForShip = function ({profileData}) {
 }
 
 const UserProfile = function ({profileData}) {
-
-  console.log(profileData)
-
   const [name, setName] = useState(profileData.name);
   const [address, setAddress] = useState(profileData.address);
   const [phone, setPhone] = useState(profileData.phone);
@@ -202,7 +198,6 @@ const UserProfile = function ({profileData}) {
   )
 }
 
-
 const Profile = function () {
   const { profileData } = useLoaderData();
   
@@ -215,7 +210,7 @@ const Profile = function () {
         <UserProfile profileData={profileData}/>
         
         <div className='purchase-display'>
-        <ForShip profileData={profileData}/>
+        <ToShip profileData={profileData}/>
       </div>
 
       </div>

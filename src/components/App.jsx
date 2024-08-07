@@ -2,20 +2,15 @@ import { useState, createContext, useRef } from "react";
 import Header from "./Header";
 import { Outlet, useLoaderData } from "react-router-dom";
 
-export const ShoppingContext = createContext({});
-
 const App = function () {
 
-  const cartData = useRef([]);
-  const forShipData = useRef([]);
-
-  const [profileData, productsData] = useLoaderData();
+  const {profileData, productsData} = useLoaderData();
 
   return (
-    <ShoppingContext.Provider value={{cartData, forShipData}}>
+    <>
       <Header/>
       <Outlet/>
-    </ShoppingContext.Provider>
+    </>
   )
 }
 
