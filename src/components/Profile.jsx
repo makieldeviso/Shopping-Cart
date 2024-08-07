@@ -6,48 +6,56 @@ import { format } from "date-fns";
 import { amountFormat, capitalizeString, updateProfile } from "../utilities/utilities";
 import { NewIcon } from "./Icons";
 
-const ForShip = function () {
-  const { forShipData } = useContext(ShoppingContext);
+const ForShip = function ({profileData}) {
+
+  const toShipData = profileData.toShip;
 
   // Reiterate for ship items by batch
-  const forShipItems = forShipData.current.map(batch => {
+  const toShipItems = toShipData.map(batch => {
 
     // Reiterate the items per batch
     const batchItems = batch.items.map( item => {
+      const isOnSale = item.isOnSale === '1';
       return (
         <div key={item.id} className="order-list">
-          <img className='order-img' src={item.image} alt={`${item.id} preview`} width={100} />
-          <p className="order-title">{item.title}</p>
-          <p className="order-unit-price">{amountFormat(item.price)}</p>
-          <p className="order-quantity">x{item.quantity}</p>
-          <p className="order-total-price">{amountFormat(item.quantity * item.price)}</p>
+          <img className='order preview' src={item.header} alt={`${item.gameID} preview`}/>
+          <p className="order title">{item.title}</p>
+
+          <div className={`order prices ${isOnSale ? 'sale' : ''}`}>
+            {isOnSale && <p className='discount'>{`-${Number.parseFloat(item.savings).toPrecision(2)}%`}</p>}
+            {isOnSale && <p className='normal-price'>{amountFormat(item.normalPrice)}</p>}
+            <p className='disc-price'>{amountFormat(item.salePrice)}</p>  
+          </div>
+
+          <p className="order quantity">x{item.quantity}</p>
+          <p className="order total-price">{amountFormat(item.quantity * item.salePrice)}</p>
         </div>
       )
     })
 
     return (
-      <div key={crypto.randomUUID()} className="order-batch">
-        <p className="batch-date">Ordered {format(new Date(batch.timeStamp), 'd-MMM-yyyy')}</p>
+      <div key={crypto.randomUUID()} className="batch-container">
+        <p className="batch date">Ordered {format(new Date(batch.timeStamp), 'd-MMM-yyyy')}</p>
         {batchItems}
         
-        <div className="batch-details">
-          <div className='batch-mailing'>
+        <div className="batch details">
+          {/* <div className='batch-mailing'>
             <p>{batch.mailing.name} | {batch.mailing.phone}</p>
             <p>{batch.mailing.address}</p>
-          </div>
+          </div> */}
 
-          <div className='batch-calculate'>
-            <p className="batch-amount sub">
+          <div className='batch calculate'>
+            <p className="batch sub">
               <span>Sub-total:</span>
               <span className="batch-price">{amountFormat(batch.subAmount)}</span>
             </p>
-            <p className="batch-amount delivery">
+            <p className="batch delivery">
               <span>Delivery Fee:</span>
               <span className="batch-price">
                 {batch.delivery === 0 ? 'Free' :amountFormat(batch.delivery)}
               </span>
             </p>
-            <p className="batch-amount total">
+            <p className="batch total">
               <span>Order Total:</span>
               <span className="batch-price">{amountFormat(batch.totalAmount)}</span>
             </p>
@@ -60,15 +68,18 @@ const ForShip = function () {
 
   return (
     <div className='to-ship-content'>
-      {forShipItems}
+      {toShipItems}
     </div>
   )
 }
 
-const UserProfile = function ({userProfile}) {
-  const [name, setName] = useState(userProfile.name);
-  const [address, setAddress] = useState(userProfile.address);
-  const [phone, setPhone] = useState(userProfile.phone);
+const UserProfile = function ({profileData}) {
+
+  console.log(profileData)
+
+  const [name, setName] = useState(profileData.name);
+  const [address, setAddress] = useState(profileData.address);
+  const [phone, setPhone] = useState(profileData.phone);
 
   const editDialogRef = useRef(null);
 
@@ -193,21 +204,23 @@ const UserProfile = function ({userProfile}) {
 
 
 const Profile = function () {
-  const { forShipData } = useContext(ShoppingContext);
-  const { profile } = useLoaderData();
+  const { profileData } = useLoaderData();
   
   return (
     <div className="profile-page">
       
       <h2>Profile</h2>
 
-      <UserProfile userProfile={profile}/>
+      <div className="profile-display">
+        <UserProfile profileData={profileData}/>
+        
+        <div className='purchase-display'>
+        <ForShip profileData={profileData}/>
+      </div>
 
-      <div className='purchase-display'>
-        <ForShip/>
       </div>
       
-      <button type="button" onClick={() => console.log(forShipData.current)}>
+      <button type="button" onClick={() => console.log(profileData.toShip)}>
         Check profile
       </button>
     </div>

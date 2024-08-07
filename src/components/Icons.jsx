@@ -8,7 +8,8 @@ import {
   mdiStorefrontOutline,
   mdiCartOutline,
   mdiClose,
-  mdiCheck 
+  mdiCheck,
+  mdiMapMarkerOutline  
 } from '@mdi/js';
 
 const NewIcon = function ({assignClass}) {
@@ -28,6 +29,10 @@ const NewIcon = function ({assignClass}) {
 
     case 'check':
       assignPath = mdiCheck;
+      break;
+
+    case 'location':
+      assignPath = mdiMapMarkerOutline;
       break;
 
     case 'profile':

@@ -755,11 +755,71 @@ input[type='checkbox']:hover {
   /* border: 1px solid var(--base-color); */
   border-radius: 5px;
   background-color: rgba(141, 236, 180, 0.3);
-  padding: var(--padding);
+  /* padding: var(--padding); */
   height: max-content;
   display: flex;
   flex-direction: column;
-  gap: var(--margin);
+}
+
+.mailing-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: var(--margin);
+  border-bottom: 1px solid var(--comp-color-2);
+  background-color: rgba(141, 236, 180, 0.1);
+    padding: var(--padding);
+}
+
+.mailing-container .location-icon {
+  width: 25px;
+  height: 25px;
+  color: var(--darker-color);
+}
+
+.mailing.input-field {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 5px;
+  align-items: center;
+}
+
+.mailing label {
+  color: var(--lightest-color);
+  width: 60px;
+  min-width: max-content;
+}
+
+label[for='mail-address'] {
+  align-self: start;
+}
+
+.mailing input, .mailing textarea {
+  padding: 0 3px;
+  color: var(--lightest-color);
+  background-color: rgba(255, 245, 224, 0.1);
+  border: 1px solid var(--lightest-color);
+}
+
+.mailing input.invalid, .mailing textarea.invalid {
+  border: 1px solid var(--comp-color-1);
+  outline: 1px solid var(--comp-color-1);
+  background-color: rgba(255, 100, 100, 0.3);
+}
+
+.mailing input::placeholder, .mailing textarea::placeholder {
+  color: var(--lightest-color)
+}
+
+.mailing textarea {
+  resize: vertical;
+  margin-bottom: var(--margin);
+}
+
+.order-computation {
+  display: flex;
+  flex-direction: column;
+  padding: var(--padding);
 }
 
 .checkout-cont p {
@@ -796,6 +856,7 @@ input[type='checkbox']:hover {
   border-radius: 5px;
   border: 1px solid transparent;
   transition: filter 0.2s ease-in-out;
+  margin-bottom: var(--margin);
 }
 
 .checkout-cont button:hover {
@@ -815,15 +876,18 @@ button:hover {
 
 /* Profile (start) */
 .profile-page {
+  
+}
+
+.profile-display {
   display: grid;
   grid-template-columns: max-content 1fr;
   grid-template-areas: 
-    "header header"
     "profile purchase";
+  max-width: 1024px;
 }
 
 .profile-page h2 {
-  grid-area: header;
   color: var(--lightest-color);
 }
 
@@ -831,7 +895,7 @@ button:hover {
   grid-area: profile;
   background-color: var(--base-color);
   border-radius: 10px;
-  width: 400px;
+  width: 350px;
   height: max-content;
   padding: calc(var(--padding) * 2);
 
@@ -996,48 +1060,48 @@ dialog::backdrop {
 
 .purchase-display {
   grid-area: purchase;
+  width: 100%;
 }
 
 /* For Shipping (start) */
 .to-ship-content {
   display: flex;
+  justify-self: start;
   flex-direction: column;
   gap: var(--margin);
   padding: var(--padding);
   align-items: center;
-  width: max-content;
-  margin: auto;
 }
 
-.batch-date {
+.batch.date {
   padding: var(--padding);
   color: var(--lightest-color);
 }
 
-.batch-details {
+.batch.details {
   display: grid;
   grid-template-columns: 1fr max-content;
   border-top: 1px solid rgba(255, 245, 224, 0.3);
 }
 
-.batch-mailing {
+.batch.mailing {
   display: flex;
   flex-direction: column;
   padding: var(--padding);
 }
 
-.batch-mailing p {
+.batch.mailing p {
   color: var(--base-color);
 }
 
-.batch-calculate {
+.batch.calculate {
   padding: var(--padding);
   display: flex;
   flex-direction: column;
   align-items: end;
 }
 
-.batch-amount {
+.batch.calculate p {
   color: var(--lightest-color);
   width: 200px;
   min-width: max-content;
@@ -1047,76 +1111,113 @@ dialog::backdrop {
   align-items: center;
 }
 
-.batch-amount span {
+.batch.calculate p span {
   width: 100px;
   min-width: max-content;
-  font-size: 1.1rem;
+  font-size: 1rem;
 }
 
-.batch-amount span.batch-price {
+.batch.calculate p span.batch-price {
   letter-spacing: 0.1rem;
+  text-align: end;
 }
 
-.batch-amount.total span.batch-price {
+.batch.calculate p.total span.batch-price {
   color: var(--comp-color-2);
 }
 
-.order-batch {
-  border: 1px solid var(--lightest-color);
-  border-radius: 10px;
-  width: 800px;
+.batch-container{
+  border: 1px solid transparent;
+  border-radius: 5px;
+  background-color: rgba(65, 176, 110, 0.1);
+  width: 100%;
   display: flex;
   flex-direction: column;
-  background-color: var(--black);
+  gap: calc(var(--margin) * 0.5);
 }
 
 .order-list {
-  display: grid;
   padding: var(--padding);
-  grid-template-columns: max-content max-content 1fr;
-  grid-template-areas: 
-    "img title title"
-    "img unit-price quantity"
-    "img total-price total-price";
+  display: grid;
   align-items: center;
   column-gap: var(--margin);
+  grid-template-columns: max-content 1fr max-content;
+  grid-template-areas: 
+    "title title title"
+    "img . quantity"
+    "img . unit-price"
+    "img total-price total-price";
 }
 
 .order-list p {
-  width: 100%;
   color: var(--lightest-color);
+}
+
+.order.preview {
+  grid-area: img;
+  align-self: start;
+  width: 150px;
+  object-fit: cover;
+  background-color: white;
+  height: 100%;
+}
+
+.order.title {
+  grid-area: title;
+  font-size: 1rem;
+  /* line-height: 1.3rem; */
+
+  display: -webkit-box;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  text-wrap: nowrap;
 }
 
-.order-list p:not(.order-title) {
-  letter-spacing: 0.1rem;
-  font-size: 0.9rem;
-  filter: brightness(0.8);
-}
-
-.order-img {
-  grid-area: img;
-  width: 100px;
-  height: 100px;
-  object-fit: contain;
-  background-color: white;
-}
-
-.order-title {
-  grid-area: title;
-}
-
-.order-unit-price {
+.order.prices {
   grid-area: unit-price;
+  display: flex;
+  justify-self: end;
+  align-items: center;
 }
 
-.order-quantity {
+.order.prices .disc-price {
+  font-size: 1rem;
+  color: var(--lightest-color);
+  margin-left: var(--margin);
+  padding-right: 5px;
+}
+
+.order.prices .normal-price {
+  text-decoration: line-through;
+  font-size: 0.8rem;
+  padding: 0 3px;
+  filter: opacity(0.8);
+}
+
+.order.prices .discount {
+  font-size: 0.8rem;
+  color: var(--darker-color);
+  padding: 0 3px;
+  background-color: rgba(141, 236, 180, 0.1);
+}
+
+
+.order.quantity {
   grid-area: quantity;
+  justify-self: end;
+  padding-right: 5px;
 }
 
-.order-list .order-total-price {
+.order-list .order.total-price {
   grid-area: total-price;
+  justify-self: end;
+  text-align: end;
+  width: 100%;
+  color: var(--base-color);
+  background: linear-gradient(0.25turn, transparent, rgba(255, 245, 224, 0.1));
+  padding-right: 5px;
 }
 /* For Shipping (start) */

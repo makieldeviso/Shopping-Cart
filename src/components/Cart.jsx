@@ -80,7 +80,10 @@ const CartItems = function ({cartData, handleQuantityChange, handleAddForCheckou
   )
 }
 
-const CheckOutCounter = function ({itemsForCheckout, checkoutAmount, handleCheckout}) {
+const CheckOutCounter = function ({profileData, itemsForCheckout, checkoutAmount, handleCheckout}) {
+  const mailingRef = useRef({ name: profileData.name, phone: profileData.phone, address: profileData.address});
+  const checkoutBtnRef = useRef(null);
+
   let deliveryCheck;
   let totalCheck;
   if (checkoutAmount === 0) {
@@ -95,24 +98,84 @@ const CheckOutCounter = function ({itemsForCheckout, checkoutAmount, handleCheck
   }
 
   const Mailing = function () {
-    return (
-      <div className='mailing-details'>
 
+    const [name,  setName] = useState(mailingRef.current.name);
+    const [phone,  setPhone] = useState(mailingRef.current.phone);
+    const [address,  setAddress] = useState(mailingRef.current.address);
+
+    useEffect(() => {
+      mailingRef.current = {name, phone, address};
+
+      if (name.length === 0 || phone.length === 0 || address.length === 0 || itemsForCheckout.length === 0) {
+        checkoutBtnRef.current.disabled = true; 
+      } else if (checkoutBtnRef.current.disabled && (name.length > 0 || phone.length > 0 || address.length > 0)) {
+        checkoutBtnRef.current.disabled = false;
+      }
+
+    }, [name, phone, address])
+
+    return (
+      <div className='mailing-container'>
+        <p>
+          <NewIcon assignClass={'location'}/>
+        </p>
+        <div className="mailing input-field">
+          <label htmlFor="mail-name">Name:</label>
+          <input
+            required
+            placeholder={name.length === 0 ? 'Enter name of mail receiver' : ''}
+            className={name.length === 0 ? 'invalid' : ''}
+            type="text" id='mail-name'name="mail-name" value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </div>
+
+        <div className="mailing input-field">
+          <label htmlFor="mail-phone">Phone:</label>
+          <input
+            required
+            placeholder={phone.length === 0 ? 'Enter number for contact' : ''}
+            className={phone.length === 0 ? 'invalid' : ''}
+            type="text" id='mail-phone'name="mail-phone" value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+          />
+        </div>
+
+        <div className="mailing input-field">
+          <label htmlFor="mail-address">Address:</label>
+          <textarea
+            required
+            placeholder={phone.length === 0 ? 'Enter mailing address' : ''}
+            className={address.length === 0 ? 'invalid' : ''}
+            id='mail-address'name="mail-address" value={address}
+            onChange={(e) => setAddress(e.target.value)}
+          />
+        </div>
+      
       </div>
     )
   }
 
+  const OrderComputation = function () {
+    return (
+      <div className="order-computation">
+        <p><span>Subtotal:</span><span className="cart-amount">{amountFormat(checkoutAmount)}</span></p>
+        <p><span>Delivery:</span><span className="cart-amount">{deliveryCheck}</span></p>
+        <p className='cart-total'><span>Total:</span><span className="cart-amount">{totalCheck}</span></p>
+      </div>
+    )
+  }
 
   return (
     <div className='checkout-cont'>
-      <p><span>Subtotal:</span><span className="cart-amount">{amountFormat(checkoutAmount)}</span></p>
-      <p><span>Delivery:</span><span className="cart-amount">{deliveryCheck}</span></p>
-      <p className='cart-total'><span>Total:</span><span className="cart-amount">{totalCheck}</span></p>
+      <Mailing/>
+      <OrderComputation/>
       <button 
-        onClick = { handleCheckout } 
+        ref = {checkoutBtnRef}
+        onClick = {(mailing) => handleCheckout(mailingRef.current)} 
         disabled = {itemsForCheckout.length <= 0 ? true : false}
       >
-        Checkout
+      Checkout
       </button>
     </div>
   )
@@ -209,8 +272,10 @@ const Cart = function () {
   }
 
   // Checkout readied items
-  const handleCheckout = async function () {
+  const handleCheckout = async function (mailing) {
     if (itemsForCheckout.length === 0) return
+
+    if (mailing.name.length === 0 || mailing.phone.length === 0 || mailing.address.length === 0) return
 
     // Calculate eligibility for free delivery
     const delivery = checkoutAmount > freeDeliveryMin ? 0 : deliveryFee;
@@ -222,7 +287,8 @@ const Cart = function () {
         subAmount: checkoutAmount,
         delivery: delivery,
         totalAmount: checkoutAmount + delivery,
-        timeStamp: (new Date()).valueOf()
+        timeStamp: (new Date()).valueOf(),
+        mailing: mailing
       }
     ]
 
@@ -255,6 +321,7 @@ const Cart = function () {
           handleRemoveItemFromCart = { handleRemoveItemFromCart }
         />
         <CheckOutCounter 
+          profileData = { profileData }
           itemsForCheckout = { itemsForCheckout }
           checkoutAmount = { checkoutAmount }
           handleCheckout = { handleCheckout } 

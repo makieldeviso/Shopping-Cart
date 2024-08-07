@@ -172,8 +172,8 @@ const cartLoader = async function () {
 // Note: this is a placeholder profile fetch
 // Fetches data from jsonplaceholder and uses local storage to save data
 const profileLoader = async function () {
-  const profile = await getProfileData();
-  return { profile }
+  const profileData = await getProfileData();
+  return { profileData }
 }
 
 const pageLoader = async function () {
