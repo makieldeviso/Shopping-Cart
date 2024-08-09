@@ -9,7 +9,14 @@ import {
   mdiCartOutline,
   mdiClose,
   mdiCheck,
-  mdiMapMarkerOutline  
+  mdiMapMarkerOutline,
+  mdiCubeSend,
+  mdiPackageVariant,
+  mdiTruckOutline,
+  mdiBorderNoneVariant,
+  mdiTruckFastOutline,
+  mdiPackageVariantClosedCheck,
+  mdiMinus 
 } from '@mdi/js';
 
 const NewIcon = function ({assignClass}) {
@@ -21,6 +28,10 @@ const NewIcon = function ({assignClass}) {
   
     case 'edit':
       assignPath = mdiPencilOutline;
+      break;
+    
+    case 'line':
+      assignPath = mdiMinus;
       break;
 
     case 'close':
@@ -39,12 +50,36 @@ const NewIcon = function ({assignClass}) {
       assignPath = mdiAccountOutline;
       break;
 
+    case 'send':
+      assignPath = mdiCubeSend;
+      break;
+    
+    case 'deliver':
+      assignPath = mdiTruckFastOutline;
+      break;
+    
+    case 'delivered':
+      assignPath = mdiPackageVariantClosedCheck;
+      break;
+
     case 'shop':
       assignPath = mdiStorefrontOutline;
       break;
     
     case 'cart':
       assignPath = mdiCartOutline;
+      break;
+
+    case 'box-empty':
+      assignPath = mdiPackageVariant;
+      break;
+
+    case 'truck-empty':
+      assignPath = mdiTruckOutline;
+      break;
+    
+    case 'empty':
+      assignPath = mdiBorderNoneVariant;
       break;
   
     default:

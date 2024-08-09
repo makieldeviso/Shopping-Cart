@@ -43,7 +43,6 @@ body::before {
   width: 100%;
   height: 100%;
   background-color: var(--black);
-  /* background-image: url('../assets/bg-5.jpg'); */
   background-attachment: fixed;
   background-size: cover;
   background-position: center;
@@ -407,6 +406,7 @@ p.item-desc, .item-desc p {
   color: var(--lightest-color);
   text-shadow: 0 0 3px var(--darkest-color);
   border-radius: 5px;
+  font-family: var(--title-font);
 }
 
 .item-desc.add-btn:hover {
@@ -429,6 +429,7 @@ p.item-desc, .item-desc p {
   padding: var(--padding);
   display: flex;
   flex-direction: column;
+  gap: calc(var(--margin) * 0.5);
 }
 
 .pre-cart.close-btn {
@@ -610,7 +611,47 @@ p.item-desc, .item-desc p {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  /* gap: var(--margin); */
+}
+
+.empty.container {
+  margin-top: calc(var(--margin) * 2);
+  padding: var(--padding);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--margin);
+}
+
+.empty svg {
+  width: 150px;
+  height: 150px;
+  color: var(--base-color);
+  margin: 0 auto;
+  background-color: rgba(255, 245, 224, 0.1);
+  padding: calc(var(--padding) * 3);
+  border-radius: 50%;
+}
+
+.empty.message {
+  font-size: 1.2rem;
+  color: var(--lightest-color);
+  text-align: center;
+}
+
+.empty.shop-btn {
+  font-size: 1rem;
+  font-family: var(--title-font);
+  padding: var(--padding) calc(var(--padding) * 2);
+  width: max-content;
+  background-color: #41B06E;
+  color: var(--lightest-color);
+  text-shadow: 0 1px 3px var(--darkest-color);
+  border: 1px solid transparent;
+  border-radius: 5px;
+}
+
+.empty.shop-btn:hover {
+  filter: brightness(1.1);
 }
 
 .cart.container {
@@ -750,12 +791,8 @@ input[type='checkbox']:hover {
 }
 
 .checkout-cont {
-  /* grid-area: checkout-counter; */
   width: 300px;
-  /* border: 1px solid var(--base-color); */
-  border-radius: 5px;
   background-color: rgba(141, 236, 180, 0.3);
-  /* padding: var(--padding); */
   height: max-content;
   display: flex;
   flex-direction: column;
@@ -883,8 +920,10 @@ button:hover {
   display: grid;
   grid-template-columns: max-content 1fr;
   grid-template-areas: 
-    "profile purchase";
+    "profile links"
+    ". purchase";
   max-width: 1024px;
+  margin: auto;
 }
 
 .profile-page h2 {
@@ -893,20 +932,22 @@ button:hover {
 
 .user-profile {
   grid-area: profile;
-  background-color: var(--base-color);
-  border-radius: 10px;
+  background-color: rgba(141, 236, 180, 0.3);
   width: 350px;
   height: max-content;
-  padding: calc(var(--padding) * 2);
+  padding: var(--padding);
 
   display: grid;
   grid-template-columns: 1fr max-content;
 }
 
+.user-profile p {
+  color: var(--lightest-color);
+}
+
 .user-details-cont {
   display: flex;
   flex-direction: column;
-  gap: calc(var(--margin) * 0.5);
 }
 
 .profile {
@@ -922,18 +963,20 @@ button:hover {
   width: 30px;
   height: 30px;
   background-color: transparent;
-  border: 1px solid var(--darker-color);
   border-radius: 50%;
-  color: var(--darker-color);
+ 
   padding: 3px;
   display: flex;
   justify-content: center;
   align-items: center;
+
+  border: 1px solid var(--lightest-color);
+  color: var(--lightest-color);
 }
 
 .edit-profile-btn:hover {
-  filter: brightness(1.1);
-  background-color: var(--base-color);
+  border: 1px solid var(--base-color);
+  color: var(--base-color);
 }
 
 /* Edit profile dialog (start) */
@@ -949,15 +992,14 @@ dialog::backdrop {
   background-color: rgba(20, 30, 70, 0.3);
 }
 
-.dialog-cont {
+.edit-profile-dialog .dialog-cont {
   padding: var(--padding);
   min-width: max-content;
-  max-width: 500px;
+  max-width: 450px;
   width: 50vw;
 
   display: flex;
   flex-direction: column;
-  gap: var(--margin);
 }
 
 .dialog-header {
@@ -972,18 +1014,20 @@ dialog::backdrop {
   color: var(--lightest-color);
   justify-self: center;
   font-size: 1.2rem;
+  margin-bottom: var(--margin);
 }
 
-.dialog-cont .input-cont {
+.edit-profile.input-cont {
   display: grid;
   grid-template-columns: max-content 1fr;
   padding: var(--padding);
   align-items: center;
 }
 
-.input-cont label {
+.edit-profile label {
   min-width: max-content;
   width: 70px;
+  font-size: 1rem;
 }
 
 .input-cont label[for="user-address"] {
@@ -993,8 +1037,19 @@ dialog::backdrop {
 
 .input-cont input, .input-cont textarea {
   padding: calc(var(--padding) * 0.5);
-  background-color: var(--lightest-color);
-  border-radius: 5px;
+  background-color:rgba(255, 245, 224, 0.1);
+  border: 1px solid var(--lightest-color);
+  color: var(--lightest-color);
+}
+
+.input-cont input.invalid, .input-cont textarea.invalid {
+  background-color: rgba(255, 0, 0, 0.3);
+  border: 1px solid var(--comp-color-1);
+  outline: 1px solid var(--comp-color-1);
+}
+
+.input-cont input::placeholder, .input-cont textarea::placeholder {
+  color: rgba(255, 245, 224, 0.8);
 }
 
 .close-dialog-btn {
@@ -1024,7 +1079,7 @@ dialog::backdrop {
 
 .action-btns {
   display: flex;
-  justify-content: end;
+  justify-content: center;
   gap: calc(var(--margin) * 2);
   margin: var(--margin);
 }
@@ -1036,6 +1091,8 @@ dialog::backdrop {
   align-self: center;
   border-radius: 10px;
   width: 100px;
+  font-family: var(--title-font);
+  text-shadow: 0 2px 5px var(--darkest-color);
 
   transition: filter 0.2s ease-in-out;
 }
@@ -1044,16 +1101,19 @@ dialog::backdrop {
   filter: brightness(1.1);
 }
 
+.action-btns button:disabled {
+  filter: opacity(0.5);
+}
+
 .save-btn {
-  border: 3px solid var(--base-color);
-  background-color: var(--darker-color);
+  border: 1px solid transparent;
+  background-color: var(--triad-color-1);
   color: var(--lightest-color);
   text-shadow: 0 0 5px var(--black);
 }
 
 .cancel-btn {
   background-color: var(--lightest-color);
-  border: 3px solid #c9c4b8;
 }
 
 /* Edit profile dialog (start) */
@@ -1063,7 +1123,61 @@ dialog::backdrop {
   width: 100%;
 }
 
-/* For Shipping (start) */
+/* Purchase Links */
+.purchase-links-container {
+  width: 100%;
+}
+
+
+.purchase-links {
+  grid-area: links;
+  list-style:none;
+  display: flex;
+  width: 100%;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.purchase-links a{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  color: var(--lightest-color); 
+  width: max-content;
+  font-size: 1rem;
+  background-color: var(--black);
+  width: 60px;
+  height: 60px;
+  border: 3px solid var(--lightest-color);
+  transform: rotateZ(45deg);
+  transition: 200ms;
+}
+
+.purchase-links a:hover {
+  background-color: var(--darker-color);
+}
+
+.purchase-links a.active {
+  background-color: var(--base-color);
+  border: 3px solid var(--darkest-color);
+}
+
+.purchase-links a.active svg {
+  color: var(--darkest-color);
+}
+
+.purchase-links a:visited {
+ color: var(--lightest-color);
+}
+
+.purchase-links a svg {
+  width: 80%;
+  transform: rotateZ(-45deg);
+  transition: 200ms;
+}
+
+/* To Ship (start) */
 .to-ship-content {
   display: flex;
   justify-self: start;
@@ -1090,8 +1204,14 @@ dialog::backdrop {
   padding: var(--padding);
 }
 
+.batch.mailing .send-icon {
+  width: 25px;
+  height: 25px;
+  color: var(--darker-color);
+}
+
 .batch.mailing p {
-  color: var(--base-color);
+  color: var(--darker-color);
 }
 
 .batch.calculate {
@@ -1204,7 +1324,6 @@ dialog::backdrop {
   background-color: rgba(141, 236, 180, 0.1);
 }
 
-
 .order.quantity {
   grid-area: quantity;
   justify-self: end;
@@ -1220,4 +1339,12 @@ dialog::backdrop {
   background: linear-gradient(0.25turn, transparent, rgba(255, 245, 224, 0.1));
   padding-right: 5px;
 }
-/* For Shipping (start) */
+/* To Ship (start) */
+
+/* To Receive (start) */
+
+.to-receive-content {
+  padding: var(--padding);
+}
+
+/* To Receive (end) */

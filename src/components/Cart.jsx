@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, useRef } from "react"
-import { NavLink, useLoaderData } from "react-router-dom"
+import { NavLink, useLoaderData, useNavigate } from "react-router-dom"
 
 import { NewIcon } from "./Icons";
 
@@ -70,9 +70,27 @@ const CartItems = function ({cartData, handleQuantityChange, handleAddForCheckou
     )
   })
 
+  const EmptyCart = function () {
+    const navigate = useNavigate();
+
+    return (
+      <div className="empty container">
+        <NewIcon assignClass={'cart'}/>
+        <p className="empty message">Your cart is empty</p>
+
+        <button
+          className="empty shop-btn"
+          onClick={() => navigate('../shop')}
+        >Continue shopping 
+        </button>
+      </div>
+    )
+  }
+
   // // CartItems return
   return (
     <div className='cart-content'>
+      {!cartData.length && <EmptyCart/> }
       {products}
     </div>
   )

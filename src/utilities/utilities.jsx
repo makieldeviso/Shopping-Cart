@@ -14,8 +14,4 @@ const amountFormat = function (amount) {
   return `$${Number.parseFloat(amount).toFixed(2)}`;
 }
 
-const updateProfile = function (profileObj) {
-  localStorage.setItem('shoppingByMakieldeviso', JSON.stringify(profileObj));
-}
-
-export { capitalizeString, amountFormat, updateProfile }
+export { capitalizeString, amountFormat }

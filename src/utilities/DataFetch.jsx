@@ -61,6 +61,8 @@ const getProfileData = async function () {
       userData.username = 'Agent_LSmith';
       userData.cart = [];
       userData.toShip = [];
+      userData.toReceive = [];
+      userData.delivered = [];
 
       localStorage.setItem(localStorageName, JSON.stringify(userData));
       savedProfile = localStorage.getItem(localStorageName);
@@ -73,6 +75,33 @@ const getProfileData = async function () {
   }
 }
 
+// Update profile
+const updateProfileData = async function (updateObj) {
+  let savedProfile = await JSON.parse(localStorage.getItem(localStorageName));
+  const modifiedData = {...savedProfile, ...updateObj}
+
+  try {
+    const url = encodeURI('https://jsonplaceholder.typicode.com/users/1');
+    const patch = await fetch(url, 
+      {
+        method: 'PATCH',
+        mode: 'cors',
+        body: JSON.stringify(modifiedData),
+        headers: {'Content-type': 'application/json; charset=UTF-8'}
+      }
+    );
+
+    const updatedProfile = await patch.json();
+    
+    // Mock successful patch, save to local storage
+    localStorage.setItem(localStorageName, JSON.stringify(updatedProfile));
+    
+    return JSON.parse(savedProfile);
+
+  } catch (error) {
+    console.log(error.message)
+  }
+}
 
 // Add to Cart script
 // Note: Mock a fetch PATCH to modify cart array in the user profile data
@@ -144,8 +173,6 @@ const addCheckoutItems = async function (cartData, toShipData ) {
 }
 
 
-
-
 // Loaders -------------
 const shopLoader = async function () {
   const [productsData] = await Promise.all(
@@ -190,6 +217,7 @@ const pageLoader = async function () {
 export { 
   // scripts
   getProfileData,
+  updateProfileData,
   addToCartData,
   changeCartItemQuantity,
   addCheckoutItems,

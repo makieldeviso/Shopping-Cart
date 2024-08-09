@@ -1,7 +1,7 @@
 import App from './App'
 
 import { Main, PageDisplay } from './PageMain';
-import Profile from './Profile';
+import { Profile, PurchaseDisplay } from './Profile';
 import { Shop, ShopCatalog, ItemPage } from './Shop';
 import { Cart } from './Cart';
 import ErrorPage from './ErrorPage';
@@ -28,7 +28,17 @@ const router = createBrowserRouter([
               {
                 path: 'profile',
                 element: <Profile/>,
-                loader: profileLoader
+                loader: profileLoader,  
+                children: [
+                  {
+                    index: true,
+                    element: <Navigate to='to-ship' replace/>
+                  },
+                  {
+                    path: ':displayid',
+                    element: <PurchaseDisplay/>
+                  }
+                ]
               },
               {
                 path: 'shop',

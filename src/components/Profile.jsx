@@ -1,17 +1,42 @@
 import { useContext, useRef, useState } from "react"
-import { NavLink, useLoaderData } from "react-router-dom"
+import { NavLink, useLoaderData, Outlet, useParams, useOutletContext } from "react-router-dom"
 
 import { format } from "date-fns";
-import { amountFormat, capitalizeString, updateProfile } from "../utilities/utilities";
+import { amountFormat, capitalizeString } from "../utilities/utilities";
 import { NewIcon } from "./Icons";
+import { updateProfileData } from "../utilities/DataFetch";
+
+const PurchaseDisplay = function () {
+  const {displayid} = useParams();
+  const outletContext = useOutletContext();
+
+  let displayComponent = null;
+
+  switch (displayid) {
+    case 'to-ship':
+      displayComponent = <ToShip profileData={outletContext.profileData}/>
+      break;
+    
+    case 'to-receive':
+      displayComponent = <ToReceive profileData={outletContext.profileData}/>
+      break;
+    
+    case 'delivered':
+      displayComponent = <Delivered profileData={outletContext.profileData}/>
+      break;
+  
+    default:
+      break;
+  }
+
+  return (<>{displayComponent}</>)
+}
 
 const ToShip = function ({profileData}) {
-
   const toShipData = profileData.toShip;
 
   // Reiterate for ship items by batch
   const toShipItems = toShipData.map(batch => {
-   
     // Reiterate the items per batch
     const batchItems = batch.items.map( item => {
       const isOnSale = item.isOnSale === '1';
@@ -38,10 +63,12 @@ const ToShip = function ({profileData}) {
         {batchItems}
         
         <div className="batch details">
-          {/* <div className='batch-mailing'>
+          <div className='batch mailing'>
+
+            <NewIcon assignClass={'send'}/>
             <p>{batch.mailing.name} | {batch.mailing.phone}</p>
             <p>{batch.mailing.address}</p>
-          </div> */}
+          </div>
 
           <div className='batch calculate'>
             <p className="batch sub">
@@ -65,9 +92,64 @@ const ToShip = function ({profileData}) {
     )
   })
 
+  const EmptyToShip = function () {
+    return (
+      <div className="empty container to-ship">
+          <NewIcon assignClass={'box-empty'}/>
+          <p className="empty message">Nothing to ship</p>
+      </div>
+    ) 
+  }
+
   return (
     <div className='to-ship-content'>
+      {!toShipData.length && <EmptyToShip/>}
       {toShipItems}
+    </div>
+  )
+}
+
+
+const ToReceive = function ({profileData}) {
+  const toReceiveData = profileData.toReceive;
+
+  // Note: No logic for to receive
+  // Adds placeholder content/ empty toReceive
+  
+  const EmptyToReceive = function () {
+    return (
+      <div className="empty container to-receive">
+          <NewIcon assignClass={'truck-empty'}/>
+          <p className="empty message">No incoming delivery</p>
+      </div>
+    ) 
+  }
+
+  return (
+    <div className="to-receive-content">
+      {!toReceiveData.length && <EmptyToReceive/>}
+    </div>
+  )
+}
+
+const Delivered = function ({profileData}) {
+  const deliveredData = profileData.delivered;
+
+  // Note: No logic for delivered
+  // Adds placeholder content/ empty delivered
+  
+  const EmptyDelivered = function () {
+    return (
+      <div className="empty container delivered">
+          <NewIcon assignClass={'empty'}/>
+          <p className="empty message">No items delivered yet</p>
+      </div>
+    ) 
+  }
+
+  return (
+    <div className="to-receive-content">
+      {!deliveredData.length && <EmptyDelivered/>}
     </div>
   )
 }
@@ -80,30 +162,29 @@ const UserProfile = function ({profileData}) {
   const editDialogRef = useRef(null);
 
   const EditDialog = function () {
-
     const [tempName, setTempName] = useState(name);
-    const [tempAddress, setTempAddress] = useState(address);
     const [tempPhone, setTempPhone] = useState(phone);
-
-    const handleSaveProfileChange = function (event) {
+    const [tempAddress, setTempAddress] = useState(address);
+    
+    const handleSaveProfileChange = async function (event) {
       const btnAction = event.target.value;
 
       if (btnAction === 'save') {
-        updateProfile({
+        updateProfileData({
           name: tempName,
           address: tempAddress,
           phone: tempPhone,
         })
 
-        // Update main states with the temporary states
-        setName(tempName);
-        setAddress(tempAddress);
+        // Update profileDataRef with new saved profile
+        setName(tempName) ;
         setPhone(tempPhone);
+        setAddress(tempAddress);
 
       } else if (btnAction === 'cancel') {
         setTempName(name);
-        setTempAddress(address);
         setTempPhone(phone);
+        setTempAddress(address);
       }
     
       editDialogRef.current.close();
@@ -125,25 +206,18 @@ const UserProfile = function ({profileData}) {
             </button>
           </div>
         
-          <div className={`profile-name input-cont`}>
+          <div className={`edit-profile name input-cont`}>
             <label htmlFor={`user-name`}>Name</label>
             <input type="text" data-class='name' id={`user-name`} name={`user-name`}
               onChange = {(event) => setTempName(event.target.value)}
               value = {tempName}
+              className={tempName.length === 0 ? 'invalid' : ''}
+              placeholder="Enter name"
+              required
             />
           </div>
 
-          <div className={`profile-address input-cont`}>
-            <label htmlFor={`user-address`}>Address</label>
-            <textarea data-class='address' id={`user-address`} name={`user-address`}
-              style = {{resize: 'none'}}
-              rows = '2'
-              onChange = {(event) => setTempAddress(event.target.value)}
-              value = {tempAddress}
-            />
-          </div>
-
-          <div className={`profile-phone input-cont`}>
+          <div className={`edit-profile phone input-cont`}>
             <label htmlFor={`user-phone`}>Phone</label>
             <input type="text" data-class='phone' id={`user-phone`} name={`user-phone`}
               onChange = {(event) => {
@@ -155,12 +229,33 @@ const UserProfile = function ({profileData}) {
                 }
               }}
               value = {tempPhone}
+              className={tempPhone.length === 0 ? 'invalid' : ''}
+              placeholder="Enter phone contact number"
+              required
             />
           </div>
-          
+
+          <div className={`edit-profile address input-cont`}>
+            <label htmlFor={`user-address`}>Address</label>
+            <textarea data-class='address' id={`user-address`} name={`user-address`}
+              style = {{resize: 'none'}}
+              rows = '2'
+              onChange = {(event) => setTempAddress(event.target.value)}
+              value = {tempAddress}
+              className={tempAddress.length === 0 ? 'invalid' : ''}
+              placeholder="Enter address"
+              required
+            />
+          </div>
+
           <div className="action-btns">
             <button className='cancel-btn' value='cancel' type='button' onClick={handleSaveProfileChange}>Cancel</button>
-            <button className='save-btn' value='save' type='button' onClick={handleSaveProfileChange}>Save</button>
+            <button 
+              className='save-btn' value='save' type='button' 
+              onClick = { handleSaveProfileChange }
+              disabled = {tempName.length === 0 || tempPhone === 0 || tempAddress === 0 ? true : false}
+            >Save
+            </button>
           </div>
           
         </div>
@@ -200,26 +295,40 @@ const UserProfile = function ({profileData}) {
 
 const Profile = function () {
   const { profileData } = useLoaderData();
-  
+
   return (
     <div className="profile-page">
-      
       <h2>Profile</h2>
 
       <div className="profile-display">
         <UserProfile profileData={profileData}/>
         
+        <ul className='purchase-links'>
+          <li>
+            <NavLink to='to-ship'>
+              <NewIcon assignClass={'send'}/>
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to='to-receive'>
+              <NewIcon assignClass={'deliver'}/>
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to='delivered'>
+              <NewIcon assignClass={'delivered'}/>
+            </NavLink>
+          </li>
+        </ul>
+
         <div className='purchase-display'>
-        <ToShip profileData={profileData}/>
-      </div>
+          <Outlet context={{profileData}}/>
+        </div>
 
       </div>
-      
-      <button type="button" onClick={() => console.log(profileData.toShip)}>
-        Check profile
-      </button>
     </div>
   )
 }
 
-export default Profile
+
+export { Profile, PurchaseDisplay}
