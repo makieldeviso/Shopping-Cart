@@ -31,9 +31,9 @@ const getProductsData = async function () {
 let controller = null;
 
 // Mock a user profile fetch
-const getProfileData = async function () {
+const getProfileData = async function (enableAbort) {
 
-  if (controller) {
+  if (controller && enableAbort) {
     controller.abort({message: 'Request overwritten'});
   }
 
@@ -141,12 +141,11 @@ const addToCartData = async function (profileData, newCart) {
 
 // Edit Cart 
 const changeCartItemQuantity = async function (cartData) {
-
-  const profileData = await getProfileData();
+  const profileData = await getProfileData(true);
   
   // Note: addToCartData function updates the profile
   return await addToCartData(profileData, cartData);
-  
+
 }
 
 // Checkout Items, Move selected cart items to toShip, then add new details
@@ -168,6 +167,8 @@ const addCheckoutItems = async function (cartData, toShipData ) {
     const newProfileData = await updateProfile.json();
     // Mock successful patch, save to local storage
     localStorage.setItem(localStorageName, JSON.stringify(newProfileData));
+
+    return newProfileData;
 
   } catch (error) {
     console.log(error.message)

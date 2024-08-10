@@ -1,12 +1,18 @@
-// Hooks
+// React
 import { useContext, useState, useRef, useEffect } from "react";
 import { NavLink, Outlet, useLoaderData, useOutletContext, useParams, useNavigate } from "react-router-dom";
-import { format, formatDate } from "date-fns";
+
+// Context
+import { CartCountContext } from "./App";
+
+// Data fetch
+import { addToCartData, getProfileData } from "../utilities/DataFetch";
 
 // Scripts
-import { amountFormat, capitalizeString } from "../utilities/utilities";
+import { amountFormat } from "../utilities/utilities";
+
+// Components
 import { NewIcon } from "./Icons";
-import { addToCartData, getProfileData } from "../utilities/DataFetch";
 
 // Render the Shop catalog
 const ShopCatalog = function () {
@@ -97,6 +103,7 @@ const ItemPage = function () {
   // Pre-cart
   const CartDialog = function () {
     const [itemQuantity, setItemQuantity] = useState(0);
+    const { setCartCount } = useContext(CartCountContext);
 
     const handleQuantityChange = function (event) {
       if (event.target.value === 'increase') {
@@ -142,8 +149,12 @@ const ItemPage = function () {
 
       // Add item to cart by updating profile
       console.log('loading');
-      await addToCartData( profileData, currentCart );
+      const newProfileData = await addToCartData( profileData, currentCart );
       console.log('done');
+
+      // Update cartCount in header
+      setCartCount(newProfileData.cart.length);
+
       handleClose();
     }
 

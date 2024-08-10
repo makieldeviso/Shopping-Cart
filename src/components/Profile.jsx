@@ -1,13 +1,19 @@
-import { useContext, useRef, useState } from "react"
-import { NavLink, useLoaderData, Outlet, useParams, useOutletContext, useNavigate, useLocation } from "react-router-dom"
+// React
+import { useRef, useState } from "react"
+import { useLoaderData, Outlet, useParams, useOutletContext, useNavigate, useLocation } from "react-router-dom"
 
+// Scripts
 import { format } from "date-fns";
 import { amountFormat, capitalizeString } from "../utilities/utilities";
-import { NewIcon } from "./Icons";
+
+// Data fetch
 import { updateProfileData } from "../utilities/DataFetch";
 
+// Components
+import { NewIcon } from "./Icons";
+
 const PurchaseDisplay = function () {
-  const {displayid} = useParams();
+  const { displayid } = useParams();
   const outletContext = useOutletContext();
 
   let displayComponent = null;

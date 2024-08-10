@@ -1,16 +1,16 @@
-import App from './App'
+// React
+import { createBrowserRouter, Navigate } from 'react-router-dom';
 
+// Components
+import App from './App'
 import { Main, PageDisplay } from './PageMain';
 import { Profile, PurchaseDisplay } from './Profile';
 import { Shop, ShopCatalog, ItemPage } from './Shop';
-import Header from './Header';
-
 import { Cart } from './Cart';
 import ErrorPage from './ErrorPage';
 
-import { createBrowserRouter, Navigate } from 'react-router-dom';
-
-import { shopLoader, cartLoader, profileLoader, pageLoader } from '../utilities/DataFetch';
+// Data fetch
+import { shopLoader, cartLoader, profileLoader } from '../utilities/DataFetch';
 
 const router = createBrowserRouter([
   {

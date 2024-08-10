@@ -1,10 +1,18 @@
-import { createContext, useContext, useEffect, useState, useRef } from "react"
-import { NavLink, useLoaderData, useNavigate } from "react-router-dom"
+// React
+import { useContext, useEffect, useState, useRef } from "react"
+import { useLoaderData, useNavigate } from "react-router-dom"
 
+// Components
 import { NewIcon } from "./Icons";
 
+// Data fetch
+import { addCheckoutItems, changeCartItemQuantity } from "../utilities/DataFetch";
+
+// Scripts
 import { amountFormat } from "../utilities/utilities";
-import { addCheckoutItems, addToCartData, changeCartItemQuantity, getProfileData } from "../utilities/DataFetch";
+
+// Context
+import { CartCountContext } from "./App";
 
 const deliveryFee = 50;
 const freeDeliveryMin = 300;
@@ -201,12 +209,18 @@ const CheckOutCounter = function ({profileData, itemsForCheckout, checkoutAmount
 const Cart = function () {
   const { profileData } = useLoaderData();
   const [profile, setProfile] = useState(profileData);
+  const { setCartCount } = useContext(CartCountContext);
   
   const cartData = profile.cart;
   let toShipData = profile.toShip;
 
   const [itemsForCheckout, setItemsForCheckout] = useState([]);
   const [checkoutAmount, setCheckoutAmount] = useState(0);
+
+  // Update cart counter whenever profile state is updated
+  useEffect(() => {
+    setCartCount(profile.cart.length);
+  }, [profile]);
 
   // Update checkout amount whenever itemsForCheckout is changed
   useEffect(() => {
@@ -286,7 +300,6 @@ const Cart = function () {
     } else {
       setProfile(newProfileData)
     }
-
   }
 
   // Checkout readied items
@@ -317,13 +330,16 @@ const Cart = function () {
     })
 
     // Update profile from storage
-    // Note: update cart and forShip properties
+    // Note: update cart and toShip properties
     console.log('loading');
-    await addCheckoutItems(cartData, toShipData);
+    const newProfileData = await addCheckoutItems(cartData, toShipData);
     console.log('done');
 
     // Empty items for checkout upon successful checkout
     setItemsForCheckout(i => i = []);
+
+    // Update reference profile state
+    setProfile(newProfileData);
   }
 
   // // Cart return

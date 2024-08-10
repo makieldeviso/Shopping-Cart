@@ -1,8 +1,15 @@
+// React
+import { useContext, useState } from "react"
 import { NavLink } from "react-router-dom"
+
+// Components
 import { NewIcon } from "./Icons"
 
+// Data fetch
 import { getProfileData } from "../utilities/DataFetch"
-import { useEffect, useRef } from "react"
+
+// Context
+import { CartCountContext } from "./App"
 
 const PageBanner = function () {
   return (
@@ -16,16 +23,17 @@ const PageBanner = function () {
 
 const PageNav = function () {
 
-  const profileDataRef = useRef(0);
+  const {cartCount, setCartCount} = useContext(CartCountContext);
 
-  // useEffect(() => {
-  //   const getProfile = async () => {
-  //    const profileData = await getProfileData();
-  //    profileDataRef.current = profileData.cart.length;
-  //   }
-  //   getProfile();
-  // },[])
- 
+  useState(() => {
+    const assignCountData = async () => {
+      const profileData = await getProfileData();
+      const count = profileData.cart.length;
+      setCartCount(count);
+    }
+    assignCountData();
+  }, []);
+
   return(
     <nav className="page-nav">
       <ul>
@@ -37,7 +45,7 @@ const PageNav = function () {
         </li>
         <li title='Cart'><NavLink to='main/pages/cart'>
           <NewIcon assignClass={'cart'}/>
-          {/* <p>{profileDataRef.current}</p> */}
+          <p>{cartCount}</p>
         </NavLink></li>
       </ul>
     </nav>
