@@ -3,6 +3,8 @@ import App from './App'
 import { Main, PageDisplay } from './PageMain';
 import { Profile, PurchaseDisplay } from './Profile';
 import { Shop, ShopCatalog, ItemPage } from './Shop';
+import Header from './Header';
+
 import { Cart } from './Cart';
 import ErrorPage from './ErrorPage';
 
@@ -15,7 +17,6 @@ const router = createBrowserRouter([
     path: '/',
     element: <App/>,
     errorElement: <ErrorPage/>,
-    loader: pageLoader,
     children: [
       {
         path: 'main',

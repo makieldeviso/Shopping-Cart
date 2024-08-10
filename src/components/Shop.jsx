@@ -157,40 +157,42 @@ const ItemPage = function () {
             <NewIcon assignClass={'close'}/>
           </button>
 
-          <img src={itemData.header} alt={`${itemData.gameID} preview`} className="pre-cart preview"/>
+          <div className="item-details">
+            <img src={itemData.header} alt={`${itemData.gameID} preview`} className="pre-cart preview"/>
 
-          <p className="pre-cart title">{itemData.title}</p>
+            <p className="pre-cart title">{itemData.title}</p>
 
-          <div className={`pre-cart price ${isOnSale ? 'sale' : ''}`}>
-            <p className='label'>Price</p>
+            <div className={`pre-cart price ${isOnSale ? 'sale' : ''}`}>
+              <p className='label'>Price</p>
 
-            {isOnSale && <p className='discount'>{`-${Number.parseFloat(itemData.savings).toPrecision(2)}%`}</p>}
-            {isOnSale && <p className='normal-price'>{amountFormat(itemData.normalPrice)}</p>}
-            <p className='disc-price'>{amountFormat(itemData.salePrice)}</p>
-          </div>
-
-          <div className='pre-cart qty-controller'>
-            <p>Quantity</p>
-
-            <div className='pre-cart qty-buttons'>
-              <button 
-                value = 'decrease' 
-                disabled = { itemQuantity <= 0 ? true : false }
-                onClick = { handleQuantityChange }
-              >-</button>
-
-              <p>{itemQuantity}</p>
-
-              <button 
-                value='increase'
-                onClick = { handleQuantityChange }
-              >+</button>
+              {isOnSale && <p className='discount'>{`-${Number.parseFloat(itemData.savings).toPrecision(2)}%`}</p>}
+              {isOnSale && <p className='normal-price'>{amountFormat(itemData.normalPrice)}</p>}
+              <p className='disc-price'>{amountFormat(itemData.salePrice)}</p>
             </div>
-          </div>
 
-          <div className='pre-cart total'>
-            <p>Item total</p>
-            <p className="compute">{amountFormat(itemQuantity * itemData.salePrice)}</p>
+            <div className='pre-cart qty-controller'>
+              <p>Quantity</p>
+
+              <div className='pre-cart qty-buttons'>
+                <button 
+                  value = 'decrease' 
+                  disabled = { itemQuantity <= 0 ? true : false }
+                  onClick = { handleQuantityChange }
+                >-</button>
+
+                <p>{itemQuantity}</p>
+
+                <button 
+                  value='increase'
+                  onClick = { handleQuantityChange }
+                >+</button>
+              </div>
+            </div>
+
+            <div className='pre-cart total'>
+              <p>Item total</p>
+              <p className="compute">{amountFormat(itemQuantity * itemData.salePrice)}</p>
+            </div>
           </div>
 
           <button

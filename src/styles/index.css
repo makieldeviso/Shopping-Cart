@@ -102,6 +102,10 @@ body::before {
   color: var(--base-color);
 }
 
+.page-nav a.active {
+  color: var(--darker-color);
+}
+
 /* Navbar (end)*/
 
 /* Page Display (start) */
@@ -422,23 +426,46 @@ p.item-desc, .item-desc p {
 /* Pre cart dialog (start) */
 .pre-cart-dialog {
   width: 100vw;
-  max-width: 370px;
-  margin:  50px auto;
+  max-width: 800px;
+  margin: 150px auto;
 }
 
 .pre-cart.dialog-cont {
   width: 100%;
   min-width: unset;
-  justify-content: center;
-  padding: var(--padding);
+  padding: calc(var(--padding) * 2);
+  background-color: rgba(255, 245, 224, 0.1);
+  border-top: 5px solid var(--darker-color);
+
   display: flex;
   flex-direction: column;
-  gap: calc(var(--margin) * 0.5);
+  justify-content: center;
+  align-items: center;
+  gap: var(--margin);
+}
+
+.pre-cart.dialog-cont .item-details {
+  width: 100%;
+  min-width: unset;
+  padding: calc(var(--padding) * 2);
+  background-color: var(--black);
+
+  display: grid;
+  justify-content: center;
+  align-items: start;
+  grid-template-columns: max-content 1fr;
+  grid-template-areas: 
+    "img title"
+    "img price"
+    "img qty"
+    "img total";
+  flex-direction: column;
+  column-gap: var(--margin);
+  position: relative;
 }
 
 .pre-cart.close-btn {
   align-self: end;
-
   width: max-content;
   background-color: transparent;
   border: 1px solid transparent;
@@ -460,10 +487,9 @@ p.item-desc, .item-desc p {
 }
 
 .pre-cart.preview {
-  width: 100%;
+  grid-area: img;
+  width: 250px;
   object-fit: contain;
-  align-self: center;
-  max-height: 165px;
 }
 
 .pre-cart p {
@@ -471,18 +497,20 @@ p.item-desc, .item-desc p {
 }
 
 .pre-cart.title {
-  font-size: 1rem;
+  grid-area: title;
+  font-size: 1.3rem;
   text-wrap: wrap;
-  margin: 0 var(--margin);
-  line-height: 1.1rem;
+  margin-bottom: var(--margin);
 }
 
 .pre-cart.price {
-  background-color: rgba(9, 37, 50, 0.5);
-  margin: 0 var(--margin);
+  grid-area: price;
+
   display: grid;
   grid-template-columns: 1fr repeat(3, max-content);
   align-items: center;
+  justify-self: end;
+  width: 100%;
 }
 
 .pre-cart.price .disc-price {
@@ -511,17 +539,24 @@ p.item-desc, .item-desc p {
 
 .pre-cart.qty-controller {
   grid-area: qty;
-  display: flex;
-  gap: var(--margin);
+  justify-self: end;
+  margin-bottom: var(--margin);
+
+  width: 100%;
+  display: grid;
+  grid-template-columns: max-content 1fr;
   align-items: center;
-  justify-content: space-between;
-  margin: 0 var(--margin);
+  justify-content: start;
 }
 
 .pre-cart.qty-buttons {
+  justify-self: end;
+  width: max-content;
+
   display: flex;
-  gap: calc(var(--margin) * 0.5);
   align-items: center;
+  gap: calc(var(--margin) * 0.5);
+  
   border: 1px solid var(--base-color);
   padding: 3px;
 }
@@ -545,31 +580,39 @@ p.item-desc, .item-desc p {
 }
 
 .pre-cart.total {
-  margin: 0 var(--margin);
+  grid-area: total;
+  justify-self: end;
+
   padding: 3px 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
   border-top: 1px solid rgba(255, 245, 224, 0.3);
+
+  width: 100%;
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  align-items: center;
+  justify-content: start;
 }
 
 .pre-cart.total .compute {
   letter-spacing: 0.1rem;
   font-size: 1.3rem;
   color: var(--comp-color-2);
+  justify-self: end;
 }
 
 .pre-cart.add-btn {
   padding: var(--padding) calc(var(--padding) * 2);
-  font-size: 1rem;
+  font-size: 1.3rem;
+  font-family: var(--title-font);
   background-color: var(--triad-color-1);
   color: var(--lightest-color);
   border-radius: 5px;
   border: 1px solid transparent;
-  transition: 200ms;
   width: max-content;
+  justify-self: center;
   align-self: center;
-  margin: var(--margin);
+  
+  transition: 200ms;
 }
 
 .pre-cart.add-btn:not(:disabled):hover {
@@ -986,14 +1029,12 @@ button:hover {
 /* Edit profile dialog (start) */
 dialog {
   margin: 100px auto;
-  border-radius: 10px;
-  border: 3px solid var(--darker-color);
+  border: 1px solid transparent;
   background-color: var(--black);
-  box-shadow: 0 0 3px 1px rgba(141, 236, 180, 0.5);
 }
 
 dialog::backdrop {
-  background-color: rgba(20, 30, 70, 0.3);
+  background-color: rgba(0, 0, 0, 0.6);
 }
 
 .edit-profile-dialog .dialog-cont {

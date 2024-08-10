@@ -128,9 +128,11 @@ const addToCartData = async function (profileData, newCart) {
       }
     );
 
-    const cartData = await updateCart.json();
+    const newProfileData = await updateCart.json();
     // Mock successful patch, save to local storage
-    localStorage.setItem(localStorageName, JSON.stringify(cartData));
+    localStorage.setItem(localStorageName, JSON.stringify(newProfileData));
+
+    return newProfileData;
 
   } catch (error) {
     console.log(error.message)
@@ -143,8 +145,8 @@ const changeCartItemQuantity = async function (cartData) {
   const profileData = await getProfileData();
   
   // Note: addToCartData function updates the profile
-  addToCartData(profileData, cartData);
-  return profileData;
+  return await addToCartData(profileData, cartData);
+  
 }
 
 // Checkout Items, Move selected cart items to toShip, then add new details

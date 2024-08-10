@@ -198,11 +198,10 @@ const CheckOutCounter = function ({profileData, itemsForCheckout, checkoutAmount
   )
 }
 
-
 const Cart = function () {
   const { profileData } = useLoaderData();
   const [profile, setProfile] = useState(profileData);
-
+  
   const cartData = profile.cart;
   let toShipData = profile.toShip;
 
@@ -271,6 +270,11 @@ const Cart = function () {
 
     // Update cart data
     cartData.splice(forRemovalIndex, 1);
+    
+    // Update profile in the storage
+    console.log('loading');
+    const newProfileData = await changeCartItemQuantity(cartData);
+    console.log('done');
 
     // If item for removal is currently readied for checkout, update itemsForCheckout
     const itemIsForCheckout = itemsForCheckout.some(item => item.gameID === productId);
@@ -278,12 +282,10 @@ const Cart = function () {
       const removeItemCheckoutIndex = itemsForCheckout.findIndex(item => item.gameID === productId);
       const newCheckoutItems = itemsForCheckout.toSpliced(removeItemCheckoutIndex, 1);
       setItemsForCheckout(newCheckoutItems);
-    }
 
-    // Update profile in the storage
-    console.log('loading');
-    await changeCartItemQuantity(cartData);
-    console.log('done');
+    } else {
+      setProfile(newProfileData)
+    }
 
   }
 
