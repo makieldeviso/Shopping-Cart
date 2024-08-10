@@ -169,6 +169,10 @@ body::before {
   pointer-events: none;
 }
 
+button span {
+  pointer-events: none;
+}
+
 .shop-item p {
   color: var(--lightest-color);
 }
@@ -920,7 +924,7 @@ button:hover {
   display: grid;
   grid-template-columns: max-content 1fr;
   grid-template-areas: 
-    "profile links"
+    "profile tabs"
     ". purchase";
   max-width: 1024px;
   margin: auto;
@@ -1123,57 +1127,73 @@ dialog::backdrop {
   width: 100%;
 }
 
-/* Purchase Links */
-.purchase-links-container {
-  width: 100%;
-}
+/* Purchase Tabs */
 
+.purchase-tabs {
+  grid-area: tabs;
+  display: grid;
 
-.purchase-links {
-  grid-area: links;
-  list-style:none;
-  display: flex;
-  width: 100%;
-  justify-content: space-around;
+  grid-template-columns: max-content 1fr max-content 1fr max-content;
   align-items: center;
+  width: 100%;
+  padding: calc(var(--padding) * 2) 50px;
+  gap: var(--margin);
 }
 
-.purchase-links a{
+.purchase-tabs hr {
+  height: 2px;  
+  border: 1px solid var(--base-color);
+  align-self: start;
+  margin-top: 30px;
+}
+
+.purchase-tabs button {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  text-decoration: none;
+
   color: var(--lightest-color); 
   width: max-content;
   font-size: 1rem;
   background-color: var(--black);
-  width: 60px;
-  height: 60px;
-  border: 3px solid var(--lightest-color);
-  transform: rotateZ(45deg);
   transition: 200ms;
+  border: 1px solid transparent;
 }
 
-.purchase-links a:hover {
+.purchase-tabs button.active svg {
   background-color: var(--darker-color);
 }
 
-.purchase-links a.active {
-  background-color: var(--base-color);
-  border: 3px solid var(--darkest-color);
+.purchase-tabs button.active span{
+  color: var(--darker-color);
 }
 
-.purchase-links a.active svg {
-  color: var(--darkest-color);
+.purchase-tabs button:not(.active):hover svg {
+  border-color: var(--darker-color);
+  color: var(--darker-color);
+  filter: brightness(1.1);
 }
 
-.purchase-links a:visited {
- color: var(--lightest-color);
+.purchase-tabs button:hover span {
+  color: var(--darker-color);
 }
 
-.purchase-links a svg {
-  width: 80%;
-  transform: rotateZ(-45deg);
+.purchase-tabs button svg {
+  width: 50px;
+  height: 50px;
+  transition: 200ms;
+  border: 3px solid var(--lightest-color);
+  padding: var(--padding);
+  transform: rotateZ(45deg);
+}
+
+.purchase-tabs button svg path {
+  transform: rotateZ(-45deg) translateX(-50%) translateY(25%);
+}
+
+.purchase-tabs button span {
+  margin-top: var(--margin);
   transition: 200ms;
 }
 
@@ -1183,13 +1203,14 @@ dialog::backdrop {
   justify-self: start;
   flex-direction: column;
   gap: var(--margin);
-  padding: var(--padding);
   align-items: center;
 }
 
 .batch.date {
   padding: var(--padding);
   color: var(--lightest-color);
+  font-size: 1rem;
+  background-color: rgba(141, 236, 180, 0.1);
 }
 
 .batch.details {
@@ -1248,12 +1269,10 @@ dialog::backdrop {
 
 .batch-container{
   border: 1px solid transparent;
-  border-radius: 5px;
   background-color: rgba(65, 176, 110, 0.1);
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: calc(var(--margin) * 0.5);
 }
 
 .order-list {

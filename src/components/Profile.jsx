@@ -1,5 +1,5 @@
 import { useContext, useRef, useState } from "react"
-import { NavLink, useLoaderData, Outlet, useParams, useOutletContext } from "react-router-dom"
+import { NavLink, useLoaderData, Outlet, useParams, useOutletContext, useNavigate, useLocation } from "react-router-dom"
 
 import { format } from "date-fns";
 import { amountFormat, capitalizeString } from "../utilities/utilities";
@@ -295,6 +295,22 @@ const UserProfile = function ({profileData}) {
 
 const Profile = function () {
   const { profileData } = useLoaderData();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [activeTab, setActiveTab] = useState('to-ship');
+
+  const handleChangePurchaseTab = function (event) {
+    const route = event.target.value;
+    const path = location.pathname;
+
+    // If user click same button as route, cancel request to navigate
+    if (path.includes(route)) {
+      return
+    }
+
+    setActiveTab(route);
+    navigate(route);
+  }
 
   return (
     <div className="profile-page">
@@ -302,24 +318,29 @@ const Profile = function () {
 
       <div className="profile-display">
         <UserProfile profileData={profileData}/>
-        
-        <ul className='purchase-links'>
-          <li>
-            <NavLink to='to-ship'>
-              <NewIcon assignClass={'send'}/>
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to='to-receive'>
-              <NewIcon assignClass={'deliver'}/>
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to='delivered'>
-              <NewIcon assignClass={'delivered'}/>
-            </NavLink>
-          </li>
-        </ul>
+
+        <div className='purchase-tabs'>
+          <button value='to-ship' onClick={handleChangePurchaseTab}
+            className={activeTab === 'to-ship' ? 'active' : ''}
+          >
+            <NewIcon assignClass={'send'}/>
+            <span>To Ship</span>
+          </button>
+          <hr />
+          <button value='to-receive' onClick={handleChangePurchaseTab}
+            className={activeTab === 'to-receive' ? 'active' : ''}
+          >
+            <NewIcon assignClass={'deliver'}/>
+            <span>To Receive</span>
+          </button>
+          <hr />
+          <button value='delivered' onClick={handleChangePurchaseTab}
+            className={activeTab === 'delivered' ? 'active' : ''}
+          >
+            <NewIcon assignClass={'delivered'}/>
+            <span>To Ship</span>
+          </button>
+        </div>
 
         <div className='purchase-display'>
           <Outlet context={{profileData}}/>
