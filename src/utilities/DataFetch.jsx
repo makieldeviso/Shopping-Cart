@@ -3,18 +3,46 @@ import { categories } from "./products";
 
 const localStorageName = 'shoppingByMakieldeviso';
 
+const getHeaderSrc = function (srcUrl) {
+  const startRegex = /^.*?\/\d+\//;
+  const endRegex = /\.jpg.*$/
+
+  const srcStart = srcUrl.match(startRegex)[0];
+  const srcEnd = srcUrl.match(endRegex)[0];
+  const headerSrc = `${srcStart}header${srcEnd}`;
+
+  return headerSrc
+}
+
+
 const getProductsData = async function () {
   try {
-
     const fetchCalls = categories.map(async (category) => {
       const url = encodeURI(`https://www.cheapshark.com/api/1.0/deals?storeID=1&title=${category}`);
-      const itemFetched = await fetch(url, {
+      const itemsFetched = await fetch(url, {
         method: 'GET',
         mode: 'cors'
       })
-      return await itemFetched.json();
+
+      const items = await itemsFetched.json();
+
+      // Add custom properties to fetched data
+      items.forEach(item => {
+        const dataAddOns = {
+          header: getHeaderSrc(item.thumb),  
+          about: "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolores repellat eos doloremque. Est, quasi placeat ad modi tempora corporis autem?",
+          developer: "Lorem, ipsum dolor",
+          publisher: "Lorem ipsum dolor sit",
+          category: category
+        }
+
+        Object.assign(item, dataAddOns)
+      })
+
+      return items;
     })
 
+    // Arrange items
     const itemsSet = new Set();
     let itemsFetchedSpread = [];
     const allItemsFetchedArray = await Promise.all(fetchCalls);
@@ -30,25 +58,8 @@ const getProductsData = async function () {
     });
     itemsFetchedSpread.sort((a, b) => a.gameID - b.gameID );
     
-    const modifiedItems = itemsFetchedSpread.map(item => {
-      const startRegex = /^.*?\/\d+\//;
-      const endRegex = /\.jpg.*$/
-
-      const srcStart = item.thumb.match(startRegex)[0];
-      const srcEnd = item.thumb.match(endRegex)[0];
-      const headerSrc = `${srcStart}header${srcEnd}`;
-
-      const dataAddOns = {
-        header: headerSrc,  
-        about: "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolores repellat eos doloremque. Est, quasi placeat ad modi tempora corporis autem?",
-        developer: "Lorem, ipsum dolor",
-        publisher: "Lorem ipsum dolor sit",
-      }
-
-       return {...item, ...dataAddOns}
-    });
-
-    return modifiedItems
+    // Return final modified array of items/ products
+    return itemsFetchedSpread
 
   } catch (err) {
     console.log('error');
