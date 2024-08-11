@@ -44,9 +44,9 @@ const PageNav = function () {
           <NewIcon assignClass={'shop'}/></NavLink>
         </li>
         <li title='Cart'><NavLink to='main/pages/cart'>
-          <NewIcon assignClass={'cart'}/>
+          <NewIcon assignClass={'cart'}/></NavLink>
           <p>{cartCount}</p>
-        </NavLink></li>
+        </li>
       </ul>
     </nav>
   )

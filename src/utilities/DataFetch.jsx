@@ -1,30 +1,58 @@
-import dataAddOns from "./products";
+// import dataAddOns from "./products";
+import { categories } from "./products";
 
 const localStorageName = 'shoppingByMakieldeviso';
 
 const getProductsData = async function () {
   try {
-    const url = encodeURI('https://www.cheapshark.com/api/1.0/deals?storeID=1&title=goat')
-    const itemFetched = await fetch(url, {
-      method: 'GET',
-      mode: 'cors'
-    }).then(item => item.json())
 
-    // Filter items to exact with items in the dataAddOns
-    // Add more properties to items
-    const filteredItems = await itemFetched.filter(item => Object.hasOwn(dataAddOns, item.gameID));
-    const modifiedItems = filteredItems.map(item => {
-      return (
-        {...item, ...dataAddOns[item.gameID]}
-      )
+    const fetchCalls = categories.map(async (category) => {
+      const url = encodeURI(`https://www.cheapshark.com/api/1.0/deals?storeID=1&title=${category}`);
+      const itemFetched = await fetch(url, {
+        method: 'GET',
+        mode: 'cors'
+      })
+      return await itemFetched.json();
     })
+
+    const itemsSet = new Set();
+    let itemsFetchedSpread = [];
+    const allItemsFetchedArray = await Promise.all(fetchCalls);
+    allItemsFetchedArray.forEach(batch => {
+      batch.forEach(item => {
+        // If item gameID is not yet in the itemsSet push item in the itemsFetchedSpread
+        // then add item gameID to the set
+        if (!itemsSet.has(item.gameID)) {
+          itemsFetchedSpread.push(item);
+          itemsSet.add(item.gameID);
+        }
+      })
+    });
+    itemsFetchedSpread.sort((a, b) => a.gameID - b.gameID );
+    
+    const modifiedItems = itemsFetchedSpread.map(item => {
+      const startRegex = /^.*?\/\d+\//;
+      const endRegex = /\.jpg.*$/
+
+      const srcStart = item.thumb.match(startRegex)[0];
+      const srcEnd = item.thumb.match(endRegex)[0];
+      const headerSrc = `${srcStart}header${srcEnd}`;
+
+      const dataAddOns = {
+        header: headerSrc,  
+        about: "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolores repellat eos doloremque. Est, quasi placeat ad modi tempora corporis autem?",
+        developer: "Lorem, ipsum dolor",
+        publisher: "Lorem ipsum dolor sit",
+      }
+
+       return {...item, ...dataAddOns}
+    });
 
     return modifiedItems
 
   } catch (err) {
-    console.log('error')
+    console.log('error');
     return ([])
-
   }  
 }
 
@@ -145,7 +173,6 @@ const changeCartItemQuantity = async function (cartData) {
   
   // Note: addToCartData function updates the profile
   return await addToCartData(profileData, cartData);
-
 }
 
 // Checkout Items, Move selected cart items to toShip, then add new details

@@ -21,36 +21,14 @@ const ShopCatalog = function () {
   const [shopItems, setShopItems] = useState(productsData);
   const navigate = useNavigate();
 
-  // Filter items
-  // const handleFilterItems = function (event) {
-  //   const btnValue = event.target.value;
-  //   let filteredProducts = products;
-  //   if (btnValue !== 'all') {
-  //     filteredProducts = products.filter(item => item.category === event.target.value);
-  //   } 
-  //   setShopItems(filteredProducts)
-  // }
+    const CategoryFilterBar = function () {
+      return (
+        <div className="filter-bar">
 
-  // Item category filter
-  // const CategoryFilterBar = function () {
-  //   const CategoryButtons = ['all', ...categories].map(cat => {
-  //     return (
-  //       <button
-  //         className = 'filter-btn'
-  //         key={crypto.randomUUID()}
-  //         value = {cat}
-  //         onClick = {handleFilterItems}>
-  //         {capitalizeString(cat)}
-  //       </button>
-  //     )
-  //   })
+        </div>
+      )
+    }
 
-  //   return (
-  //     <div className='filter-sidebar'>
-  //       {CategoryButtons}
-  //     </div>
-  //   )
-  // }
 
   // Open item page
   const handleOpenItemPage = function (event) {
@@ -60,7 +38,6 @@ const ShopCatalog = function () {
 
   // Display all items in the catalog
   const productDisplay = shopItems.map(item => {
-
     const isOnSale = item.isOnSale === "1";
 
     return (
@@ -78,12 +55,12 @@ const ShopCatalog = function () {
   })
 
   return(
-    <>
-      {/* <CategoryFilterBar/> */}
+    <div className="catalog-page">
+      <CategoryFilterBar/>
       <div className={`shop-${id}`}>
         {productDisplay}
       </div>
-    </>
+    </div>
   )
 }
 
