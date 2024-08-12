@@ -1,9 +1,9 @@
 // React
 import { useContext, useState, useRef, useEffect, createContext } from "react";
-import { NavLink, Outlet, useLoaderData, useOutletContext, useParams, useNavigate } from "react-router-dom";
+import { NavLink, Outlet, useLoaderData, useOutletContext, useParams, useNavigate, useNavigation } from "react-router-dom";
 
 // Context
-import { CartCountContext } from "./App";
+import { PageContext } from "./App";
 
 // Data fetch
 import { addToCartData, getProfileData } from "../utilities/DataFetch";
@@ -13,6 +13,7 @@ import { amountFormat, capitalizeString } from "../utilities/utilities";
 
 // Components
 import { NewIcon, AnimalIcon } from "./Icons";
+import LoadingScreen from "./LoadingScreen";
 
 // Render the Shop catalog
 const ShopCatalog = function () {
@@ -138,7 +139,7 @@ const ItemPage = function () {
   // Pre-cart
   const CartDialog = function () {
     const [itemQuantity, setItemQuantity] = useState(0);
-    const { setCartCount } = useContext(CartCountContext);
+    const { setCartCount } = useContext(PageContext);
 
     const handleQuantityChange = function (event) {
       if (event.target.value === 'increase') {
@@ -292,11 +293,11 @@ const ItemPage = function () {
 
 const Shop = function () {
   const { id ='catalog' } = useParams();
-  const {productsData, categoriesData} = useLoaderData();
+  const { productsData, categoriesData } = useLoaderData();
   const [filter, setFilter] = useState('all');
-
+ 
   return (
-    <div className="shop-page">
+    <div className={`shop-page`}>
       <Outlet context={{id, productsData, categoriesData, filter, setFilter}}/>
     </div>
   )

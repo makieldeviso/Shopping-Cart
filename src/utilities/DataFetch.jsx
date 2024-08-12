@@ -1,4 +1,5 @@
 // import dataAddOns from "./products";
+import { useState } from "react";
 import { categories } from "./products";
 
 const localStorageName = 'shoppingByMakieldeviso';
@@ -64,6 +65,8 @@ const getProductsData = async function () {
     console.log('error');
     return ([])
   }  
+
+
 }
 
 // Get categories
@@ -236,16 +239,16 @@ const addCheckoutItems = async function (cartData, toShipData ) {
   }
 }
 
-
 // Loaders -------------
 const shopLoader = async function () {
+  
   const [productsData, categoriesData] = await Promise.all(
     [
       await getProductsData(),
       await getCategories(),
     ]
   );
- 
+
   return { productsData, categoriesData } ;
 }
 

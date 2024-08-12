@@ -9,7 +9,7 @@ import { NewIcon } from "./Icons"
 import { getProfileData } from "../utilities/DataFetch"
 
 // Context
-import { CartCountContext } from "./App"
+import { PageContext } from "./App"
 
 const PageBanner = function () {
   return (
@@ -26,7 +26,7 @@ const PageBanner = function () {
 
 const PageNav = function () {
 
-  const {cartCount, setCartCount} = useContext(CartCountContext);
+  const {cartCount, setCartCount} = useContext(PageContext);
 
   useState(() => {
     const assignCountData = async () => {

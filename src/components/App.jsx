@@ -1,20 +1,23 @@
 // React
-import { useState, createContext } from "react";
-import { Outlet } from "react-router-dom";
+import { useState, createContext, useRef } from "react";
+import { Outlet, useNavigation } from "react-router-dom";
+import LoadingScreen from "./LoadingScreen";
 
 // Components
 import Header from "./Header";
 
-export const CartCountContext = createContext();
+export const PageContext = createContext();
 
 const App = function () {
   const [cartCount, setCartCount] = useState(0);
-  
+  const navigation = useNavigation();
+ 
   return (
-    <CartCountContext.Provider value={{cartCount, setCartCount}}>
+    <PageContext.Provider value={{ cartCount, setCartCount }}>
       <Header/>
       <Outlet/>
-    </CartCountContext.Provider>
+      {navigation.state === 'loading' && <LoadingScreen/>}
+    </PageContext.Provider>
   )
 }
 

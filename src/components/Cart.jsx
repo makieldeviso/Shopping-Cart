@@ -12,7 +12,7 @@ import { addCheckoutItems, changeCartItemQuantity } from "../utilities/DataFetch
 import { amountFormat } from "../utilities/utilities";
 
 // Context
-import { CartCountContext } from "./App";
+import { PageContext } from "./App";
 
 const deliveryFee = 50;
 const freeDeliveryMin = 300;
@@ -209,7 +209,7 @@ const CheckOutCounter = function ({profileData, itemsForCheckout, checkoutAmount
 const Cart = function () {
   const { profileData } = useLoaderData();
   const [profile, setProfile] = useState(profileData);
-  const { setCartCount } = useContext(CartCountContext);
+  const { setCartCount } = useContext(PageContext);
   
   const cartData = profile.cart;
   let toShipData = profile.toShip;

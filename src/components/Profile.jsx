@@ -11,6 +11,7 @@ import { updateProfileData } from "../utilities/DataFetch";
 
 // Components
 import { NewIcon } from "./Icons";
+import { PageContext } from "./App";
 
 const PurchaseDisplay = function () {
   const { displayid } = useParams();
