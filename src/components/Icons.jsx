@@ -1,5 +1,26 @@
 import PropTypes from 'prop-types'
 
+import goatIcon from '../assets/goat.svg'
+import chickenIcon from '../assets/chicken.svg'
+import pigIcon from '../assets/pig.svg'
+import horseIcon from '../assets/horse.svg'
+import crabIcon from '../assets/crab.svg'
+import duckIcon from '../assets/duck.svg'
+import penguinIcon from '../assets/penguin.svg'
+import spiderIcon from '../assets/spider.svg'
+
+const importIcons = {
+  goat: goatIcon,
+  chicken: chickenIcon,
+  pig: pigIcon,
+  horse: horseIcon,
+  crab: crabIcon,
+  duck: duckIcon,
+  penguin: penguinIcon,
+  spider: spiderIcon
+
+}
+
 import Icon from '@mdi/react';
 import { 
   mdiTrashCanOutline,
@@ -102,6 +123,11 @@ NewIcon.propTypes = {
   assignClass: PropTypes.string
 }
 
+const AnimalIcon = function ({assignClass}) {
+  
+  return (
+    <img src={importIcons[assignClass]} alt="" className={`animal-icon ${assignClass}`}/>
+  )
+} 
 
-
-export { NewIcon }
+export { NewIcon, AnimalIcon }

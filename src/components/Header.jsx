@@ -15,7 +15,10 @@ const PageBanner = function () {
   return (
     <div className="page-banner">
       <h1 className='page-title'>
-        <NavLink to='/'>Shop Online</NavLink>
+        <NavLink to='/'>
+        <span>8TIER</span>
+        <span>.com</span>
+        </NavLink>
       </h1>
     </div>
   )

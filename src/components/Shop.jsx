@@ -1,5 +1,5 @@
 // React
-import { useContext, useState, useRef, useEffect } from "react";
+import { useContext, useState, useRef, useEffect, createContext } from "react";
 import { NavLink, Outlet, useLoaderData, useOutletContext, useParams, useNavigate } from "react-router-dom";
 
 // Context
@@ -9,31 +9,88 @@ import { CartCountContext } from "./App";
 import { addToCartData, getProfileData } from "../utilities/DataFetch";
 
 // Scripts
-import { amountFormat } from "../utilities/utilities";
+import { amountFormat, capitalizeString } from "../utilities/utilities";
 
 // Components
-import { NewIcon } from "./Icons";
+import { NewIcon, AnimalIcon } from "./Icons";
 
 // Render the Shop catalog
 const ShopCatalog = function () {
-  const { id } = useOutletContext();
-  const {productsData} = useLoaderData();
+  const { id, filter, setFilter, productsData, categoriesData } = useOutletContext();
   const [shopItems, setShopItems] = useState(productsData);
+  const [page, setPage] = useState(1);
+  const itemsPerPage = 50;
   const navigate = useNavigate();
 
-    const CategoryFilterBar = function () {
-      return (
-        <div className="filter-bar">
+  // Filter productsData on render
+  // Display a number of items (itemPerPage) per page
+  useEffect(() => {
+    const startIndex = itemsPerPage * (page - 1);
+    const endIndex = (itemsPerPage * page);
+   
+    const filteredData = filter === 'all' ? productsData : productsData.filter(item => item.category === filter);
+  
+    const itemsInPage = filteredData.slice(startIndex, endIndex);
+    setShopItems(itemsInPage);
+  }, [page]);
 
-        </div>
-      )
+  // Categories filter side bar
+  const CategoryFilterBar = function () {
+    const handleFilter = function (event) {
+      const filterValue = event.target.value;
+      
+      // Don't run filter if same filter btn is pressed
+      if (filterValue === filter) return;
+
+      if (filterValue === 'all') {
+        setShopItems(productsData);
+
+      } else {
+        const filteredData = productsData.filter(item => item.category === filterValue);
+        setShopItems(filteredData);
+      }
+
+      setFilter(filterValue);
     }
 
+    const FilterButtons = categoriesData.map((category) => {
+      const isActive = category === filter ? 'active' : '';
+      return (
+        <button 
+          className = {`filter-btn ${isActive}`}
+          value = {category} key={crypto.randomUUID()}
+          aria-label = {`Filter catalog with ${category} category`}
+          title = {capitalizeString(category)}
+          onClick = {handleFilter}
+        >
+          <AnimalIcon assignClass={category}/>
+        </button>
+      )
+    })
+
+    return (
+      <div className="filter-bar">
+        <h3 className="filter">Categories</h3>
+
+          <button className="remove-filter-btn" value='all' onClick={handleFilter}
+            disabled = {filter === 'all' ? true : false}
+          >
+            <NewIcon assignClass={'close'}/>
+            <span>Filter: {filter}</span>
+          </button>
+
+        <div className="buttons-container">
+          {FilterButtons}
+        </div> 
+      </div>
+    )
+  }
 
   // Open item page
   const handleOpenItemPage = function (event) {
     const itemId = event.target.dataset.gameid;
     navigate(itemId);
+
   }
 
   // Display all items in the catalog
@@ -57,17 +114,18 @@ const ShopCatalog = function () {
   return(
     <div className="catalog-page">
       <CategoryFilterBar/>
+      
       <div className={`shop-${id}`}>
         {productDisplay}
       </div>
     </div>
   )
-}
+} // Shop Catalog (end)
+
 
  // Render a specific item page (start)
 const ItemPage = function () {
-  const {id} = useOutletContext();
-  const {productsData} = useLoaderData();
+  const {id, productsData} = useOutletContext();
   const preCartRef = useRef(null);
 
   const itemData = productsData.find(item => Number(item.gameID) === Number(id));
@@ -233,12 +291,15 @@ const ItemPage = function () {
  // Render a specific item page (end)
 
 const Shop = function () {
-  const { id='catalog' } = useParams();
+  const { id ='catalog' } = useParams();
+  const {productsData, categoriesData} = useLoaderData();
+  const [filter, setFilter] = useState('all');
 
   return (
     <div className="shop-page">
-      <Outlet context={{id}}/>
+      <Outlet context={{id, productsData, categoriesData, filter, setFilter}}/>
     </div>
   )
 }
+
 export { Shop, ShopCatalog, ItemPage}

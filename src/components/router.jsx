@@ -44,6 +44,7 @@ const router = createBrowserRouter([
               {
                 path: 'shop',
                 element: <Shop/>,
+                loader: shopLoader,
                 children: [
                   {
                     index: true,
@@ -52,14 +53,13 @@ const router = createBrowserRouter([
                   {
                     path: 'catalog',
                     element: <ShopCatalog/>,
-                    loader: shopLoader,
+                    
                   },
                   {
                     path: 'catalog/:id',
                     element: <ItemPage/>,
-                    loader: shopLoader,
+                   
                   }
-                    
                 ]
               },
               {

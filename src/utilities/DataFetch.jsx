@@ -14,7 +14,6 @@ const getHeaderSrc = function (srcUrl) {
   return headerSrc
 }
 
-
 const getProductsData = async function () {
   try {
     const fetchCalls = categories.map(async (category) => {
@@ -66,6 +65,30 @@ const getProductsData = async function () {
     return ([])
   }  
 }
+
+// Get categories
+const getCategories = async function () {
+  try {
+    const url = encodeURI('https://jsonplaceholder.typicode.com/albums');
+    const mockData = await fetch(url, 
+      {
+        method: 'GET',
+        mode: 'cors'
+      }
+    )
+
+    // Mock getting categories from server
+    let mockCategories = await mockData.json();
+    mockCategories = categories;
+
+    return mockCategories;
+
+  } catch (error) {
+    console.log(error.message);
+    return [];
+  }
+}
+
 
 let controller = null;
 
@@ -216,13 +239,14 @@ const addCheckoutItems = async function (cartData, toShipData ) {
 
 // Loaders -------------
 const shopLoader = async function () {
-  const [productsData] = await Promise.all(
+  const [productsData, categoriesData] = await Promise.all(
     [
-      await getProductsData()
+      await getProductsData(),
+      await getCategories(),
     ]
   );
  
-  return { productsData } ;
+  return { productsData, categoriesData } ;
 }
 
 const cartLoader = async function () {
