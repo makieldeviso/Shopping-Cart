@@ -149,7 +149,6 @@ body::before {
   background-color: red;
 }
 
-
 .catalog-page {
   display: grid;
   grid-template-columns: max-content 1fr;
@@ -159,8 +158,27 @@ body::before {
 .shop-catalog {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-rows: repeat(3, 1fr);
   gap: var(--margin);
   padding: var(--padding);
+  position: relative;
+  scroll-margin-top: 50vh;
+  transition: 1000ms;
+  animation: fadein 0.2s ease-in-out;
+}
+
+@keyframes fadein {
+  from {
+    filter: saturate(0);
+  }
+  to {
+    filter: saturate(1);
+  }
+}
+
+
+.shop-catalog.loading {
+  filter: saturate(0);
 }
 
 /* Filter Bar */
@@ -243,6 +261,7 @@ body::before {
   align-items: center;
   overflow: hidden;
   justify-self: end;
+  transition: 200ms;
 }
 
 .filter-btn.active {
@@ -338,7 +357,7 @@ button span {
 
 .item-preview {
   grid-area: img;
-  min-width: 320px;
+  min-width: 300px;
   width: 100%;
   object-fit: cover;
   justify-self: center;
@@ -406,6 +425,77 @@ button span {
   padding: var(--padding);
   padding-top: 0;
 }
+/* Shop catalog (end)*/
+
+/* Page Changer (start) */
+.page-btns-cont {
+  grid-row: 2 / 3;
+  grid-column: 2 / 3;
+
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  align-items: center;
+  margin: var(--margin);
+  margin-bottom: 100px;
+}
+
+.page-btn {
+  width: 20px;
+  height: 20px;
+  font-size: 1rem;
+  background: transparent;
+  border: 2px solid var(--base-color);
+  transform: rotateZ(45deg);
+  color: var(--lightest-color);
+  transition: 200ms;
+}
+
+.page-btn:disabled:hover {
+  cursor: default;
+  transform: rotateZ(45deg) translateY(0) translateX(0);
+
+}
+
+.page-btn:hover {
+  background-color: rgba(141, 236, 180, 0.8);
+  transform: rotateZ(45deg) translateY(-3px) translateX(-3px);
+}
+
+.page-btn.active {
+  border-color: var(--darker-color);
+  background-color: var(--lightest-color);
+  filter: drop-shadow(0 0 2px var(--base-color));
+}
+
+.page-btn.current {
+  border-color: var(--lightest-color);
+  background-color: var(--darker-color);
+}
+
+.page-btn.alt {
+  width:50px;
+  height:50px;
+  transform: rotateZ(0);
+  border: none;
+  color: var(--lightest-color);
+}
+
+.page-btn.alt:disabled:hover {
+  cursor: default;
+  transform: rotateZ(0) translateY(0) translateX(0);
+  color: var(--lightest-color);
+  filter: unset;
+}
+
+.page-btn.alt:hover {
+  background-color: transparent;
+  color: var(--darker-color);
+  filter: drop-shadow(0 0 3px var(--lightest-color));
+}
+
+
+/* Page Changer (end) */
 
 /* Item page (start) */
 .item-page {

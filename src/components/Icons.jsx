@@ -37,7 +37,9 @@ import {
   mdiBorderNoneVariant,
   mdiTruckFastOutline,
   mdiPackageVariantClosedCheck,
-  mdiMinus 
+  mdiMinus,
+  mdiChevronRight,
+  mdiChevronLeft  
 } from '@mdi/js';
 
 const NewIcon = function ({assignClass}) {
@@ -101,6 +103,14 @@ const NewIcon = function ({assignClass}) {
     
     case 'empty':
       assignPath = mdiBorderNoneVariant;
+      break;
+
+    case 'left':
+      assignPath = mdiChevronLeft;
+      break;
+
+    case 'right':
+      assignPath = mdiChevronRight;
       break;
   
     default:

@@ -20,9 +20,12 @@ const ShopCatalog = function () {
   const { id, filter, setFilter, productsData, categoriesData } = useOutletContext();
   const [shopItems, setShopItems] = useState(productsData);
   const [page, setPage] = useState(1);
-  const itemsPerPage = 50;
-  const navigate = useNavigate();
+  const [maxPage, setMaxPage] = useState(1);
 
+  const itemsPerPage = 30;
+  const navigate = useNavigate();
+  const catalogRef = useRef(null);
+  
   // Filter productsData on render
   // Display a number of items (itemPerPage) per page
   useEffect(() => {
@@ -30,13 +33,17 @@ const ShopCatalog = function () {
     const endIndex = (itemsPerPage * page);
    
     const filteredData = filter === 'all' ? productsData : productsData.filter(item => item.category === filter);
-  
     const itemsInPage = filteredData.slice(startIndex, endIndex);
+
+    const catalogPages = Math.ceil(filteredData.length / itemsPerPage);
+
+    setMaxPage(catalogPages);
     setShopItems(itemsInPage);
-  }, [page]);
+  }, [filter, page, productsData]);
 
   // Categories filter side bar
   const CategoryFilterBar = function () {
+    
     const handleFilter = function (event) {
       const filterValue = event.target.value;
       
@@ -51,6 +58,7 @@ const ShopCatalog = function () {
         setShopItems(filteredData);
       }
 
+      setPage(1);
       setFilter(filterValue);
     }
 
@@ -87,38 +95,122 @@ const ShopCatalog = function () {
     )
   }
 
-  // Open item page
-  const handleOpenItemPage = function (event) {
-    const itemId = event.target.dataset.gameid;
-    navigate(itemId);
+// Page changer of shop catalog
+const PageChanger = function () {  
+  const [changePage, setChangePage] = useState(page);
+  const catalog = catalogRef.current;
 
+  useEffect(() => {
+    // If catalog has not rendered yet, cancel logic
+    if (!catalog) return
+
+    window.scrollTo({top: 0, left: 0, behavior: 'smooth'});
+    catalog.classList.add('loading');
+    
+    catalog.addEventListener('transitionend', () => {
+      catalog.classList.remove('loading');
+      setPage(changePage);
+    }, {once: true});
+
+  },[changePage]);
+
+  const handlePageChange = async function (event) {
+    const pageNumber = Number(event.target.value);
+    setChangePage(pageNumber);
   }
 
-  // Display all items in the catalog
-  const productDisplay = shopItems.map(item => {
-    const isOnSale = item.isOnSale === "1";
+  let buttonsArr = [];
+  for(let i = 1; i <= maxPage; i++) {
+
+    const isActive = i <= page ? 'active' : '';
+    const isCurrent = i === page ? 'current' : '';
+
+    buttonsArr.push(
+      <button key={i}  value={i} onClick={handlePageChange}
+        className = {`page-btn ${isActive} ${isCurrent}`}
+        disabled = {page === i ? true : false}
+      >
+      </button>
+    )
+  }
+
+  const ArrowButton = function ({direction}) {
+    const handlePageChangeAlt = function (e) {
+      const direction = e.target.value;
+      const nextPage = direction === 'right' ? page + 1 : page - 1;
+      
+      console.log (maxPage)
+      if (nextPage === 0) return;
+      if (nextPage > maxPage) return;
+      
+      setChangePage(nextPage);
+    }
+
+    let disabled = false
+    if (direction === 'left' && page <= 1) {
+      disabled = true;
+    } else if (direction === 'right' && page >= maxPage) {
+      disabled = true;
+    }
+    
+    return (
+      <button value={direction} onClick={handlePageChangeAlt} className="page-btn alt"
+        disabled = {disabled}
+      >
+        <NewIcon assignClass={direction}/>
+      </button>
+    )
+  }
 
     return (
-      <div key={item.gameID} className='shop-item' data-gameid={item.gameID} onClick={handleOpenItemPage}>
-        <img src={item.header} alt={`item-${item.gameID} preview`} className='item-preview'/>
-        <p className='catalog-desc title'>{item.title}</p>
-
-        <div className={`catalog-price ${isOnSale ? 'sale' : ''}`}>
-          {isOnSale && <p className='discount'>{`-${Number.parseFloat(item.savings).toPrecision(2)}%`}</p>}
-          {isOnSale && <p className='normal-price'>{amountFormat(item.normalPrice)}</p>}
-          <p className='disc-price'>{amountFormat(item.salePrice)}</p>
-        </div>
+      <div className="page-btns-cont">
+        <ArrowButton direction={'left'}/>
+        {buttonsArr}
+        <ArrowButton direction={'right'}/>
+        {page !== changePage && <LoadingScreen/>}
       </div>
     )
-  })
+ }
 
+
+  // Display products in the catalog
+  const Products = function () {
+    // Open item page
+    const handleOpenItemPage = function (event) {
+      const itemId = event.target.dataset.gameid;
+      navigate(itemId);
+    }
+
+    const productDisplay = shopItems.map(item => {
+      const isOnSale = item.isOnSale === "1";
+      return (
+        <div key={item.gameID} className='shop-item' data-gameid={item.gameID} onClick={handleOpenItemPage}>
+          <img src={item.header} alt={`item-${item.gameID} preview`} className='item-preview'/>
+          <p className='catalog-desc title'>{item.title}</p>
+  
+          <div className={`catalog-price ${isOnSale ? 'sale' : ''}`}>
+            {isOnSale && <p className='discount'>{`-${Number.parseFloat(item.savings).toPrecision(2)}%`}</p>}
+            {isOnSale && <p className='normal-price'>{amountFormat(item.normalPrice)}</p>}
+            <p className='disc-price'>{amountFormat(item.salePrice)}</p>
+          </div>
+        </div>
+      )
+    })
+
+    return (
+      <div className={`shop-catalog`} ref={catalogRef}>
+        {productDisplay}
+      </div>
+    )
+  }
+  
   return(
     <div className="catalog-page">
       <CategoryFilterBar/>
       
-      <div className={`shop-${id}`}>
-        {productDisplay}
-      </div>
+      <Products/>
+
+      <PageChanger/>
     </div>
   )
 } // Shop Catalog (end)
