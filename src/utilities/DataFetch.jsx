@@ -15,9 +15,15 @@ const getHeaderSrc = function (srcUrl) {
   return headerSrc
 }
 
-const getProductsData = async function () {
+const getProductsData = async function (...titles) {
+
+  // If a title is passed as argument use the title to fetch data
+  // Note: title must be inside array since logic uses Array.map
+  // If no argument use categories array exported from products jsx
+  const callArray = titles ? categories : [titles];
+
   try {
-    const fetchCalls = categories.map(async (category) => {
+    const fetchCalls = callArray.map(async (category) => {
       const url = encodeURI(`https://www.cheapshark.com/api/1.0/deals?storeID=1&title=${category}`);
       const itemsFetched = await fetch(url, {
         method: 'GET',
@@ -282,6 +288,7 @@ const pageLoader = async function () {
   return { profileData, productsData };
 }
 
+
 export { 
   // scripts
   getProfileData,
@@ -289,7 +296,11 @@ export {
   addToCartData,
   changeCartItemQuantity,
   addCheckoutItems,
+  getProductsData,
 
   // loaders
-  shopLoader, cartLoader, profileLoader, pageLoader 
+  shopLoader,
+  cartLoader,
+  profileLoader,
+  pageLoader 
 }

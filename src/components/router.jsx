@@ -4,13 +4,14 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 // Components
 import App from './App'
 import { Main, PageDisplay } from './PageMain';
+import HomePage from './FrontPage';
 import { Profile, PurchaseDisplay } from './Profile';
 import { Shop, ShopCatalog, ItemPage } from './Shop';
 import { Cart } from './Cart';
 import ErrorPage from './ErrorPage';
 
 // Data fetch
-import { shopLoader, cartLoader, profileLoader } from '../utilities/DataFetch';
+import { shopLoader, cartLoader, profileLoader, pageLoader } from '../utilities/DataFetch';
 
 const router = createBrowserRouter([
   {
@@ -19,9 +20,20 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage/>,
     children: [
       {
-        path: 'main',
+        index: true,
+        element: <Navigate to='Home' replace/>
+      },
+
+      {
+        path: 'Home',
+        element: <HomePage/>,
+        loader: pageLoader
+      },
+
+      {
+        path:'main',
         element: <Main/>,
-        children: [
+        children: [   
           {
             path: 'pages',
             element: <PageDisplay/>,

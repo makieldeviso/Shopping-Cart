@@ -105,11 +105,11 @@ const NewIcon = function ({assignClass}) {
       assignPath = mdiBorderNoneVariant;
       break;
 
-    case 'left':
+    case 'previous':
       assignPath = mdiChevronLeft;
       break;
 
-    case 'right':
+    case 'next':
       assignPath = mdiChevronRight;
       break;
   

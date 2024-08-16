@@ -16,7 +16,7 @@ const PageBanner = function () {
     <div className="page-banner">
       <h1 className='page-title'>
         <NavLink to='/'>
-        <span>8TIER</span>
+        <span>A-TIER</span>
         <span>.com</span>
         </NavLink>
       </h1>
