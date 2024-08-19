@@ -1,29 +1,30 @@
 // React
 import { createContext, useContext, useEffect, useRef, useState } from "react"
-import { useLoaderData } from "react-router-dom"
+import { Navigate, useLoaderData, useNavigate } from "react-router-dom"
 
 // Scripts
-import { amountFormat } from "../utilities/utilities"
+import { amountFormat, capitalizeString } from "../utilities/utilities"
 
 //Asset import
 import heroImg from '../assets/hero-2.jpg'
 
 // Components
-import { NewIcon } from "./Icons"
+import { NewIcon, AnimalIcon, AnimalImage } from "./Icons"
 import { PageContext } from "./App"
+import { ca } from "date-fns/locale/ca"
 
 // Context
 const HomePageContext = createContext();
 
 const HomePage = function () {
-  const {productsData} = useLoaderData();
+  const {productsData, categoriesData} = useLoaderData();
 
   return (
-    <HomePageContext.Provider value={{productsData}}>
+    <HomePageContext.Provider value={{productsData, categoriesData}}>
     <main>
-      {/* <p>Front page</p> */}
       <HeroBanner/>
       <SpecialOffers/>
+      <CategoriesBanner/>
     </main>
     </HomePageContext.Provider>
   )
@@ -36,15 +37,19 @@ const ArrowButton = function ({direction, maxPage, page, setPage}) {
 
   const handleNextSet = function (e) {
     const action = e.target.value;
-    if(min || max) return;
-
-    action === 'previous' ? setPage(page - 1) : setPage(page + 1);
+    if(min) {
+      setPage(maxPage)
+    } else if (max) {
+      setPage(1)
+    } else {
+      action === 'previous' ? setPage(page - 1) : setPage(page + 1);
+    }
   }
 
   return (
-    <button value={direction} className={`chevron-btn ${direction}-page`} 
+    <button value={direction} className={`chevron-btn ${direction}-page ${maxPage === 1 && 'no-page'}`} 
       onClick={handleNextSet}
-      disabled = {min || max ? true : false }
+      disabled = {maxPage === 1 ? true : false }
     >
       <NewIcon assignClass={direction}/>
     </button>
@@ -60,8 +65,8 @@ const PageNodes = function ({maxPage, page, setPage}) {
 
   const pageNodesArr = [];
   for(let i = 1; i <= maxPage; i++) {
-    const isActive = i <= page ? 'active' : '';
-    const isCurrent = i === page ? 'current' : '';
+    const isActive = i <= page && 'active';
+    const isCurrent = i === page && 'current';
     pageNodesArr.push(
       <button key={i}  value={i} onClick={handlePageChange}
         className = {`page-node ${isActive} ${isCurrent}`}
@@ -83,10 +88,33 @@ const SpecialOffers = function () {
   const [displayedItems,  setDisplayedItems] = useState([]);
   const [page, setPage] = useState(1);
   const [maxPage, setMaxPage]= useState(1);
-  const itemsPerPage = 3;
+  const [itemsPerPage, setItemsPerPage] = useState(6);
+  const navigate = useNavigate();
 
   const onSaleItems = productsData.filter(item => item.isOnSale === '1');
   onSaleItems.sort((a, b) => b.savings - a.savings); // Sort from largest discount
+
+  const leastDiscount = onSaleItems.length % itemsPerPage;
+  onSaleItems.splice(onSaleItems.length - leastDiscount);
+
+  // useEffect(() => {
+  //   const changeItemsNumber = function () {
+  //     const screen = window.screen.width
+  //     console.log(screen)
+  //     if (screen <= 1440 && screen > 1024) {
+  //       setItemsPerPage(6);
+  //     } else if (screen <= 1024 ) {
+  //       setItemsPerPage(4);
+  //     }
+  //   }
+
+  //   window.addEventListener('resize', changeItemsNumber)
+
+  //   return () => {
+  //     window.removeEventListener('resize', changeItemsNumber)
+  //   }
+
+  // },[])
 
   useEffect(() => {
     const startIndex = itemsPerPage * (page - 1);
@@ -99,11 +127,13 @@ const SpecialOffers = function () {
     setMaxPage(salePages);
     setDisplayedItems(itemsForDisplay);
 
-  }, [page]);
+  }, [page, itemsPerPage]);
 
   const SaleItems = displayedItems.map(item => {
     return (
-      <div key={item.gameID} className="sale-item" >
+      <div key={item.gameID} className="sale-item" 
+        onClick={() => navigate(`../main/pages/shop/catalog/${item.gameID}`)}
+      >
         <img src={item.header} alt="" />
         <div className={`on-sale prices`}>
           <p className='discount'>{`-${Number.parseFloat(item.savings).toPrecision(2)}%`}</p>
@@ -115,7 +145,7 @@ const SpecialOffers = function () {
   })
 
   return (
-    <div className="offers-banner">
+    <div className="home-banner offers">
       <h4 className='banner-header offers'>Special Offers</h4>
       <ArrowButton direction={'previous'} maxPage={maxPage} page={page} setPage={setPage}/>
 
@@ -130,12 +160,8 @@ const SpecialOffers = function () {
 }
 
 const HeroBanner = function () {
-  const {productsData} = useContext(HomePageContext);
-  const bannerData = productsData.find(item => item.internalName === 'GOATOFDUTY');
-
   return (
-    <div className="hero-section">
-      <div className="hero-banner">
+      <div className="home-banner hero">
         <div className="hero-text">
           <p className='slogan-text'>
             <span>BUY</span>
@@ -146,7 +172,51 @@ const HeroBanner = function () {
         </div>
         <img src={heroImg} alt='' className='hero-image'/>
     </div>
-    
+  )
+}
+
+const CategoriesBanner = function () {
+  const {categoriesData} = useContext(HomePageContext);
+  const [displayedItems,  setDisplayedItems] = useState([]);
+  const [page, setPage] = useState(1);
+  const [maxPage, setMaxPage]= useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(4);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const startIndex = itemsPerPage * (page - 1);
+    const endIndex = (itemsPerPage * page);
+   
+    const itemsForDisplay = categoriesData.slice(startIndex, endIndex);
+
+    const categoryPages = Math.ceil(categoriesData.length / itemsPerPage);
+
+    setMaxPage(categoryPages);
+    setDisplayedItems(itemsForDisplay);
+
+  }, [page, itemsPerPage]);
+
+
+  const categories = displayedItems.map(category => {
+    return (
+      <div className='category-item' key={category}>
+        <div className='content'>
+          <AnimalImage assignClass={category}/>
+          <p className="category-text">{capitalizeString(category)}</p>
+        </div>
+      </div>
+    )
+  })
+
+  return (
+    <div className='home-banner categories'>
+      <h4 className="banner-header categories">Categories</h4>
+      <ArrowButton direction={'previous'} maxPage={maxPage} page={page} setPage={setPage}/>
+      <div className="category-items">
+        {categories}
+      </div>
+      <ArrowButton direction={'next'} maxPage={maxPage} page={page} setPage={setPage}/>
+      <PageNodes maxPage={maxPage} page={page} setPage={setPage}/>
     </div>
   )
 }

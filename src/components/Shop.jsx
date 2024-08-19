@@ -145,7 +145,7 @@ const ShopCatalog = function () {
         </button>
       )
     }
-
+    
     const ArrowButton = function ({direction}) {
       const handlePageChangeAlt = function (e) {
         const direction = e.target.value;
@@ -185,22 +185,12 @@ const ShopCatalog = function () {
 
   // Display products in the catalog
   const Products = function () {
-    // Open item page
-    const handleOpenItemPage = function (event) {
-      let itemId = event.target.dataset.gameid;
-
-      if (event.target.classList.contains('title')) {
-        itemId = event.target.parentNode.dataset.gameid;
-      }
-
-      console.log(event)
-      navigate(itemId);
-    }
-
     const productDisplay = shopItems.map(item => {
       const isOnSale = item.isOnSale === "1";
       return (
-        <div key={item.gameID} className='shop-item' data-gameid={item.gameID} onClick={handleOpenItemPage}>
+        <div key={item.gameID} className='shop-item' data-gameid={item.gameID} 
+          onClick={() => navigate(item.gameID)}
+        >
           <img src={item.header} alt={`item-${item.gameID} preview`} className='item-preview'/>
           <p title={item.title} className='catalog-desc title'>{item.title}</p>
   

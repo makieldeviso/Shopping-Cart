@@ -278,14 +278,15 @@ const profileLoader = async function () {
 }
 
 const pageLoader = async function () {
-  const [profileData, productsData] = await Promise.all(
+  const [profileData, productsData, categoriesData] = await Promise.all(
     [
       await getProfileData(), 
-      await getProductsData()
+      await getProductsData(),
+      await getCategories()
     ]
   );
  
-  return { profileData, productsData };
+  return { profileData, productsData, categoriesData };
 }
 
 

@@ -9,6 +9,15 @@ import duckIcon from '../assets/duck.svg'
 import penguinIcon from '../assets/penguin.svg'
 import spiderIcon from '../assets/spider.svg'
 
+import goatImage from '../assets/goat-img.jpg'
+import chickenImage from '../assets/chicken-img.jpg'
+import pigImage from '../assets/pig-img.jpg'
+import horseImage from '../assets/horse-img.jpg'
+import crabImage from '../assets/crab-img.jpg'
+import duckImage from '../assets/duck-img.jpg'
+import penguinImage from '../assets/penguin-img.jpg'
+import spiderImage from '../assets/spider-img.jpg'
+
 const importIcons = {
   goat: goatIcon,
   chicken: chickenIcon,
@@ -18,7 +27,17 @@ const importIcons = {
   duck: duckIcon,
   penguin: penguinIcon,
   spider: spiderIcon
+}
 
+const importImage = {
+  goat: goatImage,
+  chicken: chickenImage,
+  pig: pigImage,
+  horse: horseImage,
+  crab: crabImage,
+  duck: duckImage,
+  penguin: penguinImage,
+  spider: spiderImage
 }
 
 import Icon from '@mdi/react';
@@ -140,4 +159,11 @@ const AnimalIcon = function ({assignClass}) {
   )
 } 
 
-export { NewIcon, AnimalIcon }
+const AnimalImage = function ({assignClass}) {
+  
+  return (
+    <img src={importImage[assignClass]} alt="" className={`animal-image ${assignClass}`}/>
+  )
+} 
+
+export { NewIcon, AnimalIcon, AnimalImage }
