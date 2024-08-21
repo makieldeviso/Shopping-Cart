@@ -5,7 +5,7 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 import App from './App'
 import HomePage from './FrontPage';
 import { Profile, PurchaseDisplay } from './Profile';
-import { Shop, ShopCatalog, ItemPage } from './Shop';
+import { Shop, ShopCatalog, ProductsOnPage, ItemPage, ProductDetails } from './Shop';
 import { Cart } from './Cart';
 import ErrorPage from './ErrorPage';
 
@@ -57,15 +57,32 @@ const router = createBrowserRouter([
           {
             path: 'catalog',
             element: <ShopCatalog/>,
-            
+            children: [
+              {
+                index: true,
+                element: <Navigate to='page_1' replace/>
+              },
+
+              {
+                path: ':page',
+                element: <ProductsOnPage/>
+              },
+            ]
           },
           {
-            path: 'catalog/:id',
+            path: 'product',
             element: <ItemPage/>,
-          }
+            children: [
+              {
+                path: ':id',
+                element: <ProductDetails/>
+              }
+            ]
+          },
         ]
       },
 
+      // Cart ----------
       {
         path: 'cart',
         element: <Cart/>,

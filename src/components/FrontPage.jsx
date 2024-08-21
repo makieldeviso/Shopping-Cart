@@ -134,7 +134,7 @@ const SpecialOffers = function () {
   const SaleItems = displayedItems.map(item => {
     return (
       <div key={item.gameID} className="sale-item" 
-        onClick={() => navigate(`../shop/catalog/${item.gameID}`)}
+        onClick={() => navigate(`../shop/product/${item.gameID}`)}
       >
         <img src={item.header} alt="" />
         <div className={`on-sale prices`}>

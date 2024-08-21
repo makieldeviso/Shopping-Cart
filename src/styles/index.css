@@ -860,11 +860,15 @@ button span {
   color: var(--lightest-color);
 }
 
+.page-btn.alt:disabled {
+  filter: opacity(0.5);
+}
+
 .page-btn.alt:disabled:hover {
   cursor: default;
   transform: rotateZ(0) translateY(0) translateX(0);
   color: var(--lightest-color);
-  filter: unset;
+  filter: opacity(0.5);
 }
 
 .page-btn.alt:hover {

@@ -1,6 +1,6 @@
 // React
 import { useContext, useState, useRef, useEffect, createContext } from "react";
-import { NavLink, Outlet, useLoaderData, useOutletContext, useParams, useNavigate, useNavigation } from "react-router-dom";
+import { NavLink, Outlet, useLoaderData, useOutletContext, useParams, useNavigate, useNavigation, useLocation } from "react-router-dom";
 
 // Context
 import { PageContext } from "./App";
@@ -15,21 +15,27 @@ import { amountFormat, capitalizeString } from "../utilities/utilities";
 import { NewIcon, AnimalIcon } from "./Icons";
 import LoadingScreen from "./LoadingScreen";
 
+
+const ShopContext = createContext({});
+
 const Shop = function () {
   const { id ='catalog' } = useParams();
   const { productsData, categoriesData } = useLoaderData();
   const [filter, setFilter] = useState('all');
  
   return (
-    <div className={`shop-page`}>
-      <Outlet context={{id, productsData, categoriesData, filter, setFilter}}/>
-    </div>
+    <ShopContext.Provider value={{id, productsData, categoriesData, filter, setFilter}}>
+      <div className={`shop-page`}>
+        <Outlet/>
+      </div>
+    </ShopContext.Provider>
+    
   )
 }
 
 // Render the Shop catalog
 const ShopCatalog = function () {
-  const { filter, setFilter, productsData, categoriesData } = useOutletContext();
+  const { filter, setFilter, productsData, categoriesData } = useContext(ShopContext);
   const [shopItems, setShopItems] = useState(productsData);
   const [page, setPage] = useState(1);
   const [maxPage, setMaxPage] = useState(1);
@@ -40,18 +46,28 @@ const ShopCatalog = function () {
   
   // Filter productsData on render
   // Display a number of items (itemPerPage) per page
-  useEffect(() => {
-    const startIndex = itemsPerPage * (page - 1);
-    const endIndex = (itemsPerPage * page);
+  // useEffect(() => {
+  //   const startIndex = itemsPerPage * (page - 1);
+  //   const endIndex = (itemsPerPage * page);
    
-    const filteredData = filter === 'all' ? productsData : productsData.filter(item => item.category === filter);
-    const itemsInPage = filteredData.slice(startIndex, endIndex);
+  //   const filteredData = filter === 'all' ? productsData : productsData.filter(item => item.category === filter);
+  //   const itemsInPage = filteredData.slice(startIndex, endIndex);
 
-    const catalogPages = Math.ceil(filteredData.length / itemsPerPage);
+  //   const catalogPages = Math.ceil(filteredData.length / itemsPerPage);
 
+  //   setMaxPage(catalogPages);
+  //   setShopItems(itemsInPage);
+  // }, [filter, page, productsData]);
+
+  useEffect(() => {
+    const catalogPages = Math.ceil(productsData.length / itemsPerPage);
     setMaxPage(catalogPages);
-    setShopItems(itemsInPage);
-  }, [filter, page, productsData]);
+  }, []);
+
+  useEffect(() => {
+    // Scroll to top on change page
+    window.scroll({top: 0, behavior:'smooth'});
+  }, [page]);
 
   // Categories filter side bar
   const CategoryFilterBar = function () {
@@ -109,26 +125,14 @@ const ShopCatalog = function () {
 
   // Page changer of shop catalog
   const PageChanger = function () {  
-    const [changePage, setChangePage] = useState(page);
-    const catalog = catalogRef.current;
-
-    useEffect(() => {
-      // If catalog has not rendered yet, cancel logic
-      if (!catalog) return
-
-      window.scrollTo({top: 0, left: 0, behavior: 'smooth'});
-      catalog.classList.add('loading');
-      
-      catalog.addEventListener('transitionend', () => {
-        catalog.classList.remove('loading');
-        setPage(changePage);
-      }, {once: true});
-
-    },[changePage]);
-
+    const navigate = useNavigate();
+    
     const handlePageChange = async function (event) {
       const pageNumber = Number(event.target.value);
-      setChangePage(pageNumber);
+      const pageRoute = `page_${pageNumber}`
+      
+      setPage(pageNumber);
+      navigate(pageRoute);
     }
 
     let pageNodesArr = [];
@@ -154,7 +158,8 @@ const ShopCatalog = function () {
         if (nextPage === 0) return;
         if (nextPage > maxPage) return;
         
-        setChangePage(nextPage);
+        setPage(nextPage);
+        navigate(`page_${nextPage}`);
       }
 
       let disabled = false
@@ -178,57 +183,104 @@ const ShopCatalog = function () {
         <ArrowButton direction={'previous'}/>
         {pageNodesArr}
         <ArrowButton direction={'next'}/>
-        {page !== changePage && <LoadingScreen/>}
       </div>
     )
  }
 
   // Display products in the catalog
-  const Products = function () {
-    const productDisplay = shopItems.map(item => {
-      const isOnSale = item.isOnSale === "1";
-      return (
-        <div key={item.gameID} className='shop-item' data-gameid={item.gameID} 
-          onClick={() => navigate(item.gameID)}
-        >
-          <img src={item.header} alt={`item-${item.gameID} preview`} className='item-preview'/>
-          <p title={item.title} className='catalog-desc title'>{item.title}</p>
+  // const Products = function () {
+  //   const productDisplay = shopItems.map(item => {
+  //     const isOnSale = item.isOnSale === "1";
+  //     return (
+  //       <div key={item.gameID} className='shop-item' data-gameid={item.gameID} 
+  //         onClick={() => navigate(item.gameID)}
+  //       >
+  //         <img src={item.header} alt={`item-${item.gameID} preview`} className='item-preview'/>
+  //         <p title={item.title} className='catalog-desc title'>{item.title}</p>
   
-          <div className={`catalog-price ${isOnSale ? 'sale' : ''}`}>
-            {isOnSale && <p className='discount'>{`-${Number.parseFloat(item.savings).toPrecision(2)}%`}</p>}
-            {isOnSale && <p className='normal-price'>{amountFormat(item.normalPrice)}</p>}
-            <p className='disc-price'>{amountFormat(item.salePrice)}</p>
-          </div>
-        </div>
-      )
-    })
+  //         <div className={`catalog-price ${isOnSale ? 'sale' : ''}`}>
+  //           {isOnSale && <p className='discount'>{`-${Number.parseFloat(item.savings).toPrecision(2)}%`}</p>}
+  //           {isOnSale && <p className='normal-price'>{amountFormat(item.normalPrice)}</p>}
+  //           <p className='disc-price'>{amountFormat(item.salePrice)}</p>
+  //         </div>
+  //       </div>
+  //     )
+  //   })
 
-    return (
-      <div className={`shop-catalog`} ref={catalogRef}>
-        {productDisplay}
-      </div>
-    )
-  }
+  //   return (
+  //     <div className={`shop-catalog`} ref={catalogRef}>
+  //       {productDisplay}
+  //     </div>
+  //   )
+  // }
   
   return(
     <div className="catalog-page">
       <h2 className='shop-header'>Catalog</h2>
 
       <CategoryFilterBar/>
-      
-      <Products/>
+    
+      <Outlet/>
 
       <PageChanger/>
     </div>
   )
-} // Shop Catalog (end)
+} 
 
+// Products per page on the catalog
+const ProductsOnPage = function () {
+  const { page } = useParams();
+  const {productsData} = useContext(ShopContext);
+  const pageNumberRegex = /(?<=page_)\d+/;
+  const pageNumber = Number(page.match(pageNumberRegex)[0]);
+ 
+  const itemsPerPage = 36;
+  const startIndex = itemsPerPage * (pageNumber - 1);
+  const endIndex = (itemsPerPage * pageNumber);
+  const itemsInPage = productsData.slice(startIndex, endIndex);
+
+  const navigate = useNavigate();
+
+  const productDisplay = itemsInPage.map(item => {
+    const isOnSale = item.isOnSale === "1";
+    return (
+      <div key={item.gameID} className='shop-item' data-gameid={item.gameID} 
+        onClick={() => navigate(`/shop/product/${item.gameID}`)}
+      >
+        <img src={item.header} alt={`item-${item.gameID} preview`} className='item-preview'/>
+        <p title={item.title} className='catalog-desc title'>{item.title}</p>
+
+        <div className={`catalog-price ${isOnSale ? 'sale' : ''}`}>
+          {isOnSale && <p className='discount'>{`-${Number.parseFloat(item.savings).toPrecision(2)}%`}</p>}
+          {isOnSale && <p className='normal-price'>{amountFormat(item.normalPrice)}</p>}
+          <p className='disc-price'>{amountFormat(item.salePrice)}</p>
+        </div>
+      </div>
+    )
+  })
+
+  return (
+    <div className={`shop-catalog`}>
+      {productDisplay}
+    </div>
+  )
+}
+// Shop Catalog (end)
 
  // Render a specific item page (start)
 const ItemPage = function () {
-  const {id, productsData} = useOutletContext();
-  const preCartRef = useRef(null);
+  return (
+    <>
+      <Outlet context/>
+    </>
+  )
+}
 
+const ProductDetails = function () {
+  const {productsData} = useContext(ShopContext);
+  const { id } = useParams();
+ 
+  const preCartRef = useRef(null);
   const itemData = productsData.find(item => Number(item.gameID) === Number(id));
 
   // Open add to cart dialog (pre-cart)
@@ -373,7 +425,7 @@ const ItemPage = function () {
       </p>
      
      <div className="item-desc counter">
-      <div className={`item-desc price ${isOnSale ? 'sale' : ''}`}>
+      <div className={`item-desc price ${isOnSale && 'sale'}`}>
         {isOnSale && <p className='discount'>{`-${Number.parseFloat(itemData.savings).toPrecision(2)}%`}</p>}
         {isOnSale && <p className='normal-price'>{amountFormat(itemData.normalPrice)}</p>}
         <p className='disc-price'>{amountFormat(itemData.salePrice)}</p>
@@ -391,4 +443,4 @@ const ItemPage = function () {
 }
  // Render a specific item page (end)
 
-export { Shop, ShopCatalog, ItemPage}
+export { Shop, ShopCatalog, ProductsOnPage, ItemPage, ProductDetails}
