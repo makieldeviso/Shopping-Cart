@@ -1,17 +1,16 @@
 // React
-import { createContext, useContext, useEffect, useRef, useState } from "react"
-import { Navigate, useLoaderData, useNavigate } from "react-router-dom"
+import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { Navigate, useLoaderData, useNavigate } from "react-router-dom";
 
 // Scripts
-import { amountFormat, capitalizeString } from "../utilities/utilities"
+import { amountFormat, capitalizeString } from "../utilities/utilities";
 
 //Asset import
-import heroImg from '../assets/hero-2.jpg'
+import heroImg from '../assets/hero-2.jpg';
 
 // Components
-import { NewIcon, AnimalIcon, AnimalImage } from "./Icons"
-import { PageContext } from "./App"
-import { ca } from "date-fns/locale/ca"
+import { NewIcon, AnimalIcon, AnimalImage } from "./Icons";
+import { PageContext } from "./App";
 
 // Context
 const HomePageContext = createContext();
@@ -21,11 +20,11 @@ const HomePage = function () {
 
   return (
     <HomePageContext.Provider value={{productsData, categoriesData}}>
-    <main>
+    <>
       <HeroBanner/>
       <SpecialOffers/>
       <CategoriesBanner/>
-    </main>
+    </>
     </HomePageContext.Provider>
   )
 }
@@ -47,9 +46,9 @@ const ArrowButton = function ({direction, maxPage, page, setPage}) {
   }
 
   return (
-    <button value={direction} className={`chevron-btn ${direction}-page ${maxPage === 1 && 'no-page'}`} 
+    <button value={direction} className={`chevron-btn ${direction}-page ${maxPage <= 1 && 'no-page'}`} 
       onClick={handleNextSet}
-      disabled = {maxPage === 1 ? true : false }
+      disabled = {maxPage <= 1 ? true : false }
     >
       <NewIcon assignClass={direction}/>
     </button>
@@ -77,7 +76,7 @@ const PageNodes = function ({maxPage, page, setPage}) {
   }
 
   return (
-    <div className="page-nodes">
+    <div className={`page-nodes ${pageNodesArr.length <= 1 && 'no-page'}`}>
       {pageNodesArr}
     </div>
   )
@@ -129,10 +128,13 @@ const SpecialOffers = function () {
 
   }, [page, itemsPerPage]);
 
+  // If no items for sale to render, return nothing
+  if (displayedItems.length < 1) return;
+
   const SaleItems = displayedItems.map(item => {
     return (
       <div key={item.gameID} className="sale-item" 
-        onClick={() => navigate(`../main/pages/shop/catalog/${item.gameID}`)}
+        onClick={() => navigate(`../shop/catalog/${item.gameID}`)}
       >
         <img src={item.header} alt="" />
         <div className={`on-sale prices`}>
@@ -196,6 +198,8 @@ const CategoriesBanner = function () {
 
   }, [page, itemsPerPage]);
 
+  // If no category to render, return nothing
+  if (displayedItems.length < 1) return;
 
   const categories = displayedItems.map(category => {
     return (

@@ -41,12 +41,12 @@ const PageNav = function () {
     <nav className="page-nav">
       <ul>
         <li title='Profile'>
-          <NavLink to='main/pages/profile'><NewIcon assignClass={'profile'}/></NavLink>
+          <NavLink to='profile'><NewIcon assignClass={'profile'}/></NavLink>
         </li>
-        <li title='Shop'><NavLink to='main/pages/shop'>
+        <li title='Shop'><NavLink to='shop'>
           <NewIcon assignClass={'shop'}/></NavLink>
         </li>
-        <li title='Cart'><NavLink to='main/pages/cart'>
+        <li title='Cart'><NavLink to='cart'>
           <NewIcon assignClass={'cart'}/></NavLink>
           <p>{cartCount}</p>
         </li>

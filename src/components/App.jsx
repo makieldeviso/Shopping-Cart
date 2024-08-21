@@ -17,7 +17,9 @@ const App = function () {
   return (
     <PageContext.Provider value={{ cartCount, setCartCount }}>
       <Header/>
-      <Outlet/>
+      <main>
+        <Outlet/>
+      </main>
       {navigation.state === 'loading' && <LoadingScreen/>}
     </PageContext.Provider>
   )
