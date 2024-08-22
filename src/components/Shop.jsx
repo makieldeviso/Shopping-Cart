@@ -35,14 +35,21 @@ const Shop = function () {
 // Render the Shop catalog
 const ShopCatalog = function () {
   const { filter, setFilter, productsData, categoriesData, setShopItems, itemsPerPage } = useContext(ShopContext);
-  const {category} = useParams();
+  const {category, catalogPage} = useParams();
   const [page, setPage] = useState(1);
   const [maxPage, setMaxPage] = useState(1);
   const navigate = useNavigate();
  
   useEffect(() => {
+    // Update filter state when category param from routing is changed
     !category ? setFilter('all') : setFilter(category);
-  },[category])
+
+     // Update page state when catalogPage category param from routing is changed
+    const pageNumberRegex = /(?<=page_)\d+/;
+    const pageNumber = Number(catalogPage.match(pageNumberRegex)[0]);
+    setPage(pageNumber);
+
+  },[category, catalogPage])
 
   useEffect(() => {
     let filteredItems = productsData;
@@ -71,7 +78,7 @@ const ShopCatalog = function () {
       // Don't run filter if same filter btn is pressed
       if (filterValue === filter) return;
 
-      const pageRoute = filterValue === 'all' ? `page_${page}`: `${filterValue}/page_1`;
+      const pageRoute = filterValue === 'all' ? `page_1`: `${filterValue}/page_1`;
       
       setPage(1);
       setFilter(filterValue);
@@ -235,10 +242,10 @@ const ProductsDisplay = function ({productList}) {
 // Products per page on the catalog
 const ProductsOnPage = function () {
   const { shopItems, itemsPerPage } = useContext(ShopContext);
-  const { page } = useParams();
+  const { catalogPage } = useParams();
 
   const pageNumberRegex = /(?<=page_)\d+/;
-  const pageNumber = Number(page.match(pageNumberRegex)[0]);
+  const pageNumber = Number(catalogPage.match(pageNumberRegex)[0]);
 
   const startIndex = itemsPerPage * (pageNumber - 1);
   const endIndex = (itemsPerPage * pageNumber);

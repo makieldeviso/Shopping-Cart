@@ -611,6 +611,7 @@ button span {
 .item-preview {
   grid-area: img;
   min-width: 300px;
+  max-height: 175px;
   width: 100%;
   object-fit: cover;
   justify-self: center;
