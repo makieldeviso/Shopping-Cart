@@ -4,10 +4,10 @@ import { amountFormat } from "../utilities/utilities";
 
 // Create products for display
 // Takes list of products (array) as argument
-const ProductsDisplay = function ({productList}) {
+const ProductsDisplay = function ({productsList}) {
   const navigate = useNavigate();
 
-  const productDisplay = productList.map(item => {
+  const productDisplay = productsList.map(item => {
     const isOnSale = item.isOnSale === "1";
     return (
       <div key={item.gameID} className='shop-item' data-gameid={item.gameID} 
@@ -31,7 +31,7 @@ const ProductsDisplay = function ({productList}) {
 }
 
 ProductsDisplay.propTypes = {
-  productList: PropTypes.array
+  productsList: PropTypes.array
 }
 
 export default ProductsDisplay;

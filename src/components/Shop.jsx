@@ -226,7 +226,7 @@ const ProductsOnPage = function () {
 
   return (
     <div className={`shop-catalog`}>
-      <ProductsDisplay productList={itemsInPage}/>
+      <ProductsDisplay productsList={itemsInPage}/>
     </div>
   )
 }

@@ -3,7 +3,7 @@ import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
 
 // Scripts
-import { amountFormat, capitalizeString } from "../utilities/utilities";
+import { capitalizeString } from "../utilities/utilities";
 
 //Asset import
 import heroImg from '../assets/hero-2.jpg';
@@ -83,46 +83,20 @@ const PageNodes = function ({maxPage, page, setPage}) {
   )
 }
 
-const SpecialOffers = function () {
-  const {productsData} = useContext(HomePageContext);
+const ProductsBanner = function ({assignClass, assignTitle, assignItemsPerPage, productsList}) {
   const [displayedItems,  setDisplayedItems] = useState([]);
   const [page, setPage] = useState(1);
   const [maxPage, setMaxPage]= useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(6);
+  const [itemsPerPage, setItemsPerPage] = useState(assignItemsPerPage);
   const navigate = useNavigate();
-
-  const onSaleItems = productsData.filter(item => item.isOnSale === '1');
-  onSaleItems.sort((a, b) => b.savings - a.savings); // Sort from largest discount
-
-  const leastDiscount = onSaleItems.length % itemsPerPage;
-  onSaleItems.splice(onSaleItems.length - leastDiscount);
-
-  // useEffect(() => {
-  //   const changeItemsNumber = function () {
-  //     const screen = window.screen.width
-  //     console.log(screen)
-  //     if (screen <= 1440 && screen > 1024) {
-  //       setItemsPerPage(6);
-  //     } else if (screen <= 1024 ) {
-  //       setItemsPerPage(4);
-  //     }
-  //   }
-
-  //   window.addEventListener('resize', changeItemsNumber)
-
-  //   return () => {
-  //     window.removeEventListener('resize', changeItemsNumber)
-  //   }
-
-  // },[])
 
   useEffect(() => {
     const startIndex = itemsPerPage * (page - 1);
     const endIndex = (itemsPerPage * page);
    
-    const itemsForDisplay = onSaleItems.slice(startIndex, endIndex);
+    const itemsForDisplay = productsList.slice(startIndex, endIndex);
 
-    const salePages = Math.ceil(onSaleItems.length / itemsPerPage);
+    const salePages = Math.ceil(productsList.length / itemsPerPage);
 
     setMaxPage(salePages);
     setDisplayedItems(itemsForDisplay);
@@ -133,17 +107,39 @@ const SpecialOffers = function () {
   if (displayedItems.length < 1) return;
 
   return (
-    <div className="home-banner offers">
-      <h4 className='banner-header offers'>Special Offers</h4>
+    <div className={`home-banner ${assignClass}`}>
+      <h4 className={`banner-header ${assignClass}`}>{assignTitle}</h4>
       <ArrowButton direction={'previous'} maxPage={maxPage} page={page} setPage={setPage}/>
 
-      <div className='offers-items'>
-        <ProductsDisplay productList={displayedItems}/>
+      <div className={`banner-products ${assignClass}-items`}>
+        <ProductsDisplay productsList={displayedItems}/>
       </div>
       
       <ArrowButton direction={'next'} maxPage={maxPage} page={page} setPage={setPage}/>
       <PageNodes maxPage={maxPage} page={page} setPage={setPage}/>
     </div>
+  )
+}
+
+const SpecialOffers = function () {
+  const {productsData} = useContext(HomePageContext);
+  const itemsPerPage = 6;
+
+  const onSaleItems = productsData.filter(item => item.isOnSale === '1');
+  onSaleItems.sort((a, b) => b.savings - a.savings); // Sort from largest discount
+
+  const leastDiscount = onSaleItems.length % itemsPerPage;
+  onSaleItems.splice(onSaleItems.length - leastDiscount);
+
+  return (
+    <>
+      <ProductsBanner
+        assignClass={'offers'}
+        assignTitle={'Special Offers'}
+        assignItemsPerPage={itemsPerPage}
+        productsList={onSaleItems}
+      />
+    </>
   )
 }
 
@@ -218,12 +214,14 @@ const UnderFiveBanner = function () {
   const underFiveProducts = productsData.filter(item => Math.ceil(Number(item.salePrice)) < 5);
 
   return (
-    <div className='home-banner under-five'>
-      <h4 className="banner-header under-five">Under $5</h4>
-      <div className="under-five-items">
-        <ProductsDisplay productList={underFiveProducts}/>
-      </div>
-    </div>
+    <>
+      <ProductsBanner
+        assignClass={'under-five'}
+        assignTitle={'Under $5'}
+        assignItemsPerPage={3}
+        productsList={underFiveProducts}
+      />
+    </>
   )
 }
 
