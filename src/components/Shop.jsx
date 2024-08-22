@@ -42,24 +42,19 @@ const ShopCatalog = function () {
  
   useEffect(() => {
     !category ? setFilter('all') : setFilter(category);
-  },[])
+  },[category])
 
   useEffect(() => {
     let filteredItems = productsData;
-    let pageRoute = 'page_1';
+    
     if (filter !== 'all') {
       filteredItems = productsData.filter(item => item.category === filter);
-      pageRoute = `${filter}/page_1`;
     }
 
     const catalogPages = Math.ceil(filteredItems.length / itemsPerPage);
 
     setMaxPage(catalogPages);
     setShopItems(filteredItems);
-    setPage(1);
-
-    // Navigate to route
-    navigate(pageRoute);
 
   }, [filter]);
 
@@ -76,7 +71,13 @@ const ShopCatalog = function () {
       // Don't run filter if same filter btn is pressed
       if (filterValue === filter) return;
 
-      setFilter(filterValue);      
+      const pageRoute = filterValue === 'all' ? `page_${page}`: `${filterValue}/page_1`;
+      
+      setPage(1);
+      setFilter(filterValue);
+
+      // Navigate to route
+      navigate(pageRoute);
     }
 
     const FilterButtons = categoriesData.map((category) => {

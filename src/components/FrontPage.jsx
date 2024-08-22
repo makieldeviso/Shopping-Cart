@@ -203,7 +203,9 @@ const CategoriesBanner = function () {
 
   const categories = displayedItems.map(category => {
     return (
-      <div className='category-item' key={category}>
+      <div className='category-item' key={category}
+        onClick={() => navigate(`../shop/catalog/${category}/page_1`)}
+      >
         <div className='content'>
           <AnimalImage assignClass={category}/>
           <p className="category-text">{capitalizeString(category)}</p>
