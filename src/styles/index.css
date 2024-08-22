@@ -261,32 +261,24 @@ header {
   grid-template-rows: 1fr 1fr;
   align-items: center;
   justify-items: center;
+
+  gap: var(--margin);
 }
 
-@media only screen and (max-width: 1280px) {
+/* @media only screen and (max-width: 1280px) {
   .offers-items {
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     min-height: 435px;
   }
-}
+} */
 
-.sale-item {
-  display: flex;
-  flex-direction: column;
-  background-color:  rgba(0, 0, 0, 0.3);
-  height: max-content;
-
+.offers-items .shop-item {
   animation: fade-in 0.5s ease-in-out 1;
-  transition: 500ms;
-  margin: calc(var(--margin) * 0.5);
+  transition: 300ms;
 }
 
-.sale-item.fade-out {
-  filter: opacity(0) saturate(0);
-}
-
-.sale-item img {
-  width: 100%;
+.offers-items .catalog-desc.title {
+  visibility: hidden ;
 }
 
 /* Page changer (common) */
@@ -336,51 +328,6 @@ header {
 }
 /* Page changer (common) */
 
-.on-sale.prices {
-  display: grid;
-  grid-template-columns: repeat(2, max-content);
-  grid-template-rows: 1fr 1fr;
-  column-gap: var(--margin);
-  justify-items: end;
-  align-items: center;
-  align-content: center;
-  align-self: end;
-}
-
-.on-sale.prices p {
-  color: var(--lightest-color);
-}
-
-.on-sale.prices p.discount {
-  font-size: 1.5rem;
-  grid-column: 1 / 2 ;
-  grid-row: 1 / 3;
-  background-color: var(--darker-color);
-  height: 100%;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 var(--padding);
-  text-shadow: 0 2px 3px var(--darkest-color);
-}
-
-.on-sale.prices p.normal-price {
-  grid-column: 2 / 3;
-  grid-row: 1 / 2;  
-  text-decoration: line-through;
-  padding-right: var(--padding);
-  filter: opacity(0.5);
-  font-size: 1rem;
-}
-
-.on-sale.prices p.disc-price {
-  grid-column: 2 / 3;
-  grid-row: 2 / 3;  
-  padding-right: var(--padding);
-  font-size: 1.3rem;
-  line-height: 1.5rem;
-}
 /* Offers (end) */
 
 /* Categories - Home banner - (start)  */
@@ -566,8 +513,8 @@ header {
     "title prices";
   background-color: var(--darkest-color);
   transition: 200ms;
-  border: 1px solid rgba(255, 245, 224, 0.5);
-  box-shadow: 0 0px 3px 1px rgba(255, 245, 224, 0.5);
+  border: 1px solid transparent;
+  box-shadow: 0 0 3px 1px rgba(0, 0, 0, 0.5);
 }
 
 .shop-item:hover {
@@ -611,7 +558,7 @@ button span {
 .item-preview {
   grid-area: img;
   min-width: 300px;
-  max-height: 175px;
+  max-height: 160px;
   width: 100%;
   object-fit: cover;
   justify-self: center;
@@ -623,7 +570,9 @@ button span {
   justify-content: end;
   background-color: rgba(255, 245, 224, 0.1);
   min-height: max-content;
-  height: 60px;
+  height: max-content;
+  min-height: 40px;
+  margin: 8px;
   align-items: center;
 }
 
@@ -638,7 +587,7 @@ button span {
   display: grid;
   grid-template-columns: repeat(2, max-content);
   grid-template-rows: 1fr 1fr;
-  column-gap: var(--margin);
+  column-gap: 3px;
   justify-items: end;
   align-items: center;
   align-content: center;
@@ -651,12 +600,13 @@ button span {
 .catalog-price.sale .discount {
   grid-column: 1 / 2;
   grid-row: 1 / 3;
-  font-size: 1.3rem;
+  font-size: 1.5rem;
   text-align: center;
   justify-self: center;
-  background-color: rgba(65, 176, 110, 0.3);
-  color: var(--darker-color);
-  padding: var(--padding);
+  background-color: var(--darker-color);
+  color: var(--lightest-color);
+  text-shadow: 0 2px 3px var(--darkest-color);
+  padding: 0 var(--padding);
   height: 100%;
   display: flex;
   align-items: center;
@@ -669,15 +619,16 @@ button span {
   font-size: 0.8rem;
   filter: opacity(0.7);
   text-decoration: line-through;
-  padding: var(--padding);
-  padding-bottom: 0;
+  padding: 0 var(--padding);
+  align-self: end;
 }
 
 .catalog-price.sale .disc-price {
   grid-column: 2 / 3;
   grid-row: 2 / 3;
-  padding: var(--padding);
-  padding-top: 0;
+  font-size: 1.2rem;
+  align-self: start;
+  padding: 0 var(--padding);
 }
 /* Shop catalog (end)*/
 

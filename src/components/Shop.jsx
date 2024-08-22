@@ -13,6 +13,7 @@ import { amountFormat, capitalizeString } from "../utilities/utilities";
 
 // Components
 import { NewIcon, AnimalIcon } from "./Icons";
+import ProductsDisplay from "./ProductsDisplay";
 
 const ShopContext = createContext({});
 
@@ -44,9 +45,9 @@ const ShopCatalog = function () {
     // Update filter state when category param from routing is changed
     !category ? setFilter('all') : setFilter(category);
 
-     // Update page state when catalogPage category param from routing is changed
+    // Update page state when catalogPage category param from routing is changed
     const pageNumberRegex = /(?<=page_)\d+/;
-    const pageNumber = Number(catalogPage.match(pageNumberRegex)[0]);
+    const pageNumber = catalogPage ? Number(catalogPage.match(pageNumberRegex)[0]) : 1;
     setPage(pageNumber);
 
   },[category, catalogPage])
@@ -210,34 +211,6 @@ const ShopCatalog = function () {
     </div>
   )
 } 
-
-// Create products for display in catalog 
-// Takes list of products (array) as argument
-const ProductsDisplay = function ({productList}) {
-  const navigate = useNavigate();
-
-  const productDisplay = productList.map(item => {
-    const isOnSale = item.isOnSale === "1";
-    return (
-      <div key={item.gameID} className='shop-item' data-gameid={item.gameID} 
-        onClick={() => navigate(`/shop/product/${item.gameID}`)}
-      >
-        <img src={item.header} alt={`item-${item.gameID} preview`} className='item-preview'/>
-        <p title={item.title} className='catalog-desc title'>{item.title}</p>
-
-        <div className={`catalog-price ${isOnSale && 'sale'}`}>
-          {isOnSale && <p className='discount'>{`-${Number.parseFloat(item.savings).toPrecision(2)}%`}</p>}
-          {isOnSale && <p className='normal-price'>{amountFormat(item.normalPrice)}</p>}
-          <p className='disc-price'>{amountFormat(item.salePrice)}</p>
-        </div>
-      </div>
-    )
-  })
-
-  return (
-    <>{productDisplay}</>
-  )
-}
 
 // Products per page on the catalog
 const ProductsOnPage = function () {

@@ -1,6 +1,6 @@
 // React
 import { createContext, useContext, useEffect, useRef, useState } from "react";
-import { Navigate, useLoaderData, useNavigate } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 
 // Scripts
 import { amountFormat, capitalizeString } from "../utilities/utilities";
@@ -9,8 +9,8 @@ import { amountFormat, capitalizeString } from "../utilities/utilities";
 import heroImg from '../assets/hero-2.jpg';
 
 // Components
-import { NewIcon, AnimalIcon, AnimalImage } from "./Icons";
-import { PageContext } from "./App";
+import { NewIcon, AnimalImage } from "./Icons";
+import ProductsDisplay from "./ProductsDisplay";
 
 // Context
 const HomePageContext = createContext();
@@ -24,6 +24,7 @@ const HomePage = function () {
       <HeroBanner/>
       <SpecialOffers/>
       <CategoriesBanner/>
+      <UnderFiveBanner/>
     </>
     </HomePageContext.Provider>
   )
@@ -131,28 +132,13 @@ const SpecialOffers = function () {
   // If no items for sale to render, return nothing
   if (displayedItems.length < 1) return;
 
-  const SaleItems = displayedItems.map(item => {
-    return (
-      <div key={item.gameID} className="sale-item" 
-        onClick={() => navigate(`../shop/product/${item.gameID}`)}
-      >
-        <img src={item.header} alt="" />
-        <div className={`on-sale prices`}>
-          <p className='discount'>{`-${Number.parseFloat(item.savings).toPrecision(2)}%`}</p>
-          <p className='normal-price'>{amountFormat(item.normalPrice)}</p>
-          <p className='disc-price'>{amountFormat(item.salePrice)}</p>  
-        </div>
-      </div>
-    )
-  })
-
   return (
     <div className="home-banner offers">
       <h4 className='banner-header offers'>Special Offers</h4>
       <ArrowButton direction={'previous'} maxPage={maxPage} page={page} setPage={setPage}/>
 
       <div className='offers-items'>
-        {SaleItems}
+        <ProductsDisplay productList={displayedItems}/>
       </div>
       
       <ArrowButton direction={'next'} maxPage={maxPage} page={page} setPage={setPage}/>
@@ -227,5 +213,18 @@ const CategoriesBanner = function () {
   )
 }
 
+const UnderFiveBanner = function () {
+  const {productsData} = useContext(HomePageContext);
+  const underFiveProducts = productsData.filter(item => Math.ceil(Number(item.salePrice)) < 5);
+
+  return (
+    <div className='home-banner under-five'>
+      <h4 className="banner-header under-five">Under $5</h4>
+      <div className="under-five-items">
+        <ProductsDisplay productList={underFiveProducts}/>
+      </div>
+    </div>
+  )
+}
 
 export default HomePage
