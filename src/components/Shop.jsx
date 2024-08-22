@@ -1,6 +1,6 @@
 // React
 import { useContext, useState, useRef, useEffect, createContext } from "react";
-import { NavLink, Outlet, useLoaderData, useOutletContext, useParams, useNavigate, useNavigation, useLocation } from "react-router-dom";
+import { Outlet, useLoaderData, useParams, useNavigate } from "react-router-dom";
 
 // Context
 import { PageContext } from "./App";
@@ -13,8 +13,6 @@ import { amountFormat, capitalizeString } from "../utilities/utilities";
 
 // Components
 import { NewIcon, AnimalIcon } from "./Icons";
-import LoadingScreen from "./LoadingScreen";
-
 
 const ShopContext = createContext({});
 
@@ -22,47 +20,48 @@ const Shop = function () {
   const { id ='catalog' } = useParams();
   const { productsData, categoriesData } = useLoaderData();
   const [filter, setFilter] = useState('all');
- 
+  const [shopItems, setShopItems] = useState(productsData);
+  const itemsPerPage = 36;
+
   return (
-    <ShopContext.Provider value={{id, productsData, categoriesData, filter, setFilter}}>
+    <ShopContext.Provider value={{id, productsData, categoriesData, filter, setFilter, shopItems, setShopItems, itemsPerPage}}>
       <div className={`shop-page`}>
         <Outlet/>
       </div>
     </ShopContext.Provider>
-    
   )
 }
 
 // Render the Shop catalog
 const ShopCatalog = function () {
-  const { filter, setFilter, productsData, categoriesData } = useContext(ShopContext);
-  const [shopItems, setShopItems] = useState(productsData);
+  const { filter, setFilter, productsData, categoriesData, setShopItems, itemsPerPage } = useContext(ShopContext);
+  const {category} = useParams();
   const [page, setPage] = useState(1);
   const [maxPage, setMaxPage] = useState(1);
-
-  const itemsPerPage = 36;
   const navigate = useNavigate();
-  const catalogRef = useRef(null);
-  
-  // Filter productsData on render
-  // Display a number of items (itemPerPage) per page
-  // useEffect(() => {
-  //   const startIndex = itemsPerPage * (page - 1);
-  //   const endIndex = (itemsPerPage * page);
-   
-  //   const filteredData = filter === 'all' ? productsData : productsData.filter(item => item.category === filter);
-  //   const itemsInPage = filteredData.slice(startIndex, endIndex);
-
-  //   const catalogPages = Math.ceil(filteredData.length / itemsPerPage);
-
-  //   setMaxPage(catalogPages);
-  //   setShopItems(itemsInPage);
-  // }, [filter, page, productsData]);
+ 
+  useEffect(() => {
+    !category ? setFilter('all') : setFilter(category);
+  },[])
 
   useEffect(() => {
-    const catalogPages = Math.ceil(productsData.length / itemsPerPage);
+    let filteredItems = productsData;
+    let pageRoute = 'page_1';
+    if (filter !== 'all') {
+      filteredItems = productsData.filter(item => item.category === filter);
+      pageRoute = `${filter}/page_1`;
+    }
+
+    const catalogPages = Math.ceil(filteredItems.length / itemsPerPage);
+
     setMaxPage(catalogPages);
-  }, []);
+    setShopItems(filteredItems);
+    setPage(1);
+
+    // Navigate to route
+    navigate(pageRoute);
+
+  }, [filter]);
 
   useEffect(() => {
     // Scroll to top on change page
@@ -71,27 +70,17 @@ const ShopCatalog = function () {
 
   // Categories filter side bar
   const CategoryFilterBar = function () {
-    
     const handleFilter = function (event) {
       const filterValue = event.target.value;
       
       // Don't run filter if same filter btn is pressed
       if (filterValue === filter) return;
 
-      if (filterValue === 'all') {
-        setShopItems(productsData);
-
-      } else {
-        const filteredData = productsData.filter(item => item.category === filterValue);
-        setShopItems(filteredData);
-      }
-
-      setPage(1);
-      setFilter(filterValue);
+      setFilter(filterValue);      
     }
 
     const FilterButtons = categoriesData.map((category) => {
-      const isActive = category === filter ? 'active' : '';
+      const isActive = category === filter && 'active';
       return (
         <button 
           className = {`filter-btn ${isActive}`}
@@ -126,42 +115,59 @@ const ShopCatalog = function () {
   // Page changer of shop catalog
   const PageChanger = function () {  
     const navigate = useNavigate();
-    
-    const handlePageChange = async function (event) {
-      const pageNumber = Number(event.target.value);
-      const pageRoute = `page_${pageNumber}`
-      
+
+    const handlePageChange = function (pageNumber, pageRoute) {
+      let finalRoute = pageRoute;
+      if (filter !== 'all') {
+        finalRoute = `${filter}/${pageRoute}`
+      }
       setPage(pageNumber);
-      navigate(pageRoute);
+      navigate(finalRoute);
+    }
+    
+    // Logic for changing page through the page nodes
+    const handleNodePageChange = async function (event) {
+      const pageNumber = Number(event.target.value);
+      const pageRoute = `page_${pageNumber}`;
+      
+      handlePageChange(pageNumber, pageRoute);
     }
 
-    let pageNodesArr = [];
-    for(let i = 1; i <= maxPage; i++) {
+    // Logic for changing page through the arrow button
+    const handleArrowPageChange = function (e) {
+      const direction = e.target.value;
+      const nextPage = direction === 'next' ? page + 1 : page - 1;
+      
+      if (nextPage === 0) return;
+      if (nextPage > maxPage) return;
+      
+      const pageRoute = `page_${nextPage}`;
+      handlePageChange(nextPage, pageRoute);
+    }
 
-      const isActive = i <= page ? 'active' : '';
-      const isCurrent = i === page ? 'current' : '';
+    const PageNodesButtons = function () {
+      let pageNodesArr = [];
+      for(let i = 1; i <= maxPage; i++) {
 
-      pageNodesArr.push(
-        <button key={i}  value={i} onClick={handlePageChange}
-          className = {`page-node ${isActive} ${isCurrent}`}
-          disabled = {page === i ? true : false}
-        >
-        </button>
+        const isActive = i <= page && 'active';
+        const isCurrent = i === page && 'current';
+
+        pageNodesArr.push(
+          <button key={i}  value={i} onClick={handleNodePageChange}
+            className = {`page-node ${isActive} ${isCurrent}`}
+            disabled = {page === i ? true : false}
+          >
+          </button>
+        )
+      }
+      return (
+        <div className="page-nodes"> 
+          {pageNodesArr} 
+        </div>
       )
     }
-    
-    const ArrowButton = function ({direction}) {
-      const handlePageChangeAlt = function (e) {
-        const direction = e.target.value;
-        const nextPage = direction === 'next' ? page + 1 : page - 1;
-        
-        if (nextPage === 0) return;
-        if (nextPage > maxPage) return;
-        
-        setPage(nextPage);
-        navigate(`page_${nextPage}`);
-      }
 
+    const ArrowButton = function ({direction}) {
       let disabled = false
       if (direction === 'previous' && page <= 1) {
         disabled = true;
@@ -170,7 +176,7 @@ const ShopCatalog = function () {
       }
       
       return (
-        <button value={direction} onClick={handlePageChangeAlt} className="page-btn alt"
+        <button value={direction} onClick={handleArrowPageChange} className="page-btn alt"
           disabled = {disabled}
         >
           <NewIcon assignClass={direction}/>
@@ -181,67 +187,28 @@ const ShopCatalog = function () {
     return (
       <div className="page-btns-cont">
         <ArrowButton direction={'previous'}/>
-        {pageNodesArr}
+        <PageNodesButtons/>
         <ArrowButton direction={'next'}/>
       </div>
     )
  }
 
-  // Display products in the catalog
-  // const Products = function () {
-  //   const productDisplay = shopItems.map(item => {
-  //     const isOnSale = item.isOnSale === "1";
-  //     return (
-  //       <div key={item.gameID} className='shop-item' data-gameid={item.gameID} 
-  //         onClick={() => navigate(item.gameID)}
-  //       >
-  //         <img src={item.header} alt={`item-${item.gameID} preview`} className='item-preview'/>
-  //         <p title={item.title} className='catalog-desc title'>{item.title}</p>
-  
-  //         <div className={`catalog-price ${isOnSale ? 'sale' : ''}`}>
-  //           {isOnSale && <p className='discount'>{`-${Number.parseFloat(item.savings).toPrecision(2)}%`}</p>}
-  //           {isOnSale && <p className='normal-price'>{amountFormat(item.normalPrice)}</p>}
-  //           <p className='disc-price'>{amountFormat(item.salePrice)}</p>
-  //         </div>
-  //       </div>
-  //     )
-  //   })
-
-  //   return (
-  //     <div className={`shop-catalog`} ref={catalogRef}>
-  //       {productDisplay}
-  //     </div>
-  //   )
-  // }
-  
   return(
     <div className="catalog-page">
       <h2 className='shop-header'>Catalog</h2>
-
       <CategoryFilterBar/>
-    
       <Outlet/>
-
       <PageChanger/>
     </div>
   )
 } 
 
-// Products per page on the catalog
-const ProductsOnPage = function () {
-  const { page } = useParams();
-  const {productsData} = useContext(ShopContext);
-  const pageNumberRegex = /(?<=page_)\d+/;
-  const pageNumber = Number(page.match(pageNumberRegex)[0]);
- 
-  const itemsPerPage = 36;
-  const startIndex = itemsPerPage * (pageNumber - 1);
-  const endIndex = (itemsPerPage * pageNumber);
-  const itemsInPage = productsData.slice(startIndex, endIndex);
-
+// Create products for display in catalog 
+// Takes list of products (array) as argument
+const ProductsDisplay = function ({productList}) {
   const navigate = useNavigate();
 
-  const productDisplay = itemsInPage.map(item => {
+  const productDisplay = productList.map(item => {
     const isOnSale = item.isOnSale === "1";
     return (
       <div key={item.gameID} className='shop-item' data-gameid={item.gameID} 
@@ -250,7 +217,7 @@ const ProductsOnPage = function () {
         <img src={item.header} alt={`item-${item.gameID} preview`} className='item-preview'/>
         <p title={item.title} className='catalog-desc title'>{item.title}</p>
 
-        <div className={`catalog-price ${isOnSale ? 'sale' : ''}`}>
+        <div className={`catalog-price ${isOnSale && 'sale'}`}>
           {isOnSale && <p className='discount'>{`-${Number.parseFloat(item.savings).toPrecision(2)}%`}</p>}
           {isOnSale && <p className='normal-price'>{amountFormat(item.normalPrice)}</p>}
           <p className='disc-price'>{amountFormat(item.salePrice)}</p>
@@ -260,8 +227,25 @@ const ProductsOnPage = function () {
   })
 
   return (
+    <>{productDisplay}</>
+  )
+}
+
+// Products per page on the catalog
+const ProductsOnPage = function () {
+  const { shopItems, itemsPerPage } = useContext(ShopContext);
+  const { page } = useParams();
+
+  const pageNumberRegex = /(?<=page_)\d+/;
+  const pageNumber = Number(page.match(pageNumberRegex)[0]);
+
+  const startIndex = itemsPerPage * (pageNumber - 1);
+  const endIndex = (itemsPerPage * pageNumber);
+  const itemsInPage = shopItems.slice(startIndex, endIndex);
+
+  return (
     <div className={`shop-catalog`}>
-      {productDisplay}
+      <ProductsDisplay productList={itemsInPage}/>
     </div>
   )
 }
@@ -269,11 +253,7 @@ const ProductsOnPage = function () {
 
  // Render a specific item page (start)
 const ItemPage = function () {
-  return (
-    <>
-      <Outlet context/>
-    </>
-  )
+  return ( <> <Outlet context/> </> )
 }
 
 const ProductDetails = function () {
@@ -307,7 +287,7 @@ const ProductDetails = function () {
     }
 
     const handleClose = function () {
-      setItemQuantity(i => i = 0);
+      setItemQuantity(0);
       preCartRef.current.close();
     }
 
@@ -361,7 +341,7 @@ const ProductDetails = function () {
 
             <p className="pre-cart title">{itemData.title}</p>
 
-            <div className={`pre-cart price ${isOnSale ? 'sale' : ''}`}>
+            <div className={`pre-cart price ${isOnSale && 'sale'}`}>
               <p className='label'>Price</p>
 
               {isOnSale && <p className='discount'>{`-${Number.parseFloat(itemData.savings).toPrecision(2)}%`}</p>}
