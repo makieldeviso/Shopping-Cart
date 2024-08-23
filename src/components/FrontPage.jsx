@@ -44,8 +44,9 @@ const SpecialOffers = function () {
     <>
       <ProductsBanner
         assignClass={'offers'}
-        assignTitle={'Special Offers'}
+        assignTitle={'SPECIAL OFFERS'}
         assignItemsPerPage={itemsPerPage}
+        assignRoute={'/shop/catalog/On sale/page_1'}
         productsList={onSaleItems}
       />
     </>
@@ -53,6 +54,8 @@ const SpecialOffers = function () {
 }
 
 const HeroBanner = function () {
+  const navigate = useNavigate();
+
   return (
       <div className="home-banner hero">
         <div className="hero-text">
@@ -62,6 +65,10 @@ const HeroBanner = function () {
             <span>ONLINE</span>
           </p>
           <p className='sub-text'>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Blanditiis!</p>
+          <button className="shop-btn"
+            onClick={() => navigate('/shop/catalog/page_1')}
+            >Shop now
+          </button>
         </div>
         <img src={heroImg} alt='' className='hero-image'/>
     </div>
@@ -95,7 +102,7 @@ const CategoriesBanner = function () {
   const categories = displayedItems.map(category => {
     return (
       <div className='category-item' key={category}
-        onClick={() => navigate(`../shop/catalog/${category}/page_1`)}
+        onClick={() => navigate(`/shop/catalog/${category}/page_1`)}
       >
         <div className='content'>
           <AnimalImage assignClass={category}/>
@@ -107,7 +114,7 @@ const CategoriesBanner = function () {
 
   return (
     <div className='home-banner categories'>
-      <h4 className="banner-header categories">Categories</h4>
+      <h4 className="banner-header categories">CATEGORIES</h4>
       <ArrowButton direction={'previous'} maxPage={maxPage} page={page} setPage={setPage}/>
       <div className="category-items">
         {categories}
@@ -126,8 +133,9 @@ const UnderFiveBanner = function () {
     <>
       <ProductsBanner
         assignClass={'under-five'}
-        assignTitle={'Under $5'}
+        assignTitle={'UNDER $5'}
         assignItemsPerPage={3}
+        assignRoute={`/shop/catalog/Under $5/page_1`}
         productsList={underFiveProducts}
       />
     </>

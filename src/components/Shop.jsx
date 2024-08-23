@@ -14,6 +14,7 @@ import { amountFormat, capitalizeString } from "../utilities/utilities";
 // Components
 import { NewIcon, AnimalIcon } from "./Icons";
 import { ProductsDisplay } from "./ProductsDisplay";
+import { categories } from "../utilities/products";
 
 const ShopContext = createContext({});
 
@@ -53,9 +54,18 @@ const ShopCatalog = function () {
   },[category, catalogPage])
 
   useEffect(() => {
-    let filteredItems = productsData;
-    
-    if (filter !== 'all') {
+    let filteredItems = [];
+
+    if (filter === 'all') {
+      filteredItems = productsData;
+
+    } else if (filter === 'On sale' ) {
+      filteredItems = productsData.filter(item => item.isOnSale === '1');
+
+    } else if (filter === 'Under $5') {
+      filteredItems = productsData.filter(item => Math.ceil(Number(item.salePrice)) < 5);
+
+    } else {
       filteredItems = productsData.filter(item => item.category === filter);
     }
 
@@ -88,13 +98,16 @@ const ShopCatalog = function () {
       navigate(pageRoute);
     }
 
-    const FilterButtons = categoriesData.map((category) => {
+    const filtersArray = ['On sale', 'Under $5', ...categories ];
+
+    const FilterButtons = filtersArray.map((category) => {
       const isActive = category === filter && 'active';
+      
       return (
         <button 
           className = {`filter-btn ${isActive}`}
           value = {category} key={crypto.randomUUID()}
-          aria-label = {`Filter catalog with ${category} category`}
+          aria-label = {`Filter catalog with ${category}`}
           title = {capitalizeString(category)}
           onClick = {handleFilter}
         >
@@ -216,9 +229,9 @@ const ShopCatalog = function () {
 const ProductsOnPage = function () {
   const { shopItems, itemsPerPage } = useContext(ShopContext);
   const { catalogPage } = useParams();
-
+  
   const pageNumberRegex = /(?<=page_)\d+/;
-  const pageNumber = Number(catalogPage.match(pageNumberRegex)[0]);
+  const pageNumber = catalogPage ? Number(catalogPage.match(pageNumberRegex)[0]) : 1;
 
   const startIndex = itemsPerPage * (pageNumber - 1);
   const endIndex = (itemsPerPage * pageNumber);

@@ -155,6 +155,7 @@ header {
 .home-banner {
   max-width: 1024px;
   min-width: 1024px;
+  position: relative;
 }
 
 .banner-header {
@@ -165,6 +166,7 @@ header {
   padding: var(--padding);
   text-shadow: 0 0 5px var(--darkest-color);
   margin-bottom: var(--margin);
+  width: max-content;
 }
 /* Home Banner common (end)*/
 
@@ -184,7 +186,7 @@ header {
 .hero-text {
  display: grid;
  width: 100%;
- grid-template-columns: 1fr;
+ grid-template-columns: 1fr max-content;
  grid-template-rows: max-content max-content;
  gap: var(--margin);
  width: 100%;
@@ -194,10 +196,13 @@ header {
 }
 
 .slogan-text{
+  grid-column: 1 / 3;
+  grid-row: 1 / 2;
+
   color: var(--lightest-color);
   width: 100%;
   font-family: var(--special-font);
-  font-size: 3rem;
+  font-size: 2.5rem;
   font-weight: bold;
   
   background-color: var(--darker-color);
@@ -218,12 +223,34 @@ header {
 }
 
 .sub-text {
+  grid-column: 1 / 2;
+  grid-row: 2 / 3;
+
   padding: calc(var(--padding) * 3);
   padding-top: 0;
   width: 70%;
   color: var(--lightest-color);
-  font-size: 1.5rem;
+  font-size: 1rem;
 }
+
+.hero .shop-btn {
+  grid-column: 2 / 3;
+  grid-row: 2 / 3;
+
+  font-size: 1rem;
+  font-family: var(--title-font);
+  padding: var(--padding);
+  width: max-content;
+  height: max-content;
+  align-self: end;
+  margin: var(--margin);
+  color: var(--lightest-color);
+  text-shadow: 0 0 3px var(--darkest-color);
+  background-color: var(--triad-color-1);
+  border: 1px solid transparent;
+  
+}
+
 
 .hero-image {
   width: 100%;
@@ -235,16 +262,16 @@ header {
 /* Hero (end) */
 
 /* Offers (start) */
-.home-banner.offers {
+.home-banner.offers,
+.home-banner.under-five {
   margin: 75px auto;
-
   display: grid;
-  grid-template-columns: max-content 1fr max-content;
+  grid-template-columns: max-content 1fr 1fr max-content;
   grid-auto-rows: max-content;
   grid-template-areas: 
-    ". header header"
-    "previous items next"
-    ". page-nodes .";
+    ". header more-btn ."
+    "previous items items next"
+    ". page-nodes page-nodes .";
   
   align-items: center;
 }
@@ -267,6 +294,27 @@ header {
 
 .page-nodes {
   grid-area: page-nodes;
+}
+
+.more-btn {
+  grid-area: more-btn;
+  font-family: var(--title-font);
+  font-size: 0.8rem;
+  width: max-content;
+  justify-self: end;
+  align-self: center;
+  padding: 5px 10px;
+  color: var(--lightest-color);
+  border: 1px solid var(--lightest-color);
+  background-color: transparent;
+  filter: opacity(0.5);
+  transition: 200ms;
+}
+
+.more-btn:hover {
+  filter: opacity(1);
+  color: var(--base-color);
+  border: 1px solid var(--base-color);
 }
 
 .offers-items {
@@ -332,7 +380,7 @@ header {
   padding: var(--padding);
   display: flex;
   justify-content: center;
-  gap: 30px;
+  gap: 20px;
   margin: var(--margin);
 }
 
@@ -467,19 +515,7 @@ header {
 }
 /* Categories - Home banner - (end)  */
 
-/* Under Five banner (start) */
-.home-banner.under-five {
-  margin: 75px auto;
-  display: grid;
-  grid-template-columns: max-content 1fr max-content;
-  grid-auto-rows: max-content;
-  grid-template-areas:
-      ". header header"
-      "previous items next"
-      ". page-nodes .";
-  align-items: center;
-}
-
+/* Under Five banner (start) */  
 .under-five-items {
   grid-area: items;
 
@@ -810,8 +846,8 @@ button span {
 }
 
 .page-node {
-  width: 15px;
-  height: 15px;
+  width: 10px;
+  height: 10px;
   font-size: 1rem;
   background: transparent;
   border: 2px solid var(--base-color);

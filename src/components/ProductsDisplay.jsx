@@ -94,7 +94,7 @@ ProductsDisplay.propTypes = {
   productsList: PropTypes.array
 }
 
-const ProductsBanner = function ({assignClass, assignTitle, assignItemsPerPage, productsList}) {
+const ProductsBanner = function ({assignClass, assignTitle, assignItemsPerPage, assignRoute, productsList}) {
   const [displayedItems,  setDisplayedItems] = useState([]);
   const [page, setPage] = useState(1);
   const [maxPage, setMaxPage]= useState(1);
@@ -120,6 +120,12 @@ const ProductsBanner = function ({assignClass, assignTitle, assignItemsPerPage, 
   return (
     <div className={`home-banner ${assignClass}`}>
       <h4 className={`banner-header ${assignClass}`}>{assignTitle}</h4>
+
+      <button className='more-btn'
+        onClick={() => navigate(assignRoute)}
+        >BROWSE MORE
+      </button>
+
       <ArrowButton direction={'previous'} maxPage={maxPage} page={page} setPage={setPage}/>
 
       <div className={`banner-products ${assignClass}-items`}>
