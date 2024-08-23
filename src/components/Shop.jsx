@@ -13,7 +13,7 @@ import { amountFormat, capitalizeString } from "../utilities/utilities";
 
 // Components
 import { NewIcon, AnimalIcon } from "./Icons";
-import ProductsDisplay from "./ProductsDisplay";
+import { ProductsDisplay } from "./ProductsDisplay";
 
 const ShopContext = createContext({});
 
