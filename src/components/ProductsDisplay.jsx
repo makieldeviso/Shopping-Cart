@@ -64,7 +64,7 @@ const PageNodes = function ({maxPage, page, setPage}) {
 
 // Create products for display
 // Takes list of products (array) as argument
-const ProductsDisplay = function ({productsList}) {
+const ProductsDisplay = function ({productsList, rated}) {
   const navigate = useNavigate();
 
   const productDisplay = productsList.map(item => {
@@ -75,6 +75,7 @@ const ProductsDisplay = function ({productsList}) {
       >
         <img src={item.header} alt={`item-${item.gameID} preview`} className='item-preview'/>
         <p title={item.title} className='catalog-desc title'>{item.title}</p>
+        {rated && <div className='rating'><p>{item.steamRatingPercent}</p></div>}
 
         <div className={`catalog-price ${isOnSale && 'sale'}`}>
           {isOnSale && <p className='discount'>{`-${Number.parseFloat(item.savings).toPrecision(2)}%`}</p>}
@@ -91,7 +92,8 @@ const ProductsDisplay = function ({productsList}) {
 }
 
 ProductsDisplay.propTypes = {
-  productsList: PropTypes.array
+  productsList: PropTypes.array,
+  rated: PropTypes.bool
 }
 
 const ProductsBanner = function ({assignClass, assignTitle, assignItemsPerPage, assignRoute, productsList}) {
@@ -129,7 +131,10 @@ const ProductsBanner = function ({assignClass, assignTitle, assignItemsPerPage, 
       <ArrowButton direction={'previous'} maxPage={maxPage} page={page} setPage={setPage}/>
 
       <div className={`banner-products ${assignClass}-items`}>
-        <ProductsDisplay productsList={displayedItems}/>
+        <ProductsDisplay 
+          productsList={displayedItems} 
+          rated={assignClass === 'best-rated' ? true : false}
+        />
       </div>
       
       <ArrowButton direction={'next'} maxPage={maxPage} page={page} setPage={setPage}/>

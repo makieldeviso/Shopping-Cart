@@ -65,6 +65,9 @@ const ShopCatalog = function () {
     } else if (filter === 'Under $5') {
       filteredItems = productsData.filter(item => Math.ceil(Number(item.salePrice)) < 5);
 
+    } else if (filter === 'Best rated') {
+      filteredItems = productsData.filter(item => Number(item.steamRatingPercent) >= 90 )
+
     } else {
       filteredItems = productsData.filter(item => item.category === filter);
     }
@@ -98,7 +101,7 @@ const ShopCatalog = function () {
       navigate(pageRoute);
     }
 
-    const filtersArray = ['On sale', 'Under $5', ...categories ];
+    const filtersArray = ['On sale', 'Under $5', 'Best rated', ...categories ];
 
     const FilterButtons = filtersArray.map((category) => {
       const isActive = category === filter && 'active';

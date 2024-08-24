@@ -23,33 +23,20 @@ const HomePage = function () {
     <>
       <HeroBanner/>
       <SpecialOffers/>
+      <BestRatedBanner/>
+      <TextBanner
+        assignSlogan={'ENJOY YOUR QUALITY TIME WITH QUALITY GAMES'} 
+        assignSubtext={'Respect your gaming time with our catalog of best rated games.'}
+      />
+      
       <CategoriesBanner/>
       <UnderFiveBanner/>
-    </>
-    </HomePageContext.Provider>
-  )
-}
-
-const SpecialOffers = function () {
-  const {productsData} = useContext(HomePageContext);
-  const itemsPerPage = 6;
-
-  const onSaleItems = productsData.filter(item => item.isOnSale === '1');
-  onSaleItems.sort((a, b) => b.savings - a.savings); // Sort from largest discount
-
-  const leastDiscount = onSaleItems.length % itemsPerPage;
-  onSaleItems.splice(onSaleItems.length - leastDiscount);
-
-  return (
-    <>
-      <ProductsBanner
-        assignClass={'offers'}
-        assignTitle={'SPECIAL OFFERS'}
-        assignItemsPerPage={itemsPerPage}
-        assignRoute={'/shop/catalog/On sale/page_1'}
-        productsList={onSaleItems}
+      <TextBanner
+        assignSlogan={"GAMERS NEVER STOP"} 
+        assignSubtext={'Buy games without hurting your pockets.'}
       />
     </>
+    </HomePageContext.Provider>
   )
 }
 
@@ -71,6 +58,68 @@ const HeroBanner = function () {
           </button>
         </div>
         <img src={heroImg} alt='' className='hero-image'/>
+    </div>
+  )
+}
+
+const SpecialOffers = function () {
+  const {productsData} = useContext(HomePageContext);
+  const itemsPerPage = 6;
+
+  const onSaleItems = productsData.filter(item => item.isOnSale === '1');
+  onSaleItems.sort((a, b) => b.savings - a.savings); // Sort from largest discount
+
+  if (onSaleItems.length > 30) {
+    onSaleItems.splice(30);
+  } else {
+    const leastDiscount = onSaleItems.length % itemsPerPage;
+    onSaleItems.splice(onSaleItems.length - leastDiscount);
+  }
+
+  return (
+    <>
+      <ProductsBanner
+        assignClass={'offers'}
+        assignTitle={'SPECIAL OFFERS'}
+        assignItemsPerPage={itemsPerPage}
+        assignRoute={'/shop/catalog/On sale/page_1'}
+        productsList={onSaleItems}
+      />
+    </>
+  )
+}
+
+const BestRatedBanner = function () {
+  const {productsData} = useContext(HomePageContext);
+  const itemsPerPage = 2;
+  const bestRated = productsData.filter(item => Number(item.steamRatingPercent) >= 90 );
+  bestRated.sort((a, b) => Number(b.steamRatingPercent) - Number(a.steamRatingPercent) );
+
+  if (bestRated.length > 10) {
+    bestRated.splice(10);
+  } else {
+    const leastDiscount = bestRated.length % itemsPerPage;
+    bestRated.splice(bestRated.length - leastDiscount);
+  }
+
+  return (
+    <>
+      <ProductsBanner
+        assignClass={'best-rated'}
+        assignTitle={'BEST RATED GAMES'}
+        assignItemsPerPage={itemsPerPage}
+        assignRoute={'/shop/catalog/Best rated/page_1'}
+        productsList={bestRated}
+      />
+    </>
+  )
+}
+
+const TextBanner = function ({assignSlogan, assignSubtext}) {
+  return (
+    <div className="home-banner text">
+      <p className="slogan-text">{assignSlogan}</p>
+      <p className="sub-text">{assignSubtext}</p>
     </div>
   )
 }
@@ -127,8 +176,15 @@ const CategoriesBanner = function () {
 
 const UnderFiveBanner = function () {
   const {productsData} = useContext(HomePageContext);
-  const underFiveProducts = productsData.filter(item => Math.ceil(Number(item.salePrice)) < 5);
+  let underFiveProducts = productsData.filter(item => Math.ceil(Number(item.salePrice)) < 5);
 
+  if (underFiveProducts.length > 15 ) {
+    underFiveProducts.splice(15);
+  } else {
+    const extra = underFiveProducts.length % 3;
+    underFiveProducts.splice(underFiveProducts.length - extra);
+  }
+  
   return (
     <>
       <ProductsBanner

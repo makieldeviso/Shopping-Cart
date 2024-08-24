@@ -155,6 +155,7 @@ header {
 .home-banner {
   max-width: 1024px;
   min-width: 1024px;
+  margin: auto;
   position: relative;
 }
 
@@ -251,7 +252,6 @@ header {
   
 }
 
-
 .hero-image {
   width: 100%;
   height: 100%;
@@ -260,6 +260,22 @@ header {
   object-position: center right;
 }
 /* Hero (end) */
+
+/* Text banner (start) */
+.home-banner.text .slogan-text {
+  justify-content: center;
+  text-align: center;
+  color: var(--darker-color);
+  background-color: transparent;
+}
+
+.home-banner.text .sub-text {
+  text-align: center;
+  width: 100%;
+}
+
+
+/* Text banner (end) */
 
 /* Offers (start) */
 .home-banner.offers,
@@ -400,7 +416,7 @@ header {
     ". header header"
     "previous items next"
     ". page-nodes .";
-  margin: 0 auto 75px;
+  margin: 75px auto 75px;
 }
 
 .categories .banner-header {
@@ -516,6 +532,10 @@ header {
 /* Categories - Home banner - (end)  */
 
 /* Under Five banner (start) */  
+.home-banner.offers, .home-banner.under-five {
+  margin-bottom: 0;
+}
+
 .under-five-items {
   grid-area: items;
 
@@ -526,9 +546,69 @@ header {
   grid-template-columns: repeat(3, 1fr);
   gap: var(--margin);
 }
-
-
 /* Under Five banner (end) */
+
+/* Best Rated banner (start) */
+
+.best-rated-items {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--margin);
+  min-height: 260px;
+}
+
+.home-banner.best-rated {
+  margin: 75px auto 0;
+  display: grid;
+  grid-template-columns: max-content 1fr 1fr max-content;
+  grid-auto-rows: max-content;
+  grid-template-areas: 
+    ". header more-btn ."
+    "previous items items next"
+    ". page-nodes page-nodes .";
+  
+  align-items: center;
+}
+
+.best-rated-items .shop-item {
+  position: relative;
+}
+
+.best-rated-items .item-preview {
+  height: 200px;
+  max-height: 200px; 
+}
+
+.banner-products.best-rated-items .catalog-desc.title{
+  visibility: visible;
+}
+
+.rating {
+  position: absolute;
+  background-color: var(--triad-color-1);
+  padding: 3px;
+  top: var(--margin);
+  right: var(--margin);
+  filter: drop-shadow(0 0 10px var(--darkest-color));
+  height: 60px;
+  width: 60px;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+}
+
+.rating p {
+  font-size: 1.5rem;
+  font-family: var(--title-font);
+  padding: var(--padding);
+  background-color: var(--darkest-color);
+  width: 100%;
+  height: 100%;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Best Rated banner (end) */
 
 /* Homepage (end) */
 
@@ -632,7 +712,7 @@ button span {
 
 .item-preview {
   grid-area: img;
-  min-width: 300px;
+  /* min-width: 300px; */
   max-height: 160px;
   width: 100%;
   object-fit: cover;
@@ -646,7 +726,7 @@ button span {
   background-color: rgba(255, 245, 224, 0.1);
   min-height: max-content;
   height: max-content;
-  min-height: 40px;
+  min-height: 50px;
   margin: 8px;
   align-items: center;
 }
