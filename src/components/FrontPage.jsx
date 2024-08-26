@@ -9,7 +9,7 @@ import { capitalizeString } from "../utilities/utilities";
 import heroImg from '../assets/hero-2.jpg';
 
 // Components
-import { AnimalImage } from "./Icons";
+import { AnimalImage, NewIcon } from "./Icons";
 import { ProductsBanner, ArrowButton, PageNodes } from "./ProductsDisplay";
 
 // Context
@@ -35,6 +35,7 @@ const HomePage = function () {
         assignSlogan={"GAMERS NEVER STOP"} 
         assignSubtext={'Buy games without hurting your pockets.'}
       />
+      <AboutBanner/>
     </>
     </HomePageContext.Provider>
   )
@@ -197,5 +198,47 @@ const UnderFiveBanner = function () {
     </>
   )
 }
+
+const AboutBanner = function () {
+
+  const AboutContent = function ({assignIcon, assignHeader, assignText}) {
+    return (
+      <div className="about-detail">
+          <div className="about-icon">
+            {assignIcon}
+          </div>
+          <h5 className="about-header">{assignHeader}</h5>
+          <p>{assignText}</p>
+        </div>
+    )
+  }
+
+  return (
+    <div className="home-banner about">
+      <h4 className="banner-header about">LEVEL UP!</h4>
+      <div className='about-content'>
+
+        <AboutContent
+          assignIcon={<NewIcon assignClass={'cash'}/>}
+          assignHeader={'Best Deals'}
+          assignText={'We offer competitive offers on our games catalog. Sales are frequently updated.'}
+        />
+
+        <AboutContent
+          assignIcon={<NewIcon assignClass={'deliver'}/>}
+          assignHeader={'Safe Delivery'}
+          assignText={'Physical games means delicate discs. A-TIER games insures that your orders are delivered to your doorsteps with proper handling.'}
+        />
+
+        <AboutContent
+          assignIcon={<NewIcon assignClass={'stars'}/>}
+          assignHeader={'Authentic'}
+          assignText={'Physical games sent to customers are authentic, brand new and sealed copies. Fresh from the box!'}
+        />
+      </div>
+    </div>
+  )
+}
+
 
 export default HomePage

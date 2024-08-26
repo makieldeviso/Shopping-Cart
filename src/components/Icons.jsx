@@ -8,6 +8,7 @@ import crabIcon from '../assets/crab.svg'
 import duckIcon from '../assets/duck.svg'
 import penguinIcon from '../assets/penguin.svg'
 import spiderIcon from '../assets/spider.svg'
+import logoIcon from '../assets/logo.svg'
 
 import goatImage from '../assets/goat-img.jpg'
 import chickenImage from '../assets/chicken-img.jpg'
@@ -26,7 +27,8 @@ const importIcons = {
   crab: crabIcon,
   duck: duckIcon,
   penguin: penguinIcon,
-  spider: spiderIcon
+  spider: spiderIcon,
+  logo: logoIcon
 }
 
 const importImage = {
@@ -58,42 +60,42 @@ import {
   mdiPackageVariantClosedCheck,
   mdiMinus,
   mdiChevronRight,
-  mdiChevronLeft  
+  mdiChevronLeft,
+  mdiCopyright,
+  mdiGithub,
+  mdiCashMultiple,
+  mdiCreationOutline  
 } from '@mdi/js';
 
 const NewIcon = function ({assignClass}) {
   let assignPath;
   switch (assignClass) {
-    case 'delete':
-      assignPath = mdiTrashCanOutline;
-      break;
-  
-    case 'edit':
-      assignPath = mdiPencilOutline;
+    case 'box-empty':
+      assignPath = mdiPackageVariant;
       break;
     
-    case 'line':
-      assignPath = mdiMinus;
+    case 'cash':
+      assignPath = mdiCashMultiple;
+      break;
+
+    case 'cart':
+      assignPath = mdiCartOutline;
+      break;
+    
+    case 'check':
+      assignPath = mdiCheck;
       break;
 
     case 'close':
       assignPath = mdiClose;
       break;
-
-    case 'check':
-      assignPath = mdiCheck;
+    
+    case 'copyright':
+      assignPath = mdiCopyright;
       break;
 
-    case 'location':
-      assignPath = mdiMapMarkerOutline;
-      break;
-
-    case 'profile':
-      assignPath = mdiAccountOutline;
-      break;
-
-    case 'send':
-      assignPath = mdiCubeSend;
+    case 'delete':
+      assignPath = mdiTrashCanOutline;
       break;
     
     case 'deliver':
@@ -104,32 +106,52 @@ const NewIcon = function ({assignClass}) {
       assignPath = mdiPackageVariantClosedCheck;
       break;
 
-    case 'shop':
-      assignPath = mdiStorefrontOutline;
-      break;
-    
-    case 'cart':
-      assignPath = mdiCartOutline;
+    case 'edit':
+      assignPath = mdiPencilOutline;
       break;
 
-    case 'box-empty':
-      assignPath = mdiPackageVariant;
-      break;
-
-    case 'truck-empty':
-      assignPath = mdiTruckOutline;
-      break;
-    
     case 'empty':
       assignPath = mdiBorderNoneVariant;
       break;
 
-    case 'previous':
-      assignPath = mdiChevronLeft;
+    case 'github':
+      assignPath = mdiGithub;
+      break;
+  
+    case 'line':
+      assignPath = mdiMinus;
+      break;
+
+    case 'location':
+      assignPath = mdiMapMarkerOutline;
       break;
 
     case 'next':
       assignPath = mdiChevronRight;
+      break;
+        
+    case 'previous':
+      assignPath = mdiChevronLeft;
+      break;
+
+    case 'profile':
+      assignPath = mdiAccountOutline;
+      break;
+
+    case 'send':
+      assignPath = mdiCubeSend;
+      break;
+    
+    case 'shop':
+      assignPath = mdiStorefrontOutline;
+      break;
+
+    case 'stars':
+      assignPath = mdiCreationOutline;
+      break;
+    
+    case 'truck-empty':
+      assignPath = mdiTruckOutline;
       break;
   
     default:

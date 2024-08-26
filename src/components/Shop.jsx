@@ -250,6 +250,11 @@ const ProductsOnPage = function () {
 
  // Render a specific item page (start)
 const ItemPage = function () {
+  useEffect(() => {
+    // Scroll to top on change page
+    window.scroll({top: 0, behavior:'instant'});
+  }, [])
+
   return ( <> <Outlet context/> </> )
 }
 

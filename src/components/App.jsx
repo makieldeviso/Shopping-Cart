@@ -1,12 +1,11 @@
 // React
-import { useState, createContext, useRef, useEffect } from "react";
-import { Outlet, useLoaderData, useNavigation } from "react-router-dom";
+import { useState, createContext } from "react";
+import { Outlet, useNavigation } from "react-router-dom";
 import LoadingScreen from "./LoadingScreen";
-
-import { getProductsData } from "../utilities/DataFetch";
 
 // Components
 import Header from "./Header";
+import Footer from "./Footer";
 
 export const PageContext = createContext();
 
@@ -21,6 +20,7 @@ const App = function () {
         <Outlet/>
       </main>
       {navigation.state === 'loading' && <LoadingScreen/>}
+      <Footer/>
     </PageContext.Provider>
   )
 }

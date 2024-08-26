@@ -4,6 +4,7 @@ import { NavLink } from "react-router-dom"
 
 // Components
 import { NewIcon } from "./Icons"
+import { AnimalIcon } from "./Icons"
 
 // Data fetch
 import { getProfileData } from "../utilities/DataFetch"
@@ -14,12 +15,11 @@ import { PageContext } from "./App"
 const PageBanner = function () {
   return (
     <div className="page-banner">
-      <h1 className='page-title'>
         <NavLink to='/'>
-        <span>A-TIER</span>
-        <span>.com</span>
+          <AnimalIcon assignClass={'logo'}/>
+          <span className="page-title">A-TIER.com</span>
+          <span className='page-subtitle'>Physical Games Store</span>
         </NavLink>
-      </h1>
     </div>
   )
 }
