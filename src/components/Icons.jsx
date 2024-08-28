@@ -9,6 +9,9 @@ import duckIcon from '../assets/duck.svg'
 import penguinIcon from '../assets/penguin.svg'
 import spiderIcon from '../assets/spider.svg'
 import logoIcon from '../assets/logo.svg'
+import saleIcon from '../assets/sale.svg'
+import bestIcon from '../assets/best.svg'
+import dollarIcon from '../assets/dollar.svg'
 
 import goatImage from '../assets/goat-img.jpg'
 import chickenImage from '../assets/chicken-img.jpg'
@@ -28,7 +31,10 @@ const importIcons = {
   duck: duckIcon,
   penguin: penguinIcon,
   spider: spiderIcon,
-  logo: logoIcon
+  logo: logoIcon,
+  'On sale': saleIcon,
+  'Best rated': bestIcon,
+  'Under $5': dollarIcon
 }
 
 const importImage = {
@@ -64,7 +70,7 @@ import {
   mdiCopyright,
   mdiGithub,
   mdiCashMultiple,
-  mdiCreationOutline  
+  mdiCreationOutline, 
 } from '@mdi/js';
 
 const NewIcon = function ({assignClass}) {
@@ -137,7 +143,7 @@ const NewIcon = function ({assignClass}) {
     case 'profile':
       assignPath = mdiAccountOutline;
       break;
-
+    
     case 'send':
       assignPath = mdiCubeSend;
       break;
@@ -174,7 +180,7 @@ NewIcon.propTypes = {
   assignClass: PropTypes.string
 }
 
-const AnimalIcon = function ({assignClass}) {
+const CategoryIcon = function ({assignClass}) {
   
   return (
     <img src={importIcons[assignClass]} alt="" className={`animal-icon ${assignClass}`}/>
@@ -188,4 +194,4 @@ const AnimalImage = function ({assignClass}) {
   )
 } 
 
-export { NewIcon, AnimalIcon, AnimalImage }
+export { NewIcon, CategoryIcon, AnimalImage }

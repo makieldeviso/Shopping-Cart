@@ -1,12 +1,13 @@
 // React
 import { useState, createContext } from "react";
 import { Outlet, useNavigation } from "react-router-dom";
-import LoadingScreen from "./LoadingScreen";
+import { LoadingScreen } from "./LoadingScreen";
 
 // Components
 import Header from "./Header";
 import Footer from "./Footer";
 
+// Context
 export const PageContext = createContext();
 
 const App = function () {

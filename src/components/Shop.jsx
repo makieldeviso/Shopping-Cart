@@ -12,9 +12,10 @@ import { addToCartData, getProfileData } from "../utilities/DataFetch";
 import { amountFormat, capitalizeString } from "../utilities/utilities";
 
 // Components
-import { NewIcon, AnimalIcon } from "./Icons";
+import { NewIcon, CategoryIcon } from "./Icons";
 import { ProductsDisplay } from "./ProductsDisplay";
 import { categories } from "../utilities/products";
+import { LoadingScreen2 } from "./LoadingScreen";
 
 const ShopContext = createContext({});
 
@@ -114,7 +115,7 @@ const ShopCatalog = function () {
           title = {capitalizeString(category)}
           onClick = {handleFilter}
         >
-          <AnimalIcon assignClass={category}/>
+          <CategoryIcon assignClass={category}/>
         </button>
       )
     })
@@ -261,7 +262,8 @@ const ItemPage = function () {
 const ProductDetails = function () {
   const {productsData} = useContext(ShopContext);
   const { id } = useParams();
- 
+
+  const successRef = useRef(null);
   const preCartRef = useRef(null);
   const itemData = productsData.find(item => Number(item.gameID) === Number(id));
 
@@ -274,6 +276,7 @@ const ProductDetails = function () {
   const CartDialog = function () {
     const [itemQuantity, setItemQuantity] = useState(0);
     const { setCartCount } = useContext(PageContext);
+    const loadingRef = useRef(null);
 
     const handleQuantityChange = function (event) {
       if (event.target.value === 'increase') {
@@ -318,14 +321,26 @@ const ProductDetails = function () {
       }
 
       // Add item to cart by updating profile
-      console.log('loading');
+      loadingRef.current.classList.remove('hidden'); // Show loading screen while fetching
       const newProfileData = await addToCartData( profileData, currentCart );
-      console.log('done');
-
+      loadingRef.current.classList.add('hidden'); // Remove loading screen when done
+     
       // Update cartCount in header
       setCartCount(newProfileData.cart.length);
 
-      handleClose();
+      // Run add cart success sequence
+      const animateSuccess = function () {
+        // Add class to dialog to run closing animation
+        preCartRef.current.classList.add('added');
+
+        // Run logic when animation ends
+        preCartRef.current.addEventListener('animationend', () => {
+          successRef.current.classList.add('shown');
+          preCartRef.current.classList.remove('added');
+          handleClose();
+        }, {once: true});
+      }
+      animateSuccess();
     }
 
     const isOnSale = itemData.isOnSale === '1';
@@ -383,6 +398,7 @@ const ProductDetails = function () {
               Confirm
             </button>
         </div>
+        <LoadingScreen2 assignRef={loadingRef}/>
       </dialog>
     )
   }
@@ -417,6 +433,13 @@ const ProductDetails = function () {
           Add to cart
         </button>
      </div>
+      
+      <p className='success-msg' ref={successRef} onAnimationEnd={() => {
+        successRef.current.classList.remove('shown');
+      }}> 
+        <NewIcon assignClass={'check'}/>
+        Add to cart success
+      </p>
       
       <CartDialog/> {/* Modal hidden on render */}
 

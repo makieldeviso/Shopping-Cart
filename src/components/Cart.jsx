@@ -13,6 +13,7 @@ import { amountFormat } from "../utilities/utilities";
 
 // Context
 import { PageContext } from "./App";
+import { LoadingScreen2 } from "./LoadingScreen";
 
 const deliveryFee = 50;
 const freeDeliveryMin = 300;
@@ -210,6 +211,8 @@ const Cart = function () {
   const { profileData } = useLoaderData();
   const [profile, setProfile] = useState(profileData);
   const { setCartCount } = useContext(PageContext);
+
+  const loadingRef = useRef(null);
   
   const cartData = profile.cart;
   let toShipData = profile.toShip;
@@ -331,9 +334,9 @@ const Cart = function () {
 
     // Update profile from storage
     // Note: update cart and toShip properties
-    console.log('loading');
+    loadingRef.current.classList.remove('hidden');
     const newProfileData = await addCheckoutItems(cartData, toShipData);
-    console.log('done');
+    loadingRef.current.classList.add('hidden');
 
     // Empty items for checkout upon successful checkout
     setItemsForCheckout(i => i = []);
@@ -361,6 +364,9 @@ const Cart = function () {
           handleCheckout = { handleCheckout } 
         />
       </div>
+
+      <LoadingScreen2 assignRef={loadingRef}/>
+
     </div>
   )
 }
