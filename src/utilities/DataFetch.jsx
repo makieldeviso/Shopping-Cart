@@ -1,9 +1,9 @@
-// import dataAddOns from "./products";
-import { useState } from "react";
 import { categories } from "./products";
 
-const localStorageName = 'shoppingByMakieldeviso';
+const LOCAL_STORAGE_NAME = 'shoppingByMakieldeviso';
 
+// Create url src for header image
+// Modifies thumb property to get url for header image
 const getHeaderSrc = function (srcUrl) {
   const startRegex = /^.*?\/\d+\//;
   const endRegex = /\.jpg.*$/
@@ -12,11 +12,10 @@ const getHeaderSrc = function (srcUrl) {
   const srcEnd = srcUrl.match(endRegex)[0];
   const headerSrc = `${srcStart}header${srcEnd}`;
 
-  return headerSrc
+  return headerSrc;
 }
 
 const getProductsData = async function (...titles) {
-
   // If a title is passed as argument use the title to fetch data
   // Note: title must be inside array since logic uses Array.map
   // If no argument use categories array exported from products jsx
@@ -67,11 +66,10 @@ const getProductsData = async function (...titles) {
     // Return final modified array of items/ products
     return itemsFetchedSpread
 
-  } catch (err) {
-    console.log('error');
+  } catch (error) {
+    console.log(error.message);
     return ([])
   }  
-
 
 }
 
@@ -123,7 +121,7 @@ const getProfileData = async function (enableAbort) {
 
     const userData = await mockData.json();
 
-    let savedProfile = localStorage.getItem(localStorageName);
+    let savedProfile = localStorage.getItem(LOCAL_STORAGE_NAME);
 
     if (!savedProfile) {
       userData.name = 'Liam Smith';
@@ -135,8 +133,8 @@ const getProfileData = async function (enableAbort) {
       userData.toReceive = [];
       userData.delivered = [];
 
-      localStorage.setItem(localStorageName, JSON.stringify(userData));
-      savedProfile = localStorage.getItem(localStorageName);
+      localStorage.setItem(LOCAL_STORAGE_NAME, JSON.stringify(userData));
+      savedProfile = localStorage.getItem(LOCAL_STORAGE_NAME);
     }
  
     return JSON.parse(savedProfile);
@@ -148,7 +146,7 @@ const getProfileData = async function (enableAbort) {
 
 // Update profile
 const updateProfileData = async function (updateObj) {
-  let savedProfile = await JSON.parse(localStorage.getItem(localStorageName));
+  let savedProfile = await JSON.parse(localStorage.getItem(LOCAL_STORAGE_NAME));
   const modifiedData = {...savedProfile, ...updateObj}
 
   try {
@@ -165,7 +163,7 @@ const updateProfileData = async function (updateObj) {
     const updatedProfile = await patch.json();
     
     // Mock successful patch, save to local storage
-    localStorage.setItem(localStorageName, JSON.stringify(updatedProfile));
+    localStorage.setItem(LOCAL_STORAGE_NAME, JSON.stringify(updatedProfile));
     
     return JSON.parse(savedProfile);
 
@@ -201,7 +199,7 @@ const addToCartData = async function (profileData, newCart) {
 
     const newProfileData = await updateCart.json();
     // Mock successful patch, save to local storage
-    localStorage.setItem(localStorageName, JSON.stringify(newProfileData));
+    localStorage.setItem(LOCAL_STORAGE_NAME, JSON.stringify(newProfileData));
 
     return newProfileData;
 
@@ -236,7 +234,7 @@ const addCheckoutItems = async function (cartData, toShipData ) {
 
     const newProfileData = await updateProfile.json();
     // Mock successful patch, save to local storage
-    localStorage.setItem(localStorageName, JSON.stringify(newProfileData));
+    localStorage.setItem(LOCAL_STORAGE_NAME, JSON.stringify(newProfileData));
 
     return newProfileData;
 

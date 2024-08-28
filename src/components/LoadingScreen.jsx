@@ -13,6 +13,7 @@ const LoadingScreen = function () {
 }
 
 const LoadingScreen2 = function ({assignRef}) {
+
   return (
     <div className={`loading-screen hidden alt`} ref={assignRef}>
       <div className="spinner">
@@ -25,7 +26,7 @@ const LoadingScreen2 = function ({assignRef}) {
 
 LoadingScreen2.propTypes = {
   assignRef: PropTypes.shape({
-    current: PropTypes.oneOf([null, PropTypes.element])
+    current: PropTypes.object
   })
 }
 
