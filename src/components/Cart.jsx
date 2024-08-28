@@ -1,6 +1,7 @@
 // React
-import { useContext, useEffect, useState, useRef } from "react"
-import { useLoaderData, useNavigate } from "react-router-dom"
+import { useContext, useEffect, useState, useRef } from "react";
+import { useLoaderData, useNavigate } from "react-router-dom";
+import PropTypes from 'prop-types';
 
 // Components
 import { NewIcon } from "./Icons";
@@ -15,11 +16,14 @@ import { amountFormat } from "../utilities/utilities";
 import { PageContext } from "./App";
 import { LoadingScreen2 } from "./LoadingScreen";
 
-const deliveryFee = 50;
-const freeDeliveryMin = 300;
+// Constant
+const ORDER_CONST = {
+  DELIVERY_FEE: 50,
+  FREE_DELIVERY_MIN: 300
+}
 
 const CartItems = function ({cartData, handleQuantityChange, handleAddForCheckout, handleRemoveItemFromCart}) {
-  
+
   // // CartItems reiterated components
   const products = cartData.map(item => {
     const isOnSale = item.isOnSale === '1';
@@ -105,6 +109,14 @@ const CartItems = function ({cartData, handleQuantityChange, handleAddForCheckou
   )
 }
 
+CartItems.propTypes = {
+  cartData: PropTypes.array, 
+  handleQuantityChange: PropTypes.func,
+  handleAddForCheckout: PropTypes.func,
+  handleRemoveItemFromCart: PropTypes.func
+}
+
+// Check out counter. Handle and show order computation
 const CheckOutCounter = function ({profileData, itemsForCheckout, checkoutAmount, handleCheckout}) {
   const mailingRef = useRef({ name: profileData.name, phone: profileData.phone, address: profileData.address});
   const checkoutBtnRef = useRef(null);
@@ -115,8 +127,8 @@ const CheckOutCounter = function ({profileData, itemsForCheckout, checkoutAmount
     deliveryCheck = amountFormat(0);
     totalCheck = amountFormat(checkoutAmount);
   } else if (checkoutAmount < 300) {
-    deliveryCheck = amountFormat(deliveryFee);
-    totalCheck = amountFormat(checkoutAmount + deliveryFee);
+    deliveryCheck = amountFormat(ORDER_CONST.DELIVERY_FEE);
+    totalCheck = amountFormat(checkoutAmount + ORDER_CONST.DELIVERY_FEE);
   } else if (checkoutAmount >= 300) {
     deliveryCheck = 'Free'
     totalCheck = amountFormat(checkoutAmount);
@@ -190,7 +202,7 @@ const CheckOutCounter = function ({profileData, itemsForCheckout, checkoutAmount
       </div>
     )
   }
-
+ 
   // // CheckoutCounter return
   return (
     <div className='checkout-cont'>
@@ -198,13 +210,25 @@ const CheckOutCounter = function ({profileData, itemsForCheckout, checkoutAmount
       <OrderComputation/>
       <button 
         ref = {checkoutBtnRef}
-        onClick = {(mailing) => handleCheckout(mailingRef.current)} 
+        onClick = {() => handleCheckout(mailingRef.current)} 
         disabled = {itemsForCheckout.length <= 0 ? true : false}
       >
       Checkout
       </button>
     </div>
   )
+}
+
+CheckOutCounter.propTypes = {
+  profileData: PropTypes.shape({
+    cart: PropTypes.array,
+    name: PropTypes.string,
+    phone: PropTypes.string,
+    address: PropTypes.string,
+  }),
+  itemsForCheckout: PropTypes.array,
+  checkoutAmount: PropTypes.number,
+  handleCheckout: PropTypes.func
 }
 
 const Cart = function () {
@@ -312,7 +336,7 @@ const Cart = function () {
     if (mailing.name.length === 0 || mailing.phone.length === 0 || mailing.address.length === 0) return
 
     // Calculate eligibility for free delivery
-    const delivery = checkoutAmount > freeDeliveryMin ? 0 : deliveryFee;
+    const delivery = checkoutAmount > ORDER_CONST.FREE_DELIVERY_MIN ? 0 : ORDER_CONST.DELIVERY_FEE;
 
     // Update toShipData
     toShipData = [...toShipData, 
