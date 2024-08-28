@@ -100,6 +100,7 @@ body::before {
   font-size: 2rem;
   font-family: var(--special-font);
   align-self: end;
+
   grid-column: 2 / 3;
   grid-row: 1 / 2;
 }
@@ -109,6 +110,7 @@ body::before {
   font-family: var(--title-font);
   font-size: 0.8rem;
   align-self: start;
+
   grid-column: 2 / 3;
   grid-row: 2 / 3;
 }
@@ -241,29 +243,48 @@ main {
   font-weight: bold;
   
   background-color: var(--darker-color);
+  background-image: url(../assets/bg-2.png);
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
   height: max-content;
 
   align-self: end;
   padding: var(--padding) calc(var(--padding) * 3);
-  color: black;
+  color: var(--lightest-color);
 
-  display: flex;
-  justify-content: start;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: repeat(3, max-content);
+  gap: 3px;
 }
 
 .slogan-text span {
+  min-width: min-content;
   width: max-content;
-  margin-right: 1rem;
+  background-color: black;
+  text-wrap: nowrap;
+  padding: 0 5px;
+  box-shadow: -5px 5px 5px 1px rgba(20, 30, 70, 0.5);
+}
+
+.slogan-text span:nth-child(1) {
+  margin-left: var(--margin);
+  font-size: 1.5rem;
+}
+
+.slogan-text span:nth-child(3) {
+  margin-left: calc(var(--margin) * 5);
+  font-size: 1.5rem;
 }
 
 .sub-text {
   grid-column: 1 / 2;
   grid-row: 2 / 3;
 
-  padding: calc(var(--padding) * 3);
-  padding-top: 0;
-  width: 90%;
+  padding: 0 calc(var(--padding) * 3);
+  margin-bottom: var(--margin);
+  width: 100%;
   color: var(--lightest-color);
   font-size: 1rem;
 }
@@ -487,20 +508,20 @@ main {
   filter: opacity(1);
 }
 
-.category-item:nth-child(1):hover {
+.category-item:nth-child(4n-3):hover {
   background: linear-gradient(#41B06E, var(--lightest-color));
 }
 
-.category-item:nth-child(2):hover {
-  background: linear-gradient(#40A2E3, var(--lightest-color));
-}
-
-.category-item:nth-child(3):hover {
+.category-item:nth-child(4n-2):hover {
   background: linear-gradient(#FF0000, var(--lightest-color));
 }
 
-.category-item:nth-child(4):hover {
-  background: linear-gradient(#8DECB4, var(--lightest-color));
+.category-item:nth-child(4n-1):hover {
+  background: linear-gradient(#F6E96B, var(--lightest-color));
+}
+
+.category-item:nth-child(4n):hover {
+  background: linear-gradient(#40A2E3, var(--lightest-color));
 }
 
 .category-item .content {
@@ -508,6 +529,7 @@ main {
   justify-content: center;
   align-items: end;
   background-color: var(--black);
+  overflow: hidden;
 
   width: 100%;
   height: 100%;
@@ -545,20 +567,20 @@ main {
   color: var(--lightest-color);
 }
 
-.category-item:nth-child(1) .category-text{
+.category-item:nth-child(4n-3) .category-text{
   background: linear-gradient(0deg, rgba(65, 176, 110, 0.8), rgba(9, 37, 50, 0.8), transparent);
 }
 
-.category-item:nth-child(2) .category-text{
-  background: linear-gradient(0deg, rgba(64, 162, 227, 0.8), rgba(9, 37, 50, 0.8), transparent);
-}
-
-.category-item:nth-child(3) .category-text{
+.category-item:nth-child(4n-2) .category-text{
   background: linear-gradient(0deg, rgba(255, 0, 0, 0.8), rgba(9, 37, 50, 0.8), transparent);
 }
 
-.category-item:nth-child(4) .category-text{
-  background: linear-gradient(0deg, rgba(141, 236, 180, 0.8), rgba(9, 37, 50, 0.8), transparent);
+.category-item:nth-child(4n-1) .category-text{
+  background: linear-gradient(0deg, rgba(246, 233, 107, 0.8), rgba(9, 37, 50, 0.8), transparent);
+}
+
+.category-item:nth-child(4n) .category-text{
+  background: linear-gradient(0deg, rgba(64, 162, 227, 0.8), rgba(9, 37, 50, 0.8), transparent);
 }
 /* Categories - Home banner - (end)  */
 
@@ -657,7 +679,7 @@ main {
 .about-content {
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   align-content: center;
   justify-items: center;
 }
@@ -696,13 +718,7 @@ main {
 .about-detail p {
   text-align: center;
 }
-
-
-
-
-
 /* About banner (end) */
-
 /* Homepage (end) */
 
 /* Shop (start) */
@@ -763,6 +779,7 @@ main {
   transition: 200ms;
   border: 1px solid transparent;
   box-shadow: 0 0 3px 1px rgba(0, 0, 0, 0.5);
+  z-index: 1;
 }
 
 .shop-item:hover {
@@ -770,6 +787,7 @@ main {
   border: 1px solid rgba(255, 245, 224, 0.2);
   transform: scale(1.1);
   box-shadow: 0 0px 3px 1px #8DECB4;
+  z-index: 2;
 }
 
 .shop-item *:not(.title) {
@@ -879,7 +897,6 @@ button span {
   padding: 0 var(--padding);
 }
 /* Shop catalog (end)*/
-
 
 /* Filter Bar (start)*/
 .filter-bar {
@@ -1039,7 +1056,6 @@ button span {
 .page-node:disabled:hover {
   cursor: default;
   transform: rotateZ(45deg) translateY(0) translateX(0);
-
 }
 
 .page-node:hover {
@@ -1083,8 +1099,6 @@ button span {
   color: var(--darker-color);
   filter: drop-shadow(0 0 3px var(--lightest-color));
 }
-
-
 /* Page Changer (end) */
 
 /* Item page (start) */
@@ -1281,7 +1295,6 @@ p.item-desc, .item-desc p {
   visibility: visible;
   animation: fade-out 1s ease-in-out 3s 1;
 }
-
 /* Item page (end) */
 
 /* Pre cart dialog (start) */
@@ -1499,7 +1512,6 @@ p.item-desc, .item-desc p {
   cursor: default;
   filter: brightness(0.5);
 }
-
 /* Shop (end) */
 
 /* Cart (start)*/
@@ -1525,7 +1537,6 @@ p.item-desc, .item-desc p {
 .cart-display {
   display: grid;
   grid-template-columns: 1fr max-content;
-  /* max-width: 1024px; */
   margin: auto;
   gap: var(--margin);
 }
@@ -1831,7 +1842,6 @@ button:not(:disabled):hover {
   filter: opacity(0.7);
   cursor: default;
 }
-
 /* Cart (start)*/
 
 /* Profile (start) */
@@ -1918,6 +1928,7 @@ dialog::backdrop {
 }
 
 .edit-profile-dialog .dialog-cont {
+  border-top: 3px solid var(--darker-color);
   padding: var(--padding);
   min-width: max-content;
   max-width: 450px;
@@ -1939,7 +1950,7 @@ dialog::backdrop {
   color: var(--lightest-color);
   justify-self: center;
   font-size: 1.2rem;
-  margin-bottom: var(--margin);
+  margin: var(--margin);
 }
 
 .edit-profile.input-cont {
@@ -2038,7 +2049,6 @@ dialog::backdrop {
 .cancel-btn {
   background-color: var(--lightest-color);
 }
-
 /* Edit profile dialog (start) */
 
 .purchase-display {
@@ -2061,6 +2071,7 @@ dialog::backdrop {
 
 .purchase-tabs hr {
   height: 2px;  
+  background-color: var(--base-color);
   border: 1px solid var(--base-color);
   align-self: start;
   margin-top: 30px;
@@ -2087,7 +2098,6 @@ dialog::backdrop {
 
 .purchase-tabs button.active span{
   color: var(--darker-color);
-  
 }
 
 .purchase-tabs button:hover svg {
@@ -2201,7 +2211,6 @@ dialog::backdrop {
   padding: var(--padding);
   display: grid;
   align-items: center;
-  column-gap: var(--margin);
   grid-template-columns: max-content 1fr max-content;
   grid-template-areas: 
     "title title title"
@@ -2216,6 +2225,7 @@ dialog::backdrop {
 
 .order.preview {
   grid-area: img;
+  justify-self: start;
   align-self: start;
   width: 150px;
   object-fit: cover;
@@ -2226,7 +2236,6 @@ dialog::backdrop {
 .order.title {
   grid-area: title;
   font-size: 1rem;
-  /* line-height: 1.3rem; */
 
   display: -webkit-box;
   display: -webkit-box;
@@ -2415,6 +2424,4 @@ div.footer-content .disclaimer p {
 .disclaimer a:hover {
   color: var(--base-color);
 }
-
-
 /* Footer  (end)*/

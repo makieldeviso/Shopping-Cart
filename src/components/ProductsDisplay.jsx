@@ -117,48 +117,39 @@ const ProductsBanner = function ({assignClass, assignTitle, assignItemsPerPage, 
   const [itemsPerPage, setItemsPerPage] = useState(assignItemsPerPage);
   const navigate = useNavigate();
 
-  const productsDivRef = useRef(null);
-
-  // When in smaller screens, display all items in a scrollable flex
-  useEffect(() => {
-    const handleItemDisplay = function () {
-      const smallScreen = 375;
-
-      if (screen.width <= smallScreen) {
-        setItemsPerPage(productsList.length);
-        setMaxPage(productsList.length);
-        setDisplayedItems(productsList);
-
-      } else if (screen.width > smallScreen) {
-        setItemsPerPage(assignItemsPerPage);
-      }
-    }
-
-    window.addEventListener('resize', handleItemDisplay)
-
-    return () => {
-      window.removeEventListener('resize', handleItemDisplay)
-    }
-  }, []);
-
-  useEffect(() => {
-    const smallScreen = 375;
-  
-    if (screen.width <= smallScreen) {
+  const handleItemDisplay = function () {
+    const SCREEN = { SMALL: 375 };
+    
+    if (screen.width <= SCREEN.SMALL) {
+      // When in smaller screens, display all items in a scrollable flex
       setMaxPage(productsList.length);
       setDisplayedItems(productsList);
+  
+    } else if (screen.width > SCREEN.SMALL) {
 
-    } else if (screen.width > smallScreen) {
       const startIndex = itemsPerPage * (page - 1);
       const endIndex = (itemsPerPage * page);
-
+  
       const itemsForDisplay = productsList.slice(startIndex, endIndex);
-
+  
       const salePages = Math.ceil(productsList.length / itemsPerPage);
-
+  
       setMaxPage(salePages);
       setDisplayedItems(itemsForDisplay);
     }
+  }
+
+  useEffect(() => {
+    window.addEventListener('resize', handleItemDisplay);
+
+    return () => {
+      window.removeEventListener('resize', handleItemDisplay);
+    }
+  }, []);
+
+
+  useEffect(() => {
+    handleItemDisplay();
 
   }, [page, itemsPerPage]);
 
@@ -176,7 +167,7 @@ const ProductsBanner = function ({assignClass, assignTitle, assignItemsPerPage, 
 
       <ArrowButton direction={'previous'} maxPage={maxPage} page={page} setPage={setPage}/>
 
-      <div className={`banner-products ${assignClass}-items`} ref={productsDivRef}>
+      <div className={`banner-products ${assignClass}-items`}>
         
           <ProductsDisplay 
             productsList={displayedItems} 

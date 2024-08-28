@@ -50,7 +50,9 @@ const HeroBanner = function () {
             <span>PHYSICAL GAMES</span> 
             <span>ONLINE</span>
           </p>
-          <p className='sub-text'>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Blanditiis!</p>
+          <p className='sub-text'>
+            Amidst the digital era, A-TIER is emboldened to offer hard copies of beloved video game titles.
+          </p>
           <button className="shop-btn"
             onClick={() => navigate('/shop/catalog/page_1')}
             >Shop now
@@ -136,16 +138,38 @@ const CategoriesBanner = function () {
   const [itemsPerPage, setItemsPerPage] = useState(4);
   const navigate = useNavigate();
 
+  const handleItemDisplay = function () {
+    const SCREEN = { SMALL: 375 };
+    
+    if (screen.width <= SCREEN.SMALL) {
+      // When in smaller screens, display all items in a scrollable flex
+      setMaxPage(categoriesData.length);
+      setDisplayedItems(categoriesData);
+  
+    } else if (screen.width > SCREEN.SMALL) {
+      const startIndex = itemsPerPage * (page - 1);
+      const endIndex = (itemsPerPage * page);
+     
+      const itemsForDisplay = categoriesData.slice(startIndex, endIndex);
+  
+      const categoryPages = Math.ceil(categoriesData.length / itemsPerPage);
+  
+      setMaxPage(categoryPages);
+      setDisplayedItems(itemsForDisplay);
+    }
+  }
+
   useEffect(() => {
-    const startIndex = itemsPerPage * (page - 1);
-    const endIndex = (itemsPerPage * page);
-   
-    const itemsForDisplay = categoriesData.slice(startIndex, endIndex);
+    window.addEventListener('resize', handleItemDisplay);
 
-    const categoryPages = Math.ceil(categoriesData.length / itemsPerPage);
+    return () => {
+      window.removeEventListener('resize', handleItemDisplay);
+    }
+  }, []);
 
-    setMaxPage(categoryPages);
-    setDisplayedItems(itemsForDisplay);
+
+  useEffect(() => {
+    handleItemDisplay();
 
   }, [page, itemsPerPage]);
 
