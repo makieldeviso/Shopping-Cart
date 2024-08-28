@@ -87,25 +87,26 @@ const ShopCatalog = function () {
     window.scroll({top: 0, behavior:'smooth'});
   }, [page]);
 
+  // Handle Filter script, executable by event listener
+  const handleFilter = function (event) {
+    const filterValue = event.target.value;
+    
+    // Don't run filter if same filter btn is pressed
+    if (filterValue === filter) return;
+
+    // Note: add :page_1 param to route to roll back to first page when filter is changed
+    const pageRoute = filterValue === 'all' ? `page_1`: `${filterValue}/page_1`;
+    
+    // Set corresponding page and filter states
+    setPage(1);
+    setFilter(filterValue);
+
+    // Navigate to route
+    navigate(pageRoute);
+  }
+
   // Categories filter side bar
   const CategoryFilterBar = function () {
-    const handleFilter = function (event) {
-      const filterValue = event.target.value;
-      
-      // Don't run filter if same filter btn is pressed
-      if (filterValue === filter) return;
-
-      // Note: add :page_1 param to route to roll back to first page when filter is changed
-      const pageRoute = filterValue === 'all' ? `page_1`: `${filterValue}/page_1`;
-      
-      // Set corresponding page and filter states
-      setPage(1);
-      setFilter(filterValue);
-
-      // Navigate to route
-      navigate(pageRoute);
-    }
-    
     // Available filters
     const filtersArray = ['On sale', 'Under $5', 'Best rated', ...categoriesData ];
 
@@ -127,15 +128,7 @@ const ShopCatalog = function () {
 
     return (
       <div className="filter-bar">
-
         <h3 className="filter">Categories</h3>
-
-        <button className="remove-filter-btn" value='all' onClick={handleFilter}
-          disabled = {filter === 'all' ? true : false}
-        >
-          <NewIcon assignClass={'close'}/>
-          <span>Filter: {filter}</span>
-        </button>
 
         <div className="buttons-container">
           {FilterButtons}
@@ -238,7 +231,21 @@ const ShopCatalog = function () {
 
   return(
     <div className="catalog-page">
-      <h2 className='shop-header'>Catalog</h2>
+      <div className='shop-header'>
+        <h2 className='header'>Catalog</h2>
+
+        { filter !== 'all' && 
+          <button className='filter-label-btn' value='all' 
+            onClick={handleFilter}
+            disabled = {filter === 'all' ? true : false}
+          >
+            <NewIcon assignClass={'close'}/>
+            <span>{capitalizeString(filter)}</span>
+          </button>
+        }
+        
+      </div>
+
       <CategoryFilterBar/>
       <Outlet/>
       <PageChanger/>

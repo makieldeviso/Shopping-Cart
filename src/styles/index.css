@@ -729,20 +729,65 @@ main {
 .catalog-page {
   display: grid;
   grid-template-columns: max-content 1fr;
-  gap: var(--margin);
   position: relative;
 
   grid-template-areas: 
-    "filter-bar header"
+    ". header"
     "filter-bar catalog"
     ". page-changer";
 }
 
 .shop-header {
   grid-area: header;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  justify-items: start;
+  align-items: center;
+  padding: var(--padding);
+  min-height: 55px;
+
+  min-width: 1024px;
+  max-width: 1024px;
+}
+
+.shop-header .header {
   font-size: 1.5rem;
   color: var(--lightest-color);
   width: max-content;
+}
+
+.shop-header .filter-label-btn {
+  justify-self: end;
+
+  font-size: 1rem;
+  color: var(--darker-color);
+  font-family: var(--title-font);
+  padding: var(--padding);
+  background-color: var(--black);
+  border: 1px solid var(--darker-color);
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 5px;
+  transition: 
+    color 200ms ease-in-out
+    border 200ms ease-in-out;
+}
+
+.shop-header .filter-label-btn svg {
+  width: 15px;
+  height: 15px;
+}
+
+.shop-header .filter-label-btn:disabled {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.shop-header .filter-label-btn:hover {
+  color: var(--base-color);
+  border-color: var(--base-color);
 }
 
 /* Shop catalog (start)*/
@@ -908,8 +953,7 @@ button span {
   height: max-content;
   background-color: transparent;
   align-items: start;
-  padding: calc(var(--padding) * 2) ;
-  padding-top: 0;
+  padding: var(--padding);
 }
 
 .filter-bar h3 {
