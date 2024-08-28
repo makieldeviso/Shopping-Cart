@@ -1,6 +1,7 @@
 // React
 import { useContext, useState, useRef, useEffect, createContext } from "react";
 import { Outlet, useLoaderData, useParams, useNavigate } from "react-router-dom";
+import PropTypes from 'prop-types';
 
 // Context
 import { PageContext } from "./App";
@@ -14,20 +15,19 @@ import { amountFormat, capitalizeString } from "../utilities/utilities";
 // Components
 import { NewIcon, CategoryIcon } from "./Icons";
 import { ProductsDisplay } from "./ProductsDisplay";
-import { categories } from "../utilities/products";
 import { LoadingScreen2 } from "./LoadingScreen";
 
+// Context
 const ShopContext = createContext({});
 
 const Shop = function () {
-  const { id ='catalog' } = useParams();
   const { productsData, categoriesData } = useLoaderData();
   const [filter, setFilter] = useState('all');
   const [shopItems, setShopItems] = useState(productsData);
   const itemsPerPage = 36;
-
+ 
   return (
-    <ShopContext.Provider value={{id, productsData, categoriesData, filter, setFilter, shopItems, setShopItems, itemsPerPage}}>
+    <ShopContext.Provider value={{ productsData, categoriesData, filter, setFilter, shopItems, setShopItems, itemsPerPage }}>
       <div className={`shop-page`}>
         <Outlet/>
       </div>
@@ -37,7 +37,7 @@ const Shop = function () {
 
 // Render the Shop catalog
 const ShopCatalog = function () {
-  const { filter, setFilter, productsData, categoriesData, setShopItems, itemsPerPage } = useContext(ShopContext);
+  const { categoriesData, filter, setFilter, productsData, setShopItems, itemsPerPage } = useContext(ShopContext);
   const {category, catalogPage} = useParams();
   const [page, setPage] = useState(1);
   const [maxPage, setMaxPage] = useState(1);
@@ -73,9 +73,11 @@ const ShopCatalog = function () {
       filteredItems = productsData.filter(item => item.category === filter);
     }
 
+    // Set number for pages in respect to constant itemsPerPage
     const catalogPages = Math.ceil(filteredItems.length / itemsPerPage);
-
     setMaxPage(catalogPages);
+
+    // Render limited shop items per page
     setShopItems(filteredItems);
 
   }, [filter]);
@@ -93,16 +95,19 @@ const ShopCatalog = function () {
       // Don't run filter if same filter btn is pressed
       if (filterValue === filter) return;
 
+      // Note: add :page_1 param to route to roll back to first page when filter is changed
       const pageRoute = filterValue === 'all' ? `page_1`: `${filterValue}/page_1`;
       
+      // Set corresponding page and filter states
       setPage(1);
       setFilter(filterValue);
 
       // Navigate to route
       navigate(pageRoute);
     }
-
-    const filtersArray = ['On sale', 'Under $5', 'Best rated', ...categories ];
+    
+    // Available filters
+    const filtersArray = ['On sale', 'Under $5', 'Best rated', ...categoriesData ];
 
     const FilterButtons = filtersArray.map((category) => {
       const isActive = category === filter && 'active';
@@ -122,18 +127,20 @@ const ShopCatalog = function () {
 
     return (
       <div className="filter-bar">
+
         <h3 className="filter">Categories</h3>
 
-          <button className="remove-filter-btn" value='all' onClick={handleFilter}
-            disabled = {filter === 'all' ? true : false}
-          >
-            <NewIcon assignClass={'close'}/>
-            <span>Filter: {filter}</span>
-          </button>
+        <button className="remove-filter-btn" value='all' onClick={handleFilter}
+          disabled = {filter === 'all' ? true : false}
+        >
+          <NewIcon assignClass={'close'}/>
+          <span>Filter: {filter}</span>
+        </button>
 
         <div className="buttons-container">
           {FilterButtons}
         </div> 
+
       </div>
     )
   }
@@ -142,6 +149,7 @@ const ShopCatalog = function () {
   const PageChanger = function () {  
     const navigate = useNavigate();
 
+    // Common logic for changing page
     const handlePageChange = function (pageNumber, pageRoute) {
       let finalRoute = pageRoute;
       if (filter !== 'all') {
@@ -171,7 +179,7 @@ const ShopCatalog = function () {
       handlePageChange(nextPage, pageRoute);
     }
 
-    const PageNodesButtons = function () {
+    const PageNodesButtons = function ({maxPage}) {
       let pageNodesArr = [];
       for(let i = 1; i <= maxPage; i++) {
 
@@ -193,7 +201,11 @@ const ShopCatalog = function () {
       )
     }
 
-    const ArrowButton = function ({direction}) {
+    PageNodesButtons.propTypes = {
+      maxPage: PropTypes.number
+    }
+
+    const ArrowButton = function ({direction, maxPage}) {
       let disabled = false
       if (direction === 'previous' && page <= 1) {
         disabled = true;
@@ -210,10 +222,15 @@ const ShopCatalog = function () {
       )
     }
 
+    ArrowButton.propTypes = {
+      direction: PropTypes.string,
+      maxPage: PropTypes.number
+    }
+
     return (
       <div className="page-btns-cont">
-        <ArrowButton direction={'previous'}/>
-        <PageNodesButtons/>
+        <ArrowButton direction={'previous'} maxPage={maxPage}/>
+        <PageNodesButtons maxPage={maxPage}/>
         <ArrowButton direction={'next'}/>
       </div>
     )
@@ -249,7 +266,7 @@ const ProductsOnPage = function () {
 }
 // Shop Catalog (end)
 
- // Render a specific item page (start)
+// Render a specific item page (start)
 const ItemPage = function () {
   useEffect(() => {
     // Scroll to top on change page
@@ -434,9 +451,9 @@ const ProductDetails = function () {
         </button>
      </div>
       
-      <p className='success-msg' ref={successRef} onAnimationEnd={() => {
-        successRef.current.classList.remove('shown');
-      }}> 
+      <p className='success-msg' ref={successRef} 
+        onAnimationEnd={() => { successRef.current.classList.remove('shown') }}
+      > 
         <NewIcon assignClass={'check'}/>
         Add to cart success
       </p>

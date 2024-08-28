@@ -35,6 +35,13 @@ const ArrowButton = function ({direction, maxPage, page, setPage}) {
   )
 }
 
+ArrowButton.propTypes = {
+  direction: PropTypes.string,
+  maxPage: PropTypes.number,
+  page: PropTypes.number,
+  setPage: PropTypes.func
+}
+
 // Page changer indicators/ nodes
 const PageNodes = function ({maxPage, page, setPage}) {
   const handlePageChange = function (event) {
@@ -62,6 +69,12 @@ const PageNodes = function ({maxPage, page, setPage}) {
   )
 }
 
+PageNodes.propTypes = {
+  maxPage: PropTypes.number,
+  page: PropTypes.number,
+  setPage: PropTypes.func
+}
+
 // Create products for display
 // Takes list of products (array) as argument
 const ProductsDisplay = function ({productsList, rated}) {
@@ -75,6 +88,7 @@ const ProductsDisplay = function ({productsList, rated}) {
       >
         <img src={item.header} alt={`item-${item.gameID} preview`} className='item-preview'/>
         <p title={item.title} className='catalog-desc title'>{item.title}</p>
+        
         {rated && <div className='rating'><p>{item.steamRatingPercent}</p></div>}
 
         <div className={`catalog-price ${isOnSale && 'sale'}`}>
@@ -141,6 +155,14 @@ const ProductsBanner = function ({assignClass, assignTitle, assignItemsPerPage, 
       <PageNodes maxPage={maxPage} page={page} setPage={setPage}/>
     </div>
   )
+}
+
+ProductsBanner.propTypes = {
+  assignClass: PropTypes.string,
+  assignTitle: PropTypes.string,
+  assignItemsPerPage: PropTypes.number,
+  assignRoute: PropTypes.string,
+  productsList: PropTypes.array
 }
 
 export { ProductsDisplay, ProductsBanner, ArrowButton, PageNodes };

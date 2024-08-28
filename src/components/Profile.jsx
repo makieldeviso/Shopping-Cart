@@ -1,6 +1,7 @@
 // React
-import { useRef, useState } from "react"
-import { useLoaderData, Outlet, useParams, useOutletContext, useNavigate, useLocation } from "react-router-dom"
+import { useRef, useState } from "react";
+import { useLoaderData, Outlet, useParams, useOutletContext, useNavigate, useLocation } from "react-router-dom";
+import PropTypes from 'prop-types';
 
 // Scripts
 import { format } from "date-fns";
@@ -11,7 +12,6 @@ import { updateProfileData } from "../utilities/DataFetch";
 
 // Components
 import { NewIcon } from "./Icons";
-import { PageContext } from "./App";
 
 const PurchaseDisplay = function () {
   const { displayid } = useParams();
@@ -19,7 +19,7 @@ const PurchaseDisplay = function () {
 
   let displayComponent = null;
 
-  switch (displayid) {
+  switch ( displayid ) {
     case 'to-ship':
       displayComponent = <ToShip profileData={outletContext.profileData}/>
       break;
@@ -116,6 +116,11 @@ const ToShip = function ({profileData}) {
   )
 }
 
+ToShip.propTypes = {
+  profileData: PropTypes.shape({
+    toShip: PropTypes.array
+  })
+}
 
 const ToReceive = function ({profileData}) {
   const toReceiveData = profileData.toReceive;
@@ -139,6 +144,12 @@ const ToReceive = function ({profileData}) {
   )
 }
 
+ToReceive.propTypes = {
+  profileData: PropTypes.shape({
+    toReceive: PropTypes.array
+  })
+}
+
 const Delivered = function ({profileData}) {
   const deliveredData = profileData.delivered;
 
@@ -159,6 +170,12 @@ const Delivered = function ({profileData}) {
       {!deliveredData.length && <EmptyDelivered/>}
     </div>
   )
+}
+
+Delivered.propTypes = {
+  profileData: PropTypes.shape({
+    delivered: PropTypes.array
+  })
 }
 
 const UserProfile = function ({profileData}) {
@@ -280,6 +297,11 @@ const UserProfile = function ({profileData}) {
     )
   }
 
+  ProfileInfo.propTypes = {
+    assignLabel: PropTypes.string,
+    assignState: PropTypes.string,
+  }
+
   return (
     <div className='user-profile'>
       <div className='user-details-cont'>
@@ -298,6 +320,14 @@ const UserProfile = function ({profileData}) {
       <EditDialog/>
     </div>
   )
+}
+
+UserProfile.propTypes = {
+  profileData: PropTypes.shape({
+    name: PropTypes.string,
+    phone: PropTypes.string,
+    address: PropTypes.string,
+  })
 }
 
 const Profile = function () {
@@ -357,6 +387,5 @@ const Profile = function () {
     </div>
   )
 }
-
 
 export { Profile, PurchaseDisplay}

@@ -1,6 +1,7 @@
 // React
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
+import PropTypes from 'prop-types';
 
 // Scripts
 import { capitalizeString } from "../utilities/utilities";
@@ -20,7 +21,6 @@ const HomePage = function () {
 
   return (
     <HomePageContext.Provider value={{productsData, categoriesData}}>
-    <>
       <HeroBanner/>
       <SpecialOffers/>
       <BestRatedBanner/>
@@ -28,7 +28,6 @@ const HomePage = function () {
         assignSlogan={'ENJOY YOUR QUALITY TIME WITH QUALITY GAMES'} 
         assignSubtext={'Respect your gaming time with our catalog of best rated games.'}
       />
-      
       <CategoriesBanner/>
       <UnderFiveBanner/>
       <TextBanner
@@ -36,7 +35,6 @@ const HomePage = function () {
         assignSubtext={'Buy games without hurting your pockets.'}
       />
       <AboutBanner/>
-    </>
     </HomePageContext.Provider>
   )
 }
@@ -123,6 +121,11 @@ const TextBanner = function ({assignSlogan, assignSubtext}) {
       <p className="sub-text">{assignSubtext}</p>
     </div>
   )
+}
+
+TextBanner.propTypes = {
+  assignSlogan: PropTypes.string,
+  assignSubtext: PropTypes.string
 }
 
 const CategoriesBanner = function () {
@@ -213,6 +216,12 @@ const AboutBanner = function () {
     )
   }
 
+  AboutContent.propTypes = {
+    assignIcon: PropTypes.element,
+    assignHeader: PropTypes.string,
+    assignText: PropTypes.string
+  }
+
   return (
     <div className="home-banner about">
       <h4 className="banner-header about">LEVEL UP!</h4>
@@ -239,6 +248,5 @@ const AboutBanner = function () {
     </div>
   )
 }
-
 
 export default HomePage

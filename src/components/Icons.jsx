@@ -181,17 +181,23 @@ NewIcon.propTypes = {
 }
 
 const CategoryIcon = function ({assignClass}) {
-  
   return (
     <img src={importIcons[assignClass]} alt="" className={`animal-icon ${assignClass}`}/>
   )
 } 
 
+CategoryIcon.propTypes = {
+  assignClass: PropTypes.string
+}
+
 const AnimalImage = function ({assignClass}) {
-  
   return (
     <img src={importImage[assignClass]} alt="" className={`animal-image ${assignClass}`}/>
   )
 } 
+
+AnimalImage.propTypes = {
+  assignClass: PropTypes.string
+}
 
 export { NewIcon, CategoryIcon, AnimalImage }

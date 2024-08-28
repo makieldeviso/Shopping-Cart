@@ -15,17 +15,16 @@ import { PageContext } from "./App"
 const PageBanner = function () {
   return (
     <div className="page-banner">
-        <NavLink to='/'>
-          <CategoryIcon assignClass={'logo'}/>
-          <span className="page-title">A-TIER.com</span>
-          <span className='page-subtitle'>Physical Games Store</span>
-        </NavLink>
+      <NavLink to='/'>
+        <CategoryIcon assignClass={'logo'}/>
+        <span className="page-title">A-TIER.com</span>
+        <span className='page-subtitle'>Physical Games Store</span>
+      </NavLink>
     </div>
   )
 }
 
 const PageNav = function () {
-
   const {cartCount, setCartCount} = useContext(PageContext);
 
   useState(() => {

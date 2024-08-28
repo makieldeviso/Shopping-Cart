@@ -4,6 +4,7 @@ const Footer = function () {
   return (
     <footer>
       <div className='footer-content'>
+        
         <div className="author-info">
           <NewIcon assignClass={'copyright'}/>
           <p>2024</p>
@@ -22,7 +23,6 @@ const Footer = function () {
           <a href="https://store.steampowered.com/">Steam store</a>
           using source url.
           </p>
-
         </div>
         
       </div>
