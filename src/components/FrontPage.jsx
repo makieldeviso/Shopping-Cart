@@ -1,6 +1,6 @@
 // React
-import { createContext, useContext, useEffect, useState } from "react";
-import { useLoaderData, useNavigate } from "react-router-dom";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { useLoaderData, useNavigate, useNavigation } from "react-router-dom";
 import PropTypes from 'prop-types';
 
 // Scripts

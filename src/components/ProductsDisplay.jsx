@@ -1,5 +1,5 @@
 // React
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from "react-router-dom";
 import PropTypes from 'prop-types'
 
@@ -117,16 +117,48 @@ const ProductsBanner = function ({assignClass, assignTitle, assignItemsPerPage, 
   const [itemsPerPage, setItemsPerPage] = useState(assignItemsPerPage);
   const navigate = useNavigate();
 
+  const productsDivRef = useRef(null);
+
+  // When in smaller screens, display all items in a scrollable flex
   useEffect(() => {
-    const startIndex = itemsPerPage * (page - 1);
-    const endIndex = (itemsPerPage * page);
-   
-    const itemsForDisplay = productsList.slice(startIndex, endIndex);
+    const handleItemDisplay = function () {
+      const smallScreen = 375;
 
-    const salePages = Math.ceil(productsList.length / itemsPerPage);
+      if (screen.width <= smallScreen) {
+        setItemsPerPage(productsList.length);
+        setMaxPage(productsList.length);
+        setDisplayedItems(productsList);
 
-    setMaxPage(salePages);
-    setDisplayedItems(itemsForDisplay);
+      } else if (screen.width > smallScreen) {
+        setItemsPerPage(assignItemsPerPage);
+      }
+    }
+
+    window.addEventListener('resize', handleItemDisplay)
+
+    return () => {
+      window.removeEventListener('resize', handleItemDisplay)
+    }
+  }, []);
+
+  useEffect(() => {
+    const smallScreen = 375;
+  
+    if (screen.width <= smallScreen) {
+      setMaxPage(productsList.length);
+      setDisplayedItems(productsList);
+
+    } else if (screen.width > smallScreen) {
+      const startIndex = itemsPerPage * (page - 1);
+      const endIndex = (itemsPerPage * page);
+
+      const itemsForDisplay = productsList.slice(startIndex, endIndex);
+
+      const salePages = Math.ceil(productsList.length / itemsPerPage);
+
+      setMaxPage(salePages);
+      setDisplayedItems(itemsForDisplay);
+    }
 
   }, [page, itemsPerPage]);
 
@@ -144,11 +176,13 @@ const ProductsBanner = function ({assignClass, assignTitle, assignItemsPerPage, 
 
       <ArrowButton direction={'previous'} maxPage={maxPage} page={page} setPage={setPage}/>
 
-      <div className={`banner-products ${assignClass}-items`}>
-        <ProductsDisplay 
-          productsList={displayedItems} 
-          rated={assignClass === 'best-rated' ? true : false}
-        />
+      <div className={`banner-products ${assignClass}-items`} ref={productsDivRef}>
+        
+          <ProductsDisplay 
+            productsList={displayedItems} 
+            rated={assignClass === 'best-rated' ? true : false}
+          />
+        
       </div>
       
       <ArrowButton direction={'next'} maxPage={maxPage} page={page} setPage={setPage}/>

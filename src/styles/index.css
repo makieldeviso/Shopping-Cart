@@ -304,6 +304,7 @@ main {
   text-align: center;
   color: var(--darker-color);
   background-color: transparent;
+  letter-spacing: 0.1rem;
 }
 
 .home-banner.text .sub-text {
@@ -370,6 +371,7 @@ main {
 }
 
 .offers-items {
+  width: 100%;
   min-height: 430px;
   margin: 0 0 var(--margin) 0;
   display: grid;
@@ -380,13 +382,6 @@ main {
 
   gap: var(--margin);
 }
-
-/* @media only screen and (max-width: 1280px) {
-  .offers-items {
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    min-height: 435px;
-  }
-} */
 
 .banner-products .shop-item {
   animation: fade-in 0.5s ease-in-out 1;
@@ -1310,9 +1305,6 @@ p.item-desc, .item-desc p {
 .pre-cart-dialog.added {
   animation: success 0.3s ease-in-out 1;
 }
-
-
-
 
 .pre-cart.dialog-cont {
   width: 100%;
