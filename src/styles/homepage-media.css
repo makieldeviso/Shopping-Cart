@@ -399,7 +399,6 @@
   .page-btns-cont {
     min-width: unset;
     max-width: unset;
-    /* gap: var(--margin); */
     width: 100%;
   }
 
@@ -411,7 +410,59 @@
     display: flex;
   }
 
+  /* Item page */
+  .item-page {
+    margin: calc(var(--margin) * 2) var(--padding);
+    max-width: unset;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+    "title"
+    "img"
+    "about"
+    "dev"
+    "pub"
+    "counter";
+  }
 
+  .item-desc.title {
+    font-size: 1.1rem;
+    width: 100%;
+    margin: 0 0 var(--margin) 0;
+  }
+
+  .item-desc.preview {
+    margin: 0 0 var(--margin) 0;
+    width: 100%;
+  }
+
+  .item-desc.about {
+    margin: 0 0 var(--margin) 0;
+    font-size: 1rem;
+    line-height: 1.3rem;
+  }
+
+  .item-desc.developer, .item-desc.publisher {
+    margin-left: 0;
+    margin-right: 0;
+    font-size: 1rem;
+    line-height: 1.3rem;
+  }
+
+  .item-desc.counter {
+    margin: var(--margin) 0;
+  }
+
+  .item-desc.price .disc-price {
+    font-size: 1.1rem;
+  }
+
+  .item-desc.add-btn {
+    font-size: 1.1rem;
+  }
+
+  .item-desc.price .discount {
+    font-size: 1.3rem;
+  }
 
 
 

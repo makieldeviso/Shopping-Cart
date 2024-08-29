@@ -1184,6 +1184,7 @@ p.item-desc, .item-desc p {
   font-family: var(--title-font);
   text-shadow: 0 3px 3px var(--darkest-color);
   font-size: 1.3rem;
+  text-wrap: wrap;
   color: var(--lightest-color);
   margin: var(--margin);
 }
