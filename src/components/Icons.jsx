@@ -71,7 +71,9 @@ import {
   mdiGithub,
   mdiCashMultiple,
   mdiCreationOutline, 
-  mdiFilterVariant
+  mdiFilterVariant,
+  mdiChevronUp,
+  mdiChevronDown
 } from '@mdi/js';
 
 const NewIcon = function ({assignClass}) {
@@ -111,6 +113,10 @@ const NewIcon = function ({assignClass}) {
     
     case 'delivered':
       assignPath = mdiPackageVariantClosedCheck;
+      break;
+
+    case 'down':
+      assignPath = mdiChevronDown;
       break;
 
     case 'edit':
@@ -167,6 +173,10 @@ const NewIcon = function ({assignClass}) {
     
     case 'truck-empty':
       assignPath = mdiTruckOutline;
+      break;
+
+    case 'up':
+      assignPath = mdiChevronUp;
       break;
   
     default:

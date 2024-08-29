@@ -120,6 +120,7 @@ CartItems.propTypes = {
 const CheckOutCounter = function ({profileData, itemsForCheckout, checkoutAmount, handleCheckout}) {
   const mailingRef = useRef({ name: profileData.name, phone: profileData.phone, address: profileData.address});
   const checkoutBtnRef = useRef(null);
+  const checkoutContRef = useRef(null);
 
   let deliveryCheck;
   let totalCheck;
@@ -153,7 +154,7 @@ const CheckOutCounter = function ({profileData, itemsForCheckout, checkoutAmount
 
     return (
       <div className='mailing-container'>
-        <p><NewIcon assignClass={'location'}/></p>
+        <NewIcon assignClass={'location'}/>
 
         <div className="mailing input-field">
           <label htmlFor="mail-name">Name:</label>
@@ -205,16 +206,29 @@ const CheckOutCounter = function ({profileData, itemsForCheckout, checkoutAmount
  
   // // CheckoutCounter return
   return (
-    <div className='checkout-cont'>
+    <div className='checkout-cont' ref={checkoutContRef}>
       <Mailing/>
       <OrderComputation/>
-      <button 
-        ref = {checkoutBtnRef}
-        onClick = {() => handleCheckout(mailingRef.current)} 
-        disabled = {itemsForCheckout.length <= 0 ? true : false}
-      >
-      Checkout
-      </button>
+
+      <div className='checkout-btns-cont'>
+        <button 
+          className='edit-mailing'
+          onClick={() => {checkoutContRef.current.classList.toggle('edit')}}
+        >
+          <span className="indicator"></span>
+          Edit mailing
+        </button>
+
+        <button 
+          ref = {checkoutBtnRef}
+          className="checkout-btn"
+          onClick = {() => handleCheckout(mailingRef.current)} 
+          disabled = {itemsForCheckout.length <= 0 ? true : false}
+        >
+          Checkout
+        </button>
+      </div>
+
     </div>
   )
 }

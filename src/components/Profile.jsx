@@ -262,7 +262,7 @@ const UserProfile = function ({profileData}) {
           <div className={`edit-profile address input-cont`}>
             <label htmlFor={`user-address`}>Address</label>
             <textarea data-class='address' id={`user-address`} name={`user-address`}
-              style = {{resize: 'vertical', 'max-height': '200px', 'min-height': '70px'}}
+              style = {{resize: 'vertical', 'maxHeight': '200px', 'minHeight': '70px'}}
               rows = '2'
               onChange = {(event) => setTempAddress(event.target.value)}
               value = {tempAddress}

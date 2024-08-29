@@ -241,12 +241,6 @@ main {
   font-family: var(--special-font);
   font-size: 2.5rem;
   font-weight: bold;
-  
-  background-color: var(--darker-color);
-  background-image: url(../assets/bg-2.png);
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
   height: max-content;
 
   align-self: end;
@@ -257,6 +251,14 @@ main {
   grid-template-columns: 1fr;
   grid-template-rows: repeat(3, max-content);
   gap: 3px;
+}
+
+.hero .slogan-text {
+  background-color: var(--darker-color);
+  background-image: url(../assets/bg-2.png);
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 
 .slogan-text span {
@@ -1039,10 +1041,15 @@ button span {
 
 .filter-btn.active {
   background-color: var(--darker-color);
+  box-shadow: 0 0 3px 1px var(--base-color);
+}
+
+.filter-btn.active img {
+  filter: drop-shadow(0 0 10px var(--darkest-color));
 }
 
 .filter-btn:hover {
-  box-shadow: 0 0 3px 1px var(--base-color);
+  box-shadow: 0 0 5px 1px var(--base-color);
 }
 
 .filter-btn:hover img {
@@ -1782,7 +1789,6 @@ input[type='checkbox']:hover {
 
 .checkout-cont {
   width: 300px;
-  background-color: #30615a;
   height: max-content;
   display: flex;
   flex-direction: column;
@@ -1792,10 +1798,9 @@ input[type='checkbox']:hover {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-bottom: var(--margin);
-  border-bottom: 1px solid var(--comp-color-2);
   background-color: #548073;
-    padding: var(--padding);
+  padding: var(--padding);
+  border-bottom: 1px solid var(--comp-color-2);
 }
 
 .mailing-container .location-icon {
@@ -1824,7 +1829,7 @@ label[for='mail-address'] {
 .mailing input, .mailing textarea {
   padding: 0 3px;
   color: var(--lightest-color);
-  background-color: rgba(255, 245, 224, 0.1);
+  background-color: rgba(20, 30, 70, 0.8);
   border: 1px solid var(--lightest-color);
 }
 
@@ -1841,12 +1846,16 @@ label[for='mail-address'] {
 .mailing textarea {
   resize: vertical;
   margin-bottom: var(--margin);
+  min-height: 60px;
+  max-height: 200px;
 }
 
 .order-computation {
   display: flex;
   flex-direction: column;
   padding: var(--padding);
+  padding-top: calc(var(--padding) * 2);
+  background-color: #30615a;
 }
 
 .checkout-cont p {
@@ -1869,6 +1878,14 @@ label[for='mail-address'] {
 
 .cart-total .cart-amount {
   color: var(--comp-color-2);
+}
+
+.checkout-btns-cont {
+  background-color: #30615a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
 }
 
 .checkout-cont button {
@@ -1897,6 +1914,11 @@ button:not(:disabled):hover {
   filter: opacity(0.7);
   cursor: default;
 }
+
+.checkout-cont button.edit-mailing {
+  display: none;
+}
+
 /* Cart (start)*/
 
 /* Profile (start) */

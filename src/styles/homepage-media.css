@@ -464,7 +464,209 @@
     font-size: 1.3rem;
   }
 
+  /* Cart (start)*/
+  .cart-page {
+    max-width: unset;
+    min-width: unset;
+  }
 
+  .cart-display {
+    grid-template-columns: 1fr;
+
+  }
+
+  .cart-page h2 {
+    font-size: 1.1rem;
+    padding: var(--padding);
+    margin-bottom: 0;
+  }
+
+  .cart-content {
+    padding: var(--padding);
+  }
+
+  .cart.container {
+    padding: var(--padding);
+    grid-template-columns: max-content max-content 1fr max-content;
+    grid-template-areas:
+        'checkbox img title title'
+        'checkbox img prices delete'
+        'checkbox img qty qty'
+        'total total total total';
+  }
+
+  .cart.add-checkbox {
+    width: 20px;
+    height: 20px;
+  }
+
+  .cart.preview {
+    width: 100px;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .cart.title {
+    width: 100%;
+    font-size: 1rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+  }
+
+  .cart.prices .disc-price {
+    font-size: 0.8rem;
+    margin-right: 5px;
+  }
+
+  .cart.prices .normal-price {
+    font-size: 0.6rem;
+  }
+
+  .cart.prices .discount {
+    font-size: 0.6rem;
+  }
+
+  .cart.item-total {
+    font-size: 1rem;
+  }
+
+  .cart.qty-controller {
+    width: max-content;
+    justify-self: end;
+  }
+
+  .cart.remove-btn {
+    margin: 0;
+  }
+
+  .qty-buttons button {
+    width: 20px;
+    height: 20px;
+    font-size: 0.8rem;
+  }
+
+  .qty-buttons p {
+    width: 20px;
+    height: 20px;
+    font-size: 0.8rem;
+  }
+
+  .checkout-cont {
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+  }
+
+  .checkout-cont {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    grid-template-rows: 0fr max-content;
+    grid-template-areas: 
+      'mail mail'
+      'compute checkout-btn';
+    transition: 200ms;
+  }
+
+  .checkout-cont.edit {
+    grid-template-rows: 1fr max-content;
+  }
+
+  .checkout-cont.edit .mailing-container {
+    display: flex;
+    padding: var(--padding);
+    height: 100%;
+    transform: translateY(0);
+  }
+
+  .mailing-container {
+    grid-area: mail;
+    z-index: -1;
+    padding: 0px;
+    height: 0%;
+    transform: translateY(100vh);
+    transition: 200ms;
+  }
+
+  .order-computation {
+    grid-area: compute;
+    border-top: 1px solid var(--comp-color-2);
+  }
+
+  .checkout-btns-cont {
+    grid-area: checkout-btn;
+    border-top: 1px solid var(--comp-color-2);
+    height: 100%;
+
+    display: grid;
+    grid-template-columns: 1fr;
+    padding: var(--padding);
+    padding-top: calc(var(--padding) * 2);
+  }
+
+  .mailing label {
+    font-size: 0.8rem;
+  }
+
+  .mailing input, .mailing textarea {
+    font-size: 0.8rem;
+  }
+
+  .order-computation p {
+    font-size: 0.8rem;
+  }
+
+  .checkout-cont button.checkout-btn {
+    margin-bottom: var(--padding);
+    width: 100%;
+    align-self: end;
+  }
+
+  .checkout-cont button.edit-mailing {
+    font-size: 0.8rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    padding: 0;
+    background-color: transparent;
+    color: var(--lightest-color);
+    text-shadow: none;
+    margin-bottom: 0;
+
+    height: max-content;
+    justify-self: end;
+    align-self: start;
+  }
+
+  .checkout-cont button.edit-mailing:hover,
+  .checkout-cont button.edit-mailing:active {
+    background-color: transparent;
+  }
+
+  .edit-mailing .indicator {
+    width: 12px;
+    height: 12px;
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: end;
+  }
+
+  .checkout-cont.edit .indicator {
+    background-image: url(../assets/down.svg);
+  }
+
+  .checkout-cont .indicator {
+    background-image: url(../assets/up.svg);
+  }
+
+  /* Cart (end)*/
 
 
 
