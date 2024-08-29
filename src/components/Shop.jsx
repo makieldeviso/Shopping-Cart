@@ -42,6 +42,8 @@ const ShopCatalog = function () {
   const [page, setPage] = useState(1);
   const [maxPage, setMaxPage] = useState(1);
   const navigate = useNavigate();
+
+  const categoryBarRef = useRef(null);
  
   useEffect(() => {
     // Update filter state when category param from routing is changed
@@ -105,6 +107,30 @@ const ShopCatalog = function () {
     navigate(pageRoute);
   }
 
+  // Handle category filter bar closing and open in the UI
+  const handleFilterBarOpen = function (e) {
+    if (e.target.value === 'open') {
+      categoryBarRef.current.classList.add('open');
+
+    } else {
+      categoryBarRef.current.classList.remove('open');
+    }
+  }
+  
+  //  Category filter bar toggler button component
+  const CategoryBarToggler = function ({assignAction}) {
+    const iconName = assignAction === 'open' ? 'filter' : 'back';
+
+    return (
+      <button className={`${assignAction}-filter-btn`}
+        value = {assignAction}
+        onClick = {handleFilterBarOpen }
+      >
+        <NewIcon assignClass={iconName}/>
+      </button>
+    )
+  }
+
   // Categories filter side bar
   const CategoryFilterBar = function () {
     // Available filters
@@ -127,9 +153,9 @@ const ShopCatalog = function () {
     })
 
     return (
-      <div className="filter-bar">
+      <div className="filter-bar" ref={categoryBarRef}>
+        <CategoryBarToggler assignAction={'close'}/>
         <h3 className="filter">Categories</h3>
-
         <div className="buttons-container">
           {FilterButtons}
         </div> 
@@ -138,6 +164,7 @@ const ShopCatalog = function () {
     )
   }
 
+ 
   // Page changer of shop catalog
   const PageChanger = function () {  
     const navigate = useNavigate();
@@ -232,8 +259,12 @@ const ShopCatalog = function () {
   return(
     <div className="catalog-page">
       <div className='shop-header'>
+
+        <CategoryBarToggler assignAction={'open'}/>
+
         <h2 className='header'>Catalog</h2>
 
+        
         { filter !== 'all' && 
           <button className='filter-label-btn' value='all' 
             onClick={handleFilter}

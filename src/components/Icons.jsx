@@ -71,6 +71,7 @@ import {
   mdiGithub,
   mdiCashMultiple,
   mdiCreationOutline, 
+  mdiFilterVariant
 } from '@mdi/js';
 
 const NewIcon = function ({assignClass}) {
@@ -119,6 +120,10 @@ const NewIcon = function ({assignClass}) {
     case 'empty':
       assignPath = mdiBorderNoneVariant;
       break;
+    
+    case 'filter':
+      assignPath = mdiFilterVariant;
+      break;
 
     case 'github':
       assignPath = mdiGithub;
@@ -137,6 +142,10 @@ const NewIcon = function ({assignClass}) {
       break;
         
     case 'previous':
+      assignPath = mdiChevronLeft;
+      break;
+
+    case 'back':
       assignPath = mdiChevronLeft;
       break;
 

@@ -138,7 +138,7 @@
 
   .shop-item {
     flex: 1 0 90%;
-    width: 90vw;
+    /* width: 90vw; */
     min-width: unset;
     max-width: unset;
 
@@ -330,6 +330,100 @@
   }
 
   /* Profile (end) */
+
+  .catalog-page {
+    width: 100%;
+    /* overflow: hidden; */
+    padding: var(--padding);
+    grid-template-columns: 1fr;
+    grid-template-areas:
+    "header"
+    "catalog"
+    "page-changer";
+  }
+
+  .shop-header {
+    padding: 0;
+    min-width: unset;
+    max-width: unset;
+    grid-template-columns: max-content 1fr 1fr;
+  }
+
+  .open-filter-btn {
+    display: block;
+    width: 35px;
+    height: 35px;
+    color: var(--base-color);
+    background-color: transparent;
+    border: none;
+  }
+
+  .close-filter-btn {
+    display: block;
+    width: 35px;
+    height: 35px;
+    color: var(--lightest-color);
+    border: none;
+    background-color: rgba(141, 236, 180, 0.1);
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+
+  .shop-header .header {
+    font-size: 1.2rem;
+  }
+
+  .filter-bar {
+    position: fixed;
+    transform: translateX(-100vw);
+    z-index: 3;
+    background-color: var(--black);
+    margin-left: var(--margin);
+    border: 3px solid var(--base-color);
+    transition: 300ms;
+  }
+
+  .filter-bar.open {
+    transform: translateX(0);
+  }
+
+  .shop-catalog {
+    min-width: unset;
+    max-width: unset;
+    padding: 0;
+    width: 100%;
+    gap: var(--margin);
+  }
+
+  .page-btns-cont {
+    min-width: unset;
+    max-width: unset;
+    /* gap: var(--margin); */
+    width: 100%;
+  }
+
+  .shop-catalog .shop-item {
+    width: 100%;
+  }
+
+  .catalog-page .page-nodes {
+    display: flex;
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
