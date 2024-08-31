@@ -131,6 +131,10 @@ const ShopCatalog = function () {
     )
   }
 
+  CategoryBarToggler.propTypes = {
+    assignAction: PropTypes.string
+  }
+
   // Categories filter side bar
   const CategoryFilterBar = function () {
     // Available filters
@@ -404,7 +408,7 @@ const ProductDetails = function () {
       <dialog className='pre-cart-dialog' ref={preCartRef}>
         <div className="pre-cart dialog-cont">
     
-          <button onClick={handleClose} className="pre-cart close-btn">
+          <button onClick={handleClose} className="pre-cart close-dialog-btn">
             <NewIcon assignClass={'close'}/>
           </button>
 

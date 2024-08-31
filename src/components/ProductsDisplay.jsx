@@ -110,6 +110,8 @@ ProductsDisplay.propTypes = {
   rated: PropTypes.bool
 }
 
+
+// Renders assembled products banner with page changers
 const ProductsBanner = function ({assignClass, assignTitle, assignItemsPerPage, assignRoute, productsList}) {
   const [displayedItems,  setDisplayedItems] = useState([]);
   const [page, setPage] = useState(1);
@@ -146,7 +148,6 @@ const ProductsBanner = function ({assignClass, assignTitle, assignItemsPerPage, 
       window.removeEventListener('resize', handleItemDisplay);
     }
   }, []);
-
 
   useEffect(() => {
     handleItemDisplay();

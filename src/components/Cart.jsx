@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 
 // Components
 import { NewIcon } from "./Icons";
+import { ProductsOrderBatch, AmountOrderBatch, MailingOrderBatch } from "./OrderBatchDisplay";
 
 // Data fetch
 import { addCheckoutItems, changeCartItemQuantity } from "../utilities/DataFetch";
@@ -22,6 +23,211 @@ const ORDER_CONST = {
   FREE_DELIVERY_MIN: 300
 }
 
+// // Cart main component
+const Cart = function () {
+  const { profileData } = useLoaderData();
+  const [profile, setProfile] = useState(profileData);
+  const { setCartCount } = useContext(PageContext);
+
+  const [ checkoutQueue, setCheckoutQueue] = useState({ready: false});
+
+  const confirmCheckoutRef = useRef(null);
+  const loadingRef = useRef(null);
+  const dialogLoadingRef = useRef(null);
+  
+  const cartData = profile.cart;
+  let toShipData = profile.toShip;
+
+  const [itemsForCheckout, setItemsForCheckout] = useState([]);
+  const [checkoutAmount, setCheckoutAmount] = useState(0);
+
+  // Update cart counter whenever profile state is updated
+  useEffect(() => {
+    setCartCount(profile.cart.length);
+  }, [profile]);
+
+  // Update checkout amount whenever itemsForCheckout is changed
+  useEffect(() => {
+    const amount = itemsForCheckout.reduce((acc, curr) => {
+      return ((acc) + (curr.salePrice * curr.quantity))
+    }, 0);
+
+    setCheckoutAmount(Number(Number.parseFloat(amount).toFixed(2)));
+  }, [itemsForCheckout])
+
+  const handleQuantityChange = async function (event) {
+    const productId = event.target.dataset.productid;
+    const itemTargetIndex = cartData.findIndex(item => item.gameID === productId);
+    const itemIsForCheckout = itemsForCheckout.some(item => item.gameID === productId);
+
+    const action = event.target.value;
+    
+    if (action === 'increase') {
+      cartData[itemTargetIndex].quantity++;
+  
+    } else if (action === 'decrease') {
+      cartData[itemTargetIndex].quantity--;
+    }
+
+    if (itemIsForCheckout) {
+      const itemIndex = itemsForCheckout.findIndex(item => item.gameID === productId);
+      const modifiedCheckOutArray = itemsForCheckout.toSpliced(itemIndex, 1, cartData[itemTargetIndex]);
+
+      // Replace old item with modifiedCheckOutArray, which has the quantity changed
+      setItemsForCheckout(i => i = modifiedCheckOutArray);
+    }
+
+    // Update profile in the storage
+    changeCartItemQuantity(cartData);
+
+    setProfile({...profile, cart: cartData});
+  }
+
+  // Add/ ready item for checkout
+  const handleAddForCheckout = function (event) {
+    const productId = event.target.dataset.productid;
+    const checkoutItem = cartData.find(item => item.gameID === productId);
+    
+    let newItemsForCheckout = [];
+    if (event.target.checked) {
+      newItemsForCheckout = [...itemsForCheckout, checkoutItem];
+
+    } else {
+      const removeItemIndex = itemsForCheckout.findIndex(item => item.gameID === productId);
+      const itemRemovedArray = itemsForCheckout.toSpliced(removeItemIndex, 1);
+      newItemsForCheckout = itemRemovedArray;
+    }
+
+    setItemsForCheckout(i => i = newItemsForCheckout);
+  }
+
+  // Remove item from your cart
+  const handleRemoveItemFromCart = async function (event) {
+    const productId = event.target.dataset.productid;
+    const forRemovalIndex = cartData.findIndex(item => item.gameID === productId);
+
+    // Update cart data
+    cartData.splice(forRemovalIndex, 1);
+    
+    // Update profile in the storage
+    loadingRef.current.classList.remove('hidden');
+    const newProfileData = await changeCartItemQuantity(cartData);
+    loadingRef.current.classList.add('hidden');
+
+    // If item for removal is currently readied for checkout, update itemsForCheckout
+    const itemIsForCheckout = itemsForCheckout.some(item => item.gameID === productId);
+    if (itemIsForCheckout) {
+      const removeItemCheckoutIndex = itemsForCheckout.findIndex(item => item.gameID === productId);
+      const newCheckoutItems = itemsForCheckout.toSpliced(removeItemCheckoutIndex, 1);
+      setItemsForCheckout(newCheckoutItems);
+
+    } else {
+      setProfile(newProfileData)
+    }
+  }
+
+  // Pops a dialog for final confirmation of checkout
+  const handleCheckoutConfirm = function ( mailingDetails ) {
+    // Verify checkout items length, cancel if empty
+    if (itemsForCheckout.length === 0) return
+
+    // Calculate eligibility for free delivery
+    const delivery = checkoutAmount > ORDER_CONST.FREE_DELIVERY_MIN ? 0 : ORDER_CONST.DELIVERY_FEE;
+
+    const orderDetails = {
+      items: itemsForCheckout,
+      subAmount: checkoutAmount,
+      delivery: delivery,
+      totalAmount: checkoutAmount + delivery,
+      mailing: mailingDetails
+    }
+    
+    // Update checkout queue
+    setCheckoutQueue({...orderDetails, ready: true});
+
+    // Open confirm dialog
+    confirmCheckoutRef.current.showModal();
+  }
+
+  const handleCloseCheckoutConfirm = function () {
+    // Reset checkout queue upon successful checkout
+    setCheckoutQueue({ready: false});
+
+    // Close confirm checkout dialog
+    confirmCheckoutRef.current.close();
+  }
+
+  // Checkout readied items
+  const handleCheckout = async function () {
+    const {ready, ...orderDetails} = checkoutQueue;
+    
+    // Update toShipData
+    toShipData = [...toShipData, 
+      {
+        ...orderDetails,
+        timeStamp: (new Date()).valueOf(),
+      }
+    ]
+
+    // Remove checkout items from cartData
+    itemsForCheckout.forEach(item => {
+      const itemIndex = cartData.findIndex(product => product.gameID === item.gameID);
+      cartData.splice(itemIndex, 1);
+    })
+
+    // Update profile from storage
+    // Note: update cart and toShip properties
+    dialogLoadingRef.current.classList.remove('hidden');
+    const newProfileData = await addCheckoutItems(cartData, toShipData);
+    dialogLoadingRef.current.classList.add('hidden');
+
+    // Empty items for checkout upon successful checkout
+    setItemsForCheckout(i => i = []);
+
+    // Update reference profile state
+    setProfile(newProfileData);
+
+    // Close modal
+    // Note: handleCloseCheckoutConfirm have corresponding logic
+    handleCloseCheckoutConfirm();
+  }
+
+  // // Cart return
+  return (
+    <div className='cart-page'>
+      <h2>Cart</h2>
+
+      <div className="cart-display">
+        <CartItems 
+          cartData = {cartData}
+          handleQuantityChange = { handleQuantityChange }
+          handleAddForCheckout = { handleAddForCheckout }
+          handleRemoveItemFromCart = { handleRemoveItemFromCart }
+        />
+        <CheckOutCounter 
+          profileData = { profileData }
+          itemsForCheckout = { itemsForCheckout }
+          checkoutAmount = { checkoutAmount }
+          handleCheckout = { handleCheckout } 
+          handleCheckoutConfirm = {handleCheckoutConfirm}
+        />
+      </div>
+
+      <ConfirmCheckoutDialog 
+        assignRef={confirmCheckoutRef} 
+        dialogLoadingRef={dialogLoadingRef}
+        orderDetails={checkoutQueue}
+        handleCheckout = { handleCheckout } 
+        handleCloseCheckoutConfirm = {handleCloseCheckoutConfirm}
+      />
+
+      <LoadingScreen2 assignRef={loadingRef}/>
+
+    </div>
+  )
+}
+
+// Cart items component, renders itemized products in the cart
 const CartItems = function ({cartData, handleQuantityChange, handleAddForCheckout, handleRemoveItemFromCart}) {
 
   // // CartItems reiterated components
@@ -83,6 +289,7 @@ const CartItems = function ({cartData, handleQuantityChange, handleAddForCheckou
     )
   })
 
+  // // Renders an indicator for an empty cart
   const EmptyCart = function () {
     const navigate = useNavigate();
 
@@ -117,7 +324,7 @@ CartItems.propTypes = {
 }
 
 // Check out counter. Handle and show order computation
-const CheckOutCounter = function ({profileData, itemsForCheckout, checkoutAmount, handleCheckout}) {
+const CheckOutCounter = function ({profileData, itemsForCheckout, checkoutAmount, handleCheckoutConfirm}) {
   const mailingRef = useRef({ name: profileData.name, phone: profileData.phone, address: profileData.address});
   const checkoutBtnRef = useRef(null);
   const checkoutContRef = useRef(null);
@@ -203,13 +410,10 @@ const CheckOutCounter = function ({profileData, itemsForCheckout, checkoutAmount
       </div>
     )
   }
- 
-  // // CheckoutCounter return
-  return (
-    <div className='checkout-cont' ref={checkoutContRef}>
-      <Mailing/>
-      <OrderComputation/>
 
+  // // Counter buttons
+  const CounterButtons = function () {
+    return (
       <div className='checkout-btns-cont'>
         <button 
           className='edit-mailing'
@@ -222,13 +426,22 @@ const CheckOutCounter = function ({profileData, itemsForCheckout, checkoutAmount
         <button 
           ref = {checkoutBtnRef}
           className="checkout-btn"
-          onClick = {() => handleCheckout(mailingRef.current)} 
+          // onClick = {() => handleCheckout(mailingRef.current)} 
+          onClick = {() => handleCheckoutConfirm(mailingRef.current)} 
           disabled = {itemsForCheckout.length <= 0 ? true : false}
         >
-          Checkout
-        </button>
-      </div>
+        Checkout
+      </button>
+    </div>
+    )
+  }
 
+  // // CheckoutCounter return
+  return (
+    <div className='checkout-cont' ref={checkoutContRef}>
+      <Mailing/>
+      <OrderComputation/>
+      <CounterButtons/>
     </div>
   )
 }
@@ -245,168 +458,47 @@ CheckOutCounter.propTypes = {
   handleCheckout: PropTypes.func
 }
 
-const Cart = function () {
-  const { profileData } = useLoaderData();
-  const [profile, setProfile] = useState(profileData);
-  const { setCartCount } = useContext(PageContext);
-
-  const loadingRef = useRef(null);
-  
-  const cartData = profile.cart;
-  let toShipData = profile.toShip;
-
-  const [itemsForCheckout, setItemsForCheckout] = useState([]);
-  const [checkoutAmount, setCheckoutAmount] = useState(0);
-
-  // Update cart counter whenever profile state is updated
-  useEffect(() => {
-    setCartCount(profile.cart.length);
-  }, [profile]);
-
-  // Update checkout amount whenever itemsForCheckout is changed
-  useEffect(() => {
-    const amount = itemsForCheckout.reduce((acc, curr) => {
-      return ((acc) + (curr.salePrice * curr.quantity))
-    }, 0);
-
-    setCheckoutAmount(Number(Number.parseFloat(amount).toFixed(2)));
-  }, [itemsForCheckout])
-
-  const handleQuantityChange = async function (event) {
-    const productId = event.target.dataset.productid;
-    const itemTargetIndex = cartData.findIndex(item => item.gameID === productId);
-    const itemIsForCheckout = itemsForCheckout.some(item => item.gameID === productId);
-
-    const action = event.target.value;
-    
-    if (action === 'increase') {
-      cartData[itemTargetIndex].quantity++;
-  
-    } else if (action === 'decrease') {
-      cartData[itemTargetIndex].quantity--;
-    }
-
-    if (itemIsForCheckout) {
-      const itemIndex = itemsForCheckout.findIndex(item => item.gameID === productId);
-      const modifiedCheckOutArray = itemsForCheckout.toSpliced(itemIndex, 1, cartData[itemTargetIndex]);
-
-      // Replace old item with modifiedCheckOutArray, which has the quantity changed
-      setItemsForCheckout(i => i = modifiedCheckOutArray);
-    }
-
-    // Update profile in the storage
-    changeCartItemQuantity(cartData);
-
-    setProfile({...profile, cart: cartData});
-  }
-
-  // Add/ ready item for checkout
-  const handleAddForCheckout = function (event) {
-    const productId = event.target.dataset.productid;
-    const checkoutItem = cartData.find(item => item.gameID === productId);
-    
-    let newItemsForCheckout = [];
-    if (event.target.checked) {
-      newItemsForCheckout = [...itemsForCheckout, checkoutItem];
-
-    } else {
-      const removeItemIndex = itemsForCheckout.findIndex(item => item.gameID === productId);
-      const itemRemovedArray = itemsForCheckout.toSpliced(removeItemIndex, 1);
-      newItemsForCheckout = itemRemovedArray;
-    }
-
-    setItemsForCheckout(i => i = newItemsForCheckout);
-  }
-
-  // Remove item from your cart
-  const handleRemoveItemFromCart = async function (event) {
-    const productId = event.target.dataset.productid;
-    const forRemovalIndex = cartData.findIndex(item => item.gameID === productId);
-
-    // Update cart data
-    cartData.splice(forRemovalIndex, 1);
-    
-    // Update profile in the storage
-    console.log('loading');
-    const newProfileData = await changeCartItemQuantity(cartData);
-    console.log('done');
-
-    // If item for removal is currently readied for checkout, update itemsForCheckout
-    const itemIsForCheckout = itemsForCheckout.some(item => item.gameID === productId);
-    if (itemIsForCheckout) {
-      const removeItemCheckoutIndex = itemsForCheckout.findIndex(item => item.gameID === productId);
-      const newCheckoutItems = itemsForCheckout.toSpliced(removeItemCheckoutIndex, 1);
-      setItemsForCheckout(newCheckoutItems);
-
-    } else {
-      setProfile(newProfileData)
-    }
-  }
-
-  // Checkout readied items
-  const handleCheckout = async function (mailing) {
-    if (itemsForCheckout.length === 0) return
-
-    if (mailing.name.length === 0 || mailing.phone.length === 0 || mailing.address.length === 0) return
-
-    // Calculate eligibility for free delivery
-    const delivery = checkoutAmount > ORDER_CONST.FREE_DELIVERY_MIN ? 0 : ORDER_CONST.DELIVERY_FEE;
-
-    // Update toShipData
-    toShipData = [...toShipData, 
-      {
-        items: itemsForCheckout,
-        subAmount: checkoutAmount,
-        delivery: delivery,
-        totalAmount: checkoutAmount + delivery,
-        timeStamp: (new Date()).valueOf(),
-        mailing: mailing
-      }
-    ]
-
-    // Remove checkout items from cartData
-    itemsForCheckout.forEach(item => {
-      const itemIndex = cartData.findIndex(product => product.gameID === item.gameID);
-      cartData.splice(itemIndex, 1);
-    })
-
-    // Update profile from storage
-    // Note: update cart and toShip properties
-    loadingRef.current.classList.remove('hidden');
-    const newProfileData = await addCheckoutItems(cartData, toShipData);
-    loadingRef.current.classList.add('hidden');
-
-    // Empty items for checkout upon successful checkout
-    setItemsForCheckout(i => i = []);
-
-    // Update reference profile state
-    setProfile(newProfileData);
-  }
-
-  // // Cart return
+// Dialog for final confirmation of checkout
+const ConfirmCheckoutDialog = function ({assignRef, dialogLoadingRef, orderDetails, handleCloseCheckoutConfirm, handleCheckout}) {
+ 
   return (
-    <div className='cart-page'>
-      <h2>Your Cart</h2>
+    <dialog className='confirm-checkout' ref={assignRef}>
+      <div className="dialog-cont">
+        
+        <button className="close-dialog-btn"
+          onClick={ handleCloseCheckoutConfirm }
+        >
+          <NewIcon assignClass={'close'}/>
+        </button>
 
-      <div className="cart-display">
-        <CartItems 
-          cartData = {cartData}
-          handleQuantityChange = { handleQuantityChange }
-          handleAddForCheckout = { handleAddForCheckout }
-          handleRemoveItemFromCart = { handleRemoveItemFromCart }
-        />
-        <CheckOutCounter 
-          profileData = { profileData }
-          itemsForCheckout = { itemsForCheckout }
-          checkoutAmount = { checkoutAmount }
-          handleCheckout = { handleCheckout } 
-        />
+        <h3 className="dialog-header">Your order</h3>
+
+        {orderDetails.ready && 
+        <>
+          <MailingOrderBatch orderBatch={orderDetails}/>
+          <ProductsOrderBatch orderBatch={orderDetails}/>
+          <AmountOrderBatch orderBatch={orderDetails}/>
+          
+          <button className='confirm-btn' onClick={handleCheckout}>
+            Confirm
+          </button>
+        </>
+        } 
       </div>
 
-      <LoadingScreen2 assignRef={loadingRef}/>
-
-    </div>
+      <LoadingScreen2 assignRef={dialogLoadingRef} />
+    </dialog>
   )
+}
+
+ConfirmCheckoutDialog.propTypes = {
+  assignRef: PropTypes.object,
+  dialogLoadingRef: PropTypes.object,
+  orderDetails: PropTypes.shape({
+    ready: PropTypes.bool
+  }),
+  handleCloseCheckoutConfirm: PropTypes.func,
+  handleCheckout: PropTypes.func
 }
 
 export {Cart}

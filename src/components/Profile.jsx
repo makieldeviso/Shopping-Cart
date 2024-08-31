@@ -5,13 +5,14 @@ import PropTypes from 'prop-types';
 
 // Scripts
 import { format } from "date-fns";
-import { amountFormat, capitalizeString } from "../utilities/utilities";
+import { capitalizeString } from "../utilities/utilities";
 
 // Data fetch
 import { updateProfileData } from "../utilities/DataFetch";
 
 // Components
 import { NewIcon } from "./Icons";
+import { ProductsOrderBatch, AmountOrderBatch, MailingOrderBatch } from "./OrderBatchDisplay";
 
 const PurchaseDisplay = function () {
   const { displayid } = useParams();
@@ -44,55 +45,16 @@ const ToShip = function ({profileData}) {
 
   // Reiterate for ship items by batch
   const toShipItems = toShipData.map(batch => {
-    // Reiterate the items per batch
-    const batchItems = batch.items.map( item => {
-      const isOnSale = item.isOnSale === '1';
-      return (
-        <div key={item.gameID} className="order-list">
-          <img className='order preview' src={item.header} alt={`${item.gameID} preview`}/>
-          <p className="order title">{item.title}</p>
-
-          <div className={`order prices ${isOnSale ? 'sale' : ''}`}>
-            {isOnSale && <p className='discount'>{`-${Number.parseFloat(item.savings).toPrecision(2)}%`}</p>}
-            {isOnSale && <p className='normal-price'>{amountFormat(item.normalPrice)}</p>}
-            <p className='disc-price'>{amountFormat(item.salePrice)}</p>  
-          </div>
-
-          <p className="order quantity">x{item.quantity}</p>
-          <p className="order total-price">{amountFormat(item.quantity * item.salePrice)}</p>
-        </div>
-      )
-    })
-
+    
     return (
       <div key={crypto.randomUUID()} className="batch-container">
         <p className="batch date">Ordered {format(new Date(batch.timeStamp), 'd-MMM-yyyy')}</p>
-        {batchItems}
+
+        <ProductsOrderBatch orderBatch={batch}/>
         
         <div className="batch details">
-          <div className='batch mailing'>
-
-            <NewIcon assignClass={'send'}/>
-            <p>{batch.mailing.name} | {batch.mailing.phone}</p>
-            <p>{batch.mailing.address}</p>
-          </div>
-
-          <div className='batch calculate'>
-            <p className="batch sub">
-              <span>Sub-total:</span>
-              <span className="batch-price">{amountFormat(batch.subAmount)}</span>
-            </p>
-            <p className="batch delivery">
-              <span>Delivery Fee:</span>
-              <span className="batch-price">
-                {batch.delivery === 0 ? 'Free' :amountFormat(batch.delivery)}
-              </span>
-            </p>
-            <p className="batch total">
-              <span>Order Total:</span>
-              <span className="batch-price">{amountFormat(batch.totalAmount)}</span>
-            </p>
-          </div>
+          <MailingOrderBatch orderBatch={batch}/>
+          <AmountOrderBatch orderBatch={batch}/>
         </div>
         
       </div>
@@ -218,18 +180,17 @@ const UserProfile = function ({profileData}) {
       <dialog className="edit-profile-dialog" ref={editDialogRef}>
         <div className="dialog-cont">
 
-          <div className='dialog-header'>
-            <h3 >Update your profile</h3>
-            <button 
-              className="close-dialog-btn"
-              type='button' 
-              title='Close'
-              aria-label="Close edit dialog"
-              onClick={() => editDialogRef.current.close()}>
-              <NewIcon assignClass={'close'}/>
-            </button>
-          </div>
-        
+          <button 
+            className="close-dialog-btn"
+            type='button' 
+            title='Close'
+            aria-label="Close edit dialog"
+            onClick={() => editDialogRef.current.close()}>
+            <NewIcon assignClass={'close'}/>
+          </button>
+
+          <h3 className='dialog-header'> Update your profile</h3>
+          
           <div className={`edit-profile name input-cont`}>
             <label htmlFor={`user-name`}>Name</label>
             <input type="text" data-class='name' id={`user-name`} name={`user-name`}

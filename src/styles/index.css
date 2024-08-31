@@ -1384,7 +1384,7 @@ p.item-desc, .item-desc p {
 .pre-cart.dialog-cont {
   width: 100%;
   min-width: unset;
-  padding: calc(var(--padding) * 2);
+  padding: var(--padding);
   background-color: rgba(255, 245, 224, 0.1);
   border-top: 5px solid var(--darker-color);
 
@@ -1392,13 +1392,13 @@ p.item-desc, .item-desc p {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: var(--margin);
 }
 
 .pre-cart.dialog-cont .item-details {
   width: 100%;
   min-width: unset;
   padding: calc(var(--padding) * 2);
+  margin-top: calc(var(--margin) * 2);
   background-color: var(--black);
 
   display: grid;
@@ -1410,7 +1410,6 @@ p.item-desc, .item-desc p {
     "img price"
     "img qty"
     "img total";
-  flex-direction: column;
   column-gap: var(--margin);
   position: relative;
 }
@@ -1561,6 +1560,7 @@ p.item-desc, .item-desc p {
   width: max-content;
   justify-self: center;
   align-self: center;
+  margin: var(--margin);
   
   transition: 200ms;
 }
@@ -1919,6 +1919,65 @@ button:not(:disabled):hover {
   display: none;
 }
 
+/* Checkout dialog */
+.confirm-checkout .dialog-cont {
+  border-top: 3px solid var(--darker-color);
+  padding: var(--padding);
+  min-width: max-content;
+  max-width: 450px;
+  width: 50vw;
+  display: flex;
+  flex-direction: column;
+}
+
+.confirm-checkout .order-list {
+  gap: var(--margin);
+  padding-bottom: var(--padding);
+  border-bottom: 1px solid rgba(255, 245, 224, 0.3);
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+.confirm-checkout .order-item {
+  background-color: rgba(65, 176, 110, 0.1);
+}
+
+.confirm-checkout .batch.calculate {
+  margin-bottom: var(--margin);
+}
+
+.confirm-checkout .batch.calculate p {
+  width: 100%;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+
+.confirm-checkout .batch.calculate p span:nth-child(2) {
+  justify-self: end;
+}
+
+.confirm-checkout .confirm-btn {
+  font-size: 1rem;
+  font-family: var(--title-font);
+  width: max-content;
+  align-self: center;
+  padding: var(--padding) calc(var(--padding) * 2);
+  background-color: var(--triad-color-1);
+  border: 1px solid var(--triad-color-1);
+  color: var(--lightest-color);
+  text-shadow: 0 2px 3px var(--darkest-color);
+  margin-bottom: var(--margin);
+}
+
+
+
+
+
+
+
+
+
+
 /* Cart (start)*/
 
 /* Profile (start) */
@@ -2016,18 +2075,11 @@ dialog::backdrop {
 }
 
 .dialog-header {
-  display: grid;
-  grid-template-columns: 1fr;
-  position: relative;
-  padding: var(--padding);
-  align-items: center;
-}
-
-.dialog-header h3 {
   color: var(--lightest-color);
   justify-self: center;
   font-size: 1.2rem;
   margin: var(--margin);
+  text-align: center;
 }
 
 .edit-profile.input-cont {
@@ -2076,14 +2128,16 @@ dialog::backdrop {
   align-self: end;
   color: var(--lightest-color);
   transition: color 0.2s ease-in-out;
+  margin: var(--padding); /* use padding var for alignment  */
 
   position: absolute;
   right: 0;
   top: 0;
+  z-index: 2;
 }
 
 .close-dialog-btn:hover {
-  color: var(--base-color);
+  color: var(--comp-color-1);
 }
 
 .dialog-cont label {
@@ -2209,7 +2263,6 @@ dialog::backdrop {
 /* To Ship (start) */
 .to-ship-content {
   display: flex;
-  justify-self: start;
   flex-direction: column;
   gap: var(--margin);
   align-items: center;
@@ -2285,6 +2338,12 @@ dialog::backdrop {
 }
 
 .order-list {
+  display: flex;
+  flex-direction: column;
+
+}
+
+.order-item {
   padding: var(--padding);
   display: grid;
   align-items: center;
@@ -2296,7 +2355,7 @@ dialog::backdrop {
     "img total-price total-price";
 }
 
-.order-list p {
+.order-item p {
   color: var(--lightest-color);
 }
 
@@ -2357,7 +2416,7 @@ dialog::backdrop {
   padding-right: 5px;
 }
 
-.order-list .order.total-price {
+.order-item .order.total-price {
   grid-area: total-price;
   justify-self: end;
   text-align: end;
