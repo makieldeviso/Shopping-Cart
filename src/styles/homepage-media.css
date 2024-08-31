@@ -716,6 +716,30 @@
   .checkout-cont .indicator {
     background-image: url(../assets/up.svg);
   }
+
+  dialog.confirm-checkout {
+    width: 90vw;
+  }
+
+  .confirm-checkout .dialog-cont {
+    width: 100%;
+  }
+
+  .dialog-header {
+    font-size: 1rem;
+  }
+
+  .confirm-checkout .batch.mailing p,
+  .confirm-checkout .order-item p,
+  .confirm-checkout .order.prices .disc-price,
+  .confirm-checkout .batch.calculate p {
+    font-size: 0.8rem;
+  }
+
+  .confirm-checkout .order.prices .discount,
+  .confirm-checkout .order.prices .normal-price {
+    font-size: 0.7rem;
+  }
   /* Cart (end)*/
 
 
