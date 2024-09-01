@@ -2560,4 +2560,32 @@ div.footer-content .disclaimer p {
 .disclaimer a:hover {
   color: var(--base-color);
 }
+
+div.footer-content .delete-local p {
+  margin: 0;
+  text-align: center;
+  display: inline-block;
+  color: var(--base-color);
+}
+
+.delete-local {
+  display: flex;
+  flex-direction: column;
+  
+  justify-content: center;
+  align-items: center;
+}
+
+.reset-btn {
+  width: max-content;
+  padding: 3px 5px;
+  margin: calc(var(--margin)* 0.5);
+  background-color: var(--base-color);
+  border: 1px solid var(--base-color);
+  font-size: 1rem;
+  color: var(--darkest-color);
+}
+
+
+
 /* Footer  (end)*/

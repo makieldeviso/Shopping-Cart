@@ -2,6 +2,12 @@ import { categories } from "./products";
 
 const LOCAL_STORAGE_NAME = 'shoppingByMakieldeviso';
 
+// Removes data stored in local storage under LOCAL_STORAGE_NAME
+const deleteLocalStorage = async function () {
+  localStorage.removeItem(LOCAL_STORAGE_NAME);
+  return true;
+}
+
 // Create url src for header image
 // Modifies thumb property to get url for header image
 const getHeaderSrc = function (srcUrl) {
@@ -287,9 +293,9 @@ const pageLoader = async function () {
   return { profileData, productsData, categoriesData };
 }
 
-
 export { 
   // scripts
+  deleteLocalStorage,
   getProfileData,
   updateProfileData,
   addToCartData,
