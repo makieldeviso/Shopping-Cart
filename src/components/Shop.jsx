@@ -14,7 +14,7 @@ import { amountFormat, capitalizeString } from "../utilities/utilities";
 
 // Components
 import { NewIcon, CategoryIcon } from "./Icons";
-import { ProductsDisplay } from "./ProductsDisplay";
+import { ProductsDisplay, ProductsBanner } from "./ProductsDisplay";
 import { LoadingScreen2 } from "./LoadingScreen";
 
 // Context
@@ -318,6 +318,7 @@ const ItemPage = function () {
   return ( <> <Outlet context/> </> )
 }
 
+// Renders product details on the item page
 const ProductDetails = function () {
   const {productsData} = useContext(ShopContext);
   const { id } = useParams();
@@ -325,13 +326,85 @@ const ProductDetails = function () {
   const successRef = useRef(null);
   const preCartRef = useRef(null);
   const itemData = productsData.find(item => Number(item.gameID) === Number(id));
-
+  const isOnSale = itemData.isOnSale === '1';
+  
   // Open add to cart dialog (pre-cart)
   const handlePreAddCart = function () {
     preCartRef.current.showModal();
   }
 
-  // Pre-cart
+  // Item/ Products details display
+  const ItemDisplay = function () {
+    return (
+      <div className='product-details'> 
+        <h3 className='item-desc title'>{itemData.title}</h3>
+
+        <img src={itemData.header} alt="" className="item-desc preview"/>
+        <p className="item-desc about">{itemData.about}</p>
+
+        <p className="item-desc developer">
+          <span>Developer: </span>
+          <span>{itemData.developer}</span>
+        </p>
+
+        <p className="item-desc publisher">
+          <span>Publisher: </span>
+          <span>{itemData.publisher}</span>
+        </p>
+      
+        <div className="item-desc counter">
+          <div className={`item-desc price ${isOnSale && 'sale'}`}>
+            {isOnSale && <p className='discount'>{`-${Number.parseFloat(itemData.savings).toPrecision(2)}%`}</p>}
+            {isOnSale && <p className='normal-price'>{amountFormat(itemData.normalPrice)}</p>}
+            <p className='disc-price'>{amountFormat(itemData.salePrice)}</p>
+          </div>
+
+          <button className="item-desc add-btn" onClick={handlePreAddCart}>
+            Add to cart
+          </button>
+        </div>
+        
+        <p className='success-msg' ref={successRef} 
+          onAnimationEnd={() => { successRef.current.classList.remove('shown') }}
+        > 
+          <NewIcon assignClass={'check'}/>
+          Add to cart success
+        </p>
+      </div>
+    )
+  } // ProductDisplay (end)
+
+  // Similar products
+
+  const SimilarProducts = function () {
+    const {category} = itemData;
+
+    const similarProducts = productsData.filter(item => item.category === category);
+    const currentProductIndex = similarProducts.findIndex(item => item.gameID === itemData.gameID);
+    similarProducts.splice(currentProductIndex, 1);
+    const itemsPerPage = 6;
+    const itemsToShow = 18; // 6 * 3 pages
+
+    if (similarProducts.length > itemsToShow) {
+      similarProducts.splice(itemsToShow);
+    } else {
+      const leastDiscount = similarProducts.length % itemsPerPage;
+      similarProducts.splice(similarProducts.length - leastDiscount);
+    }
+    
+    return (
+      <ProductsBanner
+        assignClass={`similar-products`}
+        assignTitle={'More like this'}
+        assignItemsPerPage={itemsPerPage}
+        assignRoute={`/shop/catalog/${category}/page_1`}
+        productsList={similarProducts}
+      
+      />
+    )
+  } // SimilarProducts end
+
+  // Pre-cart dialog
   const CartDialog = function () {
     const [itemQuantity, setItemQuantity] = useState(0);
     const { setCartCount } = useContext(PageContext);
@@ -350,6 +423,7 @@ const ProductDetails = function () {
       }
     }
 
+    // Closed pre-cart dialog
     const handleClose = function () {
       setItemQuantity(0);
       preCartRef.current.close();
@@ -401,8 +475,6 @@ const ProductDetails = function () {
       }
       animateSuccess();
     }
-
-    const isOnSale = itemData.isOnSale === '1';
 
     return (
       <dialog className='pre-cart-dialog' ref={preCartRef}>
@@ -457,52 +529,21 @@ const ProductDetails = function () {
               Confirm
             </button>
         </div>
-        <LoadingScreen2 assignRef={loadingRef}/>
+
+        <LoadingScreen2 assignRef={loadingRef}/>  {/* Loading spinner, hidden on render */}
       </dialog>
     )
-  }
+  } // Cart Dialog (end)
 
-  const isOnSale = itemData.isOnSale === '1';
-  
+  // ProductsDetails assembled return value
   return (
-    <div className='item-page'> 
-      <h3 className='item-desc title'>{itemData.title}</h3>
+    <div className="item-page-content">
+      <ItemDisplay/>
+      <SimilarProducts/>
 
-      <img src={itemData.header} alt="" className="item-desc preview"/>
-      <p className="item-desc about">{itemData.about}</p>
-
-      <p className="item-desc developer">
-        <span>Developer: </span>
-        <span>{itemData.developer}</span>
-      </p>
-
-      <p className="item-desc publisher">
-        <span>Publisher: </span>
-        <span>{itemData.publisher}</span>
-      </p>
-     
-     <div className="item-desc counter">
-      <div className={`item-desc price ${isOnSale && 'sale'}`}>
-        {isOnSale && <p className='discount'>{`-${Number.parseFloat(itemData.savings).toPrecision(2)}%`}</p>}
-        {isOnSale && <p className='normal-price'>{amountFormat(itemData.normalPrice)}</p>}
-        <p className='disc-price'>{amountFormat(itemData.salePrice)}</p>
-      </div>
-
-        <button className="item-desc add-btn" onClick={handlePreAddCart}>
-          Add to cart
-        </button>
-     </div>
-      
-      <p className='success-msg' ref={successRef} 
-        onAnimationEnd={() => { successRef.current.classList.remove('shown') }}
-      > 
-        <NewIcon assignClass={'check'}/>
-        Add to cart success
-      </p>
-      
       <CartDialog/> {/* Modal hidden on render */}
-
     </div>
+    
   )
 }
  // Render a specific item page (end)

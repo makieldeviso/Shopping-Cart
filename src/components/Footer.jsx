@@ -42,8 +42,8 @@ const DeleteLocalStorage = function () {
 
   return (
     <div className='delete-local'>
-      <p>This webpage use your local storage to save some data.</p>
-      <p>Click &#8220;Reset Page&#8221; button to restart this page&apos;s display while removing saved data in your local storage.</p>
+      <p>This webpage uses your local storage to save some data.</p>
+      <p>Click &#8220;Reset Page&#8221; button to restart this page&apos;s display and data in your local storage.</p>
       <button className='reset-btn' onClick={handlePageReset}>Reset Page</button>
     </div>
   )
