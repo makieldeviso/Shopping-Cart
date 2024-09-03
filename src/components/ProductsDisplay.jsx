@@ -1,5 +1,5 @@
 // React
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from "react-router-dom";
 import PropTypes from 'prop-types'
 
@@ -8,6 +8,9 @@ import { amountFormat } from "../utilities/utilities";
 
 // Components
 import { NewIcon } from './Icons';
+
+// Constant
+const SCREEN = { SMALL: 767 };
 
 // Page changer arrows
 const ArrowButton = function ({direction, maxPage, page, setPage}) {
@@ -120,8 +123,7 @@ const ProductsBanner = function ({assignClass, assignTitle, assignItemsPerPage, 
   const navigate = useNavigate();
 
   const handleItemDisplay = function () {
-    const SCREEN = { SMALL: 375 };
-    
+  
     if (screen.width <= SCREEN.SMALL) {
       // When in smaller screens, display all items in a scrollable flex
       setMaxPage(productsList.length);

@@ -56,6 +56,7 @@ body::before {
   filter: opacity(0.1);
 }
 
+/* Header (start) */
 .header-cont {
   max-width: 1024px;
   min-width: 1024px;
@@ -172,6 +173,7 @@ body::before {
   color: var(--darker-color);
 }
 /* Navbar (end)*/
+/* Header (end) */
 
 /* Homepage (start) */
 main {
@@ -395,7 +397,7 @@ main {
 
 .offers-items {
   width: 100%;
-  min-height: 430px;
+  /* min-height: 430px; */
   margin: 0 0 var(--margin) 0;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -681,10 +683,10 @@ main {
 
 .about-content {
   width: 100%;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  align-content: center;
-  justify-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
 }
 
 .about-icon {
@@ -711,6 +713,7 @@ main {
   gap: var(--margin);
   margin: var(--margin);
   padding: var(--padding);
+  max-width: 300px; 
 }
 
 .about-header {
@@ -754,6 +757,14 @@ main {
 }
 
 .open-filter-btn {
+  width: 35px;
+  height: 35px;
+  color: var(--base-color);
+  background-color: transparent;
+  border: none;
+
+  /* Not displayed in bigger screen */
+  /* Used for smaller screens */
   display: none;
 }
 
@@ -1165,7 +1176,7 @@ button span {
 /* Item page (start) */
 .item-page-content {
   max-width: 1024px;
-  margin: 75px auto 0;
+  margin: auto;
 }
 
 .product-details {
@@ -1175,7 +1186,7 @@ button span {
   box-shadow: 0 0 5px 1px black;
   padding: var(--padding);
   display: grid;
-  grid-template-columns: max-content 1fr;
+  grid-template-columns: 1fr 1fr;
   grid-template-areas: 
     "title title"
     "img about"
@@ -1197,12 +1208,13 @@ p.item-desc, .item-desc p {
   font-size: 1.3rem;
   text-wrap: wrap;
   color: var(--lightest-color);
-  margin: var(--margin);
+  padding: calc(var(--padding) * 2);
 }
 
 .item-desc.preview {
   grid-area: img;
-  margin: var(--margin);
+  width: 100%;
+  padding: calc(var(--padding) * 2);
 }
 
 .item-desc.about {
@@ -1391,7 +1403,7 @@ p.item-desc, .item-desc p {
 
 /* Pre cart dialog (start) */
 .pre-cart-dialog {
-  width: 100vw;
+  width: 90vw;
   max-width: 800px;
   margin: 150px auto;
 }
@@ -1919,17 +1931,21 @@ label[for='mail-address'] {
 }
 
 .checkout-cont button {
-  padding: var(--padding);
   width: max-content;
+  justify-self: end;
+  align-self: center;
+
+  padding: var(--padding);
+  margin-bottom: var(--margin);
+  border: 1px solid transparent;
+  
+  font-family: var(--title-font);
+  font-size: 1rem;
   color: var(--lightest-color);
   background-color: var(--triad-color-1);
   text-shadow: 0 1px 3px var(--darkest-color);
-  align-self: center;
-  font-family: var(--title-font);
-  font-size: 1rem;
-  border: 1px solid transparent;
+
   transition: filter 0.2s ease-in-out;
-  margin-bottom: var(--margin);
 }
 
 .checkout-cont button:hover {
@@ -1946,16 +1962,54 @@ button:not(:disabled):hover {
 }
 
 .checkout-cont button.edit-mailing {
+  justify-content: center;
+  align-items: center;
+  justify-self: end;
+  gap: 5px;
+
+  height: max-content;
+  padding: 0;
+  margin-bottom: 0;
+
+  background-color: transparent;
+  color: var(--lightest-color);
+  font-size: 1rem;
+  text-shadow: none;
+
+  /* Used on smaller screens */
   display: none;
 }
 
+.edit-mailing .indicator {
+    width: 15px;
+    height: 15px;
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: end;
+  }
+
+  .checkout-cont.edit .indicator {
+    background-image: url(../assets/down.svg);
+  }
+
+  .checkout-cont .indicator {
+    background-image: url(../assets/up.svg);
+  }
+
 /* Checkout dialog */
+dialog.confirm-checkout {
+  min-width: max-content;
+  max-width: 500px;
+  width: 90vw;
+}
+
 .confirm-checkout .dialog-cont {
   border-top: 3px solid var(--darker-color);
   padding: var(--padding);
-  min-width: max-content;
-  max-width: 450px;
-  width: 50vw;
+  width: 100%;
   display: flex;
   flex-direction: column;
 }
@@ -2093,12 +2147,16 @@ dialog::backdrop {
   background-color: rgba(0, 0, 0, 0.6);
 }
 
+.edit-profile-dialog {
+  min-width: max-content;
+  max-width: 500px;
+  width: 50vw;
+}
+
 .edit-profile-dialog .dialog-cont {
   border-top: 3px solid var(--darker-color);
   padding: var(--padding);
-  min-width: max-content;
-  max-width: 450px;
-  width: 50vw;
+  width: 100%;
 
   display: flex;
   flex-direction: column;
@@ -2248,8 +2306,8 @@ dialog::backdrop {
   width: max-content;
   font-size: 1rem;
   background-color: var(--black);
-  transition: 200ms;
   border: 1px solid transparent;
+  transition: 200ms;
 }
 
 .purchase-tabs button.active svg {
@@ -2467,31 +2525,34 @@ dialog::backdrop {
 /* Loading Screen (start) */
 .loading-screen {
   position: fixed;
-  top: 25vh;
+  top: 0;
   right: 0;
   left: 0;
 
-  width: 150px;
-  height: 150px;
+  width: 100%;
+  height: 100%;
   margin: auto;
-  background-color: #0f394d;
-  border: 5px solid var(--lightest-color);
+  background-color: rgba(15, 57, 77, 0.5);
+  border: none;
   box-shadow: 0 0 10px 1px var(--darker-color);
   overflow: hidden;
-  transform: rotateZ(45deg);
   z-index: 3;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .spinner {
-  width: 100%;
-  height: 100%;
+  width: 100px;
+  height: 100px;
   display: flex;
   justify-content: center;
   align-items: center;
-  transform: rotateZ(-45deg);
   display: flex;
   flex-direction: column;
-  gap: var(--margin);
+  gap: var(--padding);
+  margin: auto;
 }
 
 .spinner img {
@@ -2503,7 +2564,7 @@ dialog::backdrop {
   font-size: 1rem;
   text-align: center;
   color: var(--lightest-color);
-  color: var(--darker-color);
+  color: var(--base-color);
 }
 
 .loading-screen.hidden {
@@ -2515,6 +2576,7 @@ dialog::backdrop {
 
 /* Footer  (start)*/
 footer {
+  width: 100%;
   height: max-content;
   background-color: var(--darkest-color);
   color: var(--lightest-color);
@@ -2533,6 +2595,7 @@ div.footer-content {
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-bottom: var(--margin);
 }
 
 div.footer-content p {
@@ -2540,7 +2603,7 @@ div.footer-content p {
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  margin: calc(var(--margin) * 0.5);
+  margin: 0 calc(var(--margin) * 0.5);
 }
 
 .copyright-icon, .github-icon {
@@ -2553,7 +2616,7 @@ div.footer-content p {
   justify-content: flex-start;
   align-items: center;
   font-size: 1rem;
-  margin: calc(var(--margin) * 0.5);
+  margin: 0 calc(var(--margin) * 0.5);
   gap: 3px;
   text-decoration: none;
   font-family: var(--para-font);
@@ -2574,6 +2637,8 @@ div.footer-content .disclaimer p {
   display: inline-block;
   text-align: center;
   font-size: 1rem;
+  margin: 0;
+  margin-bottom: var(--margin);
 }
 
 .disclaimer a {
@@ -2604,7 +2669,6 @@ div.footer-content .delete-local p {
   
   justify-content: center;
   align-items: center;
-  filter: opacity(0.8);
 }
 
 .reset-btn {
@@ -2616,7 +2680,4 @@ div.footer-content .delete-local p {
   font-size: 1rem;
   color: var(--darkest-color);
 }
-
-
-
 /* Footer  (end)*/

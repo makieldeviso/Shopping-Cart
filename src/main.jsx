@@ -5,7 +5,8 @@ import { RouterProvider } from 'react-router-dom'
 
 // Styles
 import './styles/index.css'
-import './styles/homepage-media.css'
+import './styles/smallScreenMedia.css'
+import './styles/mediumScreenMedia.css'
 
 
 import router from './components/router'
