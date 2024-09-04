@@ -122,14 +122,18 @@ const ProductsBanner = function ({assignClass, assignTitle, assignItemsPerPage, 
   const [itemsPerPage, setItemsPerPage] = useState(assignItemsPerPage);
   const navigate = useNavigate();
 
+  const productsContRef = useRef(null);
+  const screenWidthRef = useRef();
+
   const handleItemDisplay = function () {
-  
+
     if (screen.width <= SCREEN.SMALL) {
       // When in smaller screens, display all items in a scrollable flex
       setMaxPage(productsList.length);
       setDisplayedItems(productsList);
   
     } else if (screen.width > SCREEN.SMALL) {
+      // On bigger screens, items are displayed in a grid
 
       const startIndex = itemsPerPage * (page - 1);
       const endIndex = (itemsPerPage * page);
@@ -141,11 +145,22 @@ const ProductsBanner = function ({assignClass, assignTitle, assignItemsPerPage, 
       setMaxPage(salePages);
       setDisplayedItems(itemsForDisplay);
     }
+
+    // Update min-height of products container on resize
+    // This removes flickering when changing pages
+    if (productsContRef.current && screen.width !== screenWidthRef.current) {
+      productsContRef.current.style.minHeight = 'unset';
+      const renderHeight = Math.ceil(productsContRef.current.getBoundingClientRect().height);
+      productsContRef.current.style.minHeight = `${renderHeight}px`;
+    }
+
+    // Update screen size reference
+    screenWidthRef.current = screen.width;
   }
 
   useEffect(() => {
     window.addEventListener('resize', handleItemDisplay);
-
+    
     return () => {
       window.removeEventListener('resize', handleItemDisplay);
     }
@@ -170,7 +185,7 @@ const ProductsBanner = function ({assignClass, assignTitle, assignItemsPerPage, 
 
       <ArrowButton direction={'previous'} maxPage={maxPage} page={page} setPage={setPage}/>
 
-      <div className={`banner-products ${assignClass}-items`}>
+      <div className={`banner-products ${assignClass}-items`} ref={productsContRef}>
         
           <ProductsDisplay 
             productsList={displayedItems} 

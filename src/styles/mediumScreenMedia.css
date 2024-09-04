@@ -8,6 +8,10 @@
     padding: var(--padding);
   }
 
+  .home-banner.hero {
+    padding: 0;
+  }
+
   .profile-display {
     max-width: unset;
   }
@@ -19,9 +23,12 @@
   /* Shop Catalog (start) */
   .shop-page {
     padding: var(--padding);
+    grid-template-columns: 1fr;
   }
 
   .catalog-page {
+    justify-self: center;
+    max-width: unset;
     width: 100%;
     grid-template-columns: 1fr;
     grid-template-areas:
@@ -31,7 +38,7 @@
   }
 
   .shop-header {
-    padding: 0;
+    padding: var(--padding) 0;
     min-width: unset;
     max-width: unset;
     grid-template-columns: max-content 1fr 1fr;
