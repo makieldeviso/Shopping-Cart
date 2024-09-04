@@ -13,15 +13,15 @@ export const PageContext = createContext();
 const App = function () {
   const [cartCount, setCartCount] = useState(0);
   const navigation = useNavigation();
-
+  
   return (
     <PageContext.Provider value={{ cartCount, setCartCount }}>
       <Header/>
       <main>
-        <Outlet/>
+        <Outlet context={{ cartCount, setCartCount }}/>
       </main>
-      {navigation.state === 'loading' && <LoadingScreen/>}
       <Footer/>
+      {navigation.state === 'loading' && <LoadingScreen/>}
     </PageContext.Provider>
   )
 }

@@ -12,7 +12,20 @@ import { getProfileData } from "../utilities/DataFetch"
 // Context
 import { PageContext } from "./App"
 
+const Header = function () {
+
+  return (
+    <header>
+      <div className="header-cont">
+        <PageBanner/>
+        <PageNav/>
+      </div>
+    </header>
+  )
+}
+
 const PageBanner = function () {
+  
   return (
     <div className="page-banner">
       <NavLink to='/'>
@@ -26,7 +39,7 @@ const PageBanner = function () {
 
 const PageNav = function () {
   const {cartCount, setCartCount} = useContext(PageContext);
-
+  
   useState(() => {
     const assignCountData = async () => {
       const profileData = await getProfileData();
@@ -51,17 +64,6 @@ const PageNav = function () {
         </li>
       </ul>
     </nav>
-  )
-}
-
-const Header = function () {
-  return (
-    <header>
-      <div className="header-cont">
-        <PageBanner/>
-        <PageNav/>
-      </div>
-    </header>
   )
 }
 

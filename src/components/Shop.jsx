@@ -1,10 +1,7 @@
 // React
 import { useContext, useState, useRef, useEffect, createContext } from "react";
-import { Outlet, useLoaderData, useParams, useNavigate } from "react-router-dom";
+import { Outlet, useLoaderData, useParams, useNavigate, useOutletContext } from "react-router-dom";
 import PropTypes from 'prop-types';
-
-// Context
-import { PageContext } from "./App";
 
 // Data fetch
 import { addToCartData, getProfileData } from "../utilities/DataFetch";
@@ -24,10 +21,20 @@ const Shop = function () {
   const { productsData, categoriesData } = useLoaderData();
   const [filter, setFilter] = useState('all');
   const [shopItems, setShopItems] = useState(productsData);
+  const {setCartCount} = useOutletContext();
   const itemsPerPage = 36;
- 
+
+  const contextValues = { 
+    productsData, 
+    categoriesData, 
+    filter, setFilter, 
+    shopItems, setShopItems, 
+    itemsPerPage,
+    setCartCount 
+  }
+
   return (
-    <ShopContext.Provider value={{ productsData, categoriesData, filter, setFilter, shopItems, setShopItems, itemsPerPage }}>
+    <ShopContext.Provider value={contextValues}>
       <div className={`shop-page`}>
         <Outlet/>
       </div>
@@ -310,7 +317,7 @@ const ProductsOnPage = function () {
 // Render a specific item page (start)
 const ItemPage = function () {
   
-  return ( <> <Outlet context/> </> )
+  return ( <> <Outlet/> </> )
 }
 
 // Renders product details on the item page
@@ -402,7 +409,7 @@ const ProductDetails = function () {
   // Pre-cart dialog
   const CartDialog = function () {
     const [itemQuantity, setItemQuantity] = useState(0);
-    const { setCartCount } = useContext(PageContext);
+    const { setCartCount } = useContext(ShopContext);
     const loadingRef = useRef(null);
 
     const handleQuantityChange = function (event) {

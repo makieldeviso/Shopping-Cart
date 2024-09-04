@@ -1,11 +1,7 @@
 // React
-import { useContext, useEffect, useState, useRef } from "react";
-import { useLoaderData, useNavigate } from "react-router-dom";
+import { useEffect, useState, useRef } from "react";
+import { useLoaderData, useNavigate, useOutletContext } from "react-router-dom";
 import PropTypes from 'prop-types';
-
-// Components
-import { NewIcon } from "./Icons";
-import { ProductsOrderBatch, AmountOrderBatch, MailingOrderBatch } from "./OrderBatchDisplay";
 
 // Data fetch
 import { addCheckoutItems, changeCartItemQuantity } from "../utilities/DataFetch";
@@ -13,8 +9,9 @@ import { addCheckoutItems, changeCartItemQuantity } from "../utilities/DataFetch
 // Scripts
 import { amountFormat } from "../utilities/utilities";
 
-// Context
-import { PageContext } from "./App";
+// Components
+import { NewIcon } from "./Icons";
+import { ProductsOrderBatch, AmountOrderBatch, MailingOrderBatch } from "./OrderBatchDisplay";
 import { LoadingScreen2 } from "./LoadingScreen";
 
 // Constant
@@ -27,7 +24,7 @@ const ORDER_CONST = {
 const Cart = function () {
   const { profileData } = useLoaderData();
   const [profile, setProfile] = useState(profileData);
-  const { setCartCount } = useContext(PageContext);
+  const { setCartCount } = useOutletContext();
 
   const [ checkoutQueue, setCheckoutQueue] = useState({ready: false});
 
