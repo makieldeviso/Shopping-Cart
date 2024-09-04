@@ -123,7 +123,6 @@ const ProductsBanner = function ({assignClass, assignTitle, assignItemsPerPage, 
   const navigate = useNavigate();
 
   const productsContRef = useRef(null);
-  const screenWidthRef = useRef();
 
   const handleItemDisplay = function () {
 
@@ -148,14 +147,11 @@ const ProductsBanner = function ({assignClass, assignTitle, assignItemsPerPage, 
 
     // Update min-height of products container on resize
     // This removes flickering when changing pages
-    if (productsContRef.current && screen.width !== screenWidthRef.current) {
+    if (productsContRef.current) {
       productsContRef.current.style.minHeight = 'unset';
       const renderHeight = Math.ceil(productsContRef.current.getBoundingClientRect().height);
       productsContRef.current.style.minHeight = `${renderHeight}px`;
     }
-
-    // Update screen size reference
-    screenWidthRef.current = screen.width;
   }
 
   useEffect(() => {

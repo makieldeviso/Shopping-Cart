@@ -28,6 +28,7 @@
 
   .catalog-page {
     justify-self: center;
+    min-width: unset;
     max-width: unset;
     width: 100%;
     grid-template-columns: 1fr;
@@ -37,6 +38,10 @@
     "page-changer";
   }
 
+  .item-page-content {
+    min-width: unset;
+  }
+  
   .shop-header {
     padding: var(--padding) 0;
     min-width: unset;
