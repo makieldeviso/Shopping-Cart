@@ -87,7 +87,10 @@ const ProductsDisplay = function ({productsList, rated}) {
     const isOnSale = item.isOnSale === "1";
     return (
       <div key={item.gameID} className='shop-item' data-gameid={item.gameID} 
-        onClick={() => navigate(`/shop/product/${item.gameID}`)}
+        onClick={() => {
+          navigate(`/shop/product/${item.gameID}`)
+          window.scroll({top: 0, behavior:'instant'});
+        }}
       >
         <img src={item.header} alt={`item-${item.gameID} preview`} className='item-preview'/>
         <p title={item.title} className='catalog-desc title'>{item.title}</p>

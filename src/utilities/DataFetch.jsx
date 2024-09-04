@@ -2,6 +2,8 @@ import { categories } from "./products";
 
 const LOCAL_STORAGE_NAME = 'shoppingByMakieldeviso';
 
+let PRODUCTS_DATA = [];
+
 // Removes data stored in local storage under LOCAL_STORAGE_NAME
 const deleteLocalStorage = async function () {
   localStorage.removeItem(LOCAL_STORAGE_NAME);
@@ -28,49 +30,54 @@ const getProductsData = async function (...titles) {
   const callArray = titles ? categories : [titles];
 
   try {
-    const fetchCalls = callArray.map(async (category) => {
-      const url = encodeURI(`https://www.cheapshark.com/api/1.0/deals?storeID=1&title=${category}`);
-      const itemsFetched = await fetch(url, {
-        method: 'GET',
-        mode: 'cors'
+    if (PRODUCTS_DATA.length === 0) {
+      const fetchCalls = callArray.map(async (category) => {
+        const url = encodeURI(`https://www.cheapshark.com/api/1.0/deals?storeID=1&title=${category}`);
+        const itemsFetched = await fetch(url, {
+          method: 'GET',
+          mode: 'cors'
+        })
+  
+        const items = await itemsFetched.json();
+  
+        // Add custom properties to fetched data
+        items.forEach(item => {
+          const dataAddOns = {
+            header: getHeaderSrc(item.thumb),  
+            about: "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolores repellat eos doloremque. Est, quasi placeat ad modi tempora corporis autem?",
+            developer: "Lorem, ipsum dolor",
+            publisher: "Lorem ipsum dolor sit",
+            category: category
+          }
+  
+          Object.assign(item, dataAddOns)
+        })
+        
+        return items;
       })
+  
+      // Arrange items
+      const itemsSet = new Set();
+      let itemsFetchedSpread = [];
+      const allItemsFetchedArray = await Promise.all(fetchCalls);
+      allItemsFetchedArray.forEach(batch => {
+        batch.forEach(item => {
+          // If item gameID is not yet in the itemsSet push item in the itemsFetchedSpread
+          // then add item gameID to the set
+          if (!itemsSet.has(item.gameID)) {
+            itemsFetchedSpread.push(item);
+            itemsSet.add(item.gameID);
+          }
+        })
+      });
+      itemsFetchedSpread.sort((a, b) => a.gameID - b.gameID );
 
-      const items = await itemsFetched.json();
+      // Save products data in a variable
+      PRODUCTS_DATA = itemsFetchedSpread;
+    } 
 
-      // Add custom properties to fetched data
-      items.forEach(item => {
-        const dataAddOns = {
-          header: getHeaderSrc(item.thumb),  
-          about: "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolores repellat eos doloremque. Est, quasi placeat ad modi tempora corporis autem?",
-          developer: "Lorem, ipsum dolor",
-          publisher: "Lorem ipsum dolor sit",
-          category: category
-        }
-
-        Object.assign(item, dataAddOns)
-      })
-
-      return items;
-    })
-
-    // Arrange items
-    const itemsSet = new Set();
-    let itemsFetchedSpread = [];
-    const allItemsFetchedArray = await Promise.all(fetchCalls);
-    allItemsFetchedArray.forEach(batch => {
-      batch.forEach(item => {
-        // If item gameID is not yet in the itemsSet push item in the itemsFetchedSpread
-        // then add item gameID to the set
-        if (!itemsSet.has(item.gameID)) {
-          itemsFetchedSpread.push(item);
-          itemsSet.add(item.gameID);
-        }
-      })
-    });
-    itemsFetchedSpread.sort((a, b) => a.gameID - b.gameID );
-    
     // Return final modified array of items/ products
-    return itemsFetchedSpread
+    return PRODUCTS_DATA
 
   } catch (error) {
     console.log(error.message);

@@ -168,7 +168,6 @@ const ShopCatalog = function () {
     )
   }
 
- 
   // Page changer of shop catalog
   const PageChanger = function () {  
     const navigate = useNavigate();
@@ -310,11 +309,7 @@ const ProductsOnPage = function () {
 
 // Render a specific item page (start)
 const ItemPage = function () {
-  useEffect(() => {
-    // Scroll to top on change page
-    window.scroll({top: 0, behavior:'instant'});
-  }, [])
-
+  
   return ( <> <Outlet context/> </> )
 }
 
