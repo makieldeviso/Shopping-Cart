@@ -1,6 +1,6 @@
 // React
-import { useState, createContext } from "react";
-import { Outlet, useNavigation } from "react-router-dom";
+import { useState, createContext, Suspense, useRef} from "react";
+import { Navigate, Outlet, useNavigate, useNavigation } from "react-router-dom";
 import { LoadingScreen } from "./LoadingScreen";
 
 // Components
@@ -12,16 +12,18 @@ export const PageContext = createContext();
 
 const App = function () {
   const [cartCount, setCartCount] = useState(0);
-  const navigation = useNavigation();
-  
+  const [loggedIn, setLoggedIn] = useState(false);
+  const pathRef = useRef('/');
+  const {state} = useNavigation();
+
   return (
-    <PageContext.Provider value={{ cartCount, setCartCount }}>
+    <PageContext.Provider value={{ cartCount, setCartCount, loggedIn, setLoggedIn }}>
       <Header/>
       <main>
-        <Outlet context={{ cartCount, setCartCount }}/>
+        <Outlet context={{ cartCount, setCartCount, loggedIn, setLoggedIn, pathRef }}/>
       </main>
       <Footer/>
-      {navigation.state === 'loading' && <LoadingScreen/>}
+      {state === 'loading' && <LoadingScreen/>}
     </PageContext.Provider>
   )
 }

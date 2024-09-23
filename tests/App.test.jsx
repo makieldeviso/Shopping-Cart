@@ -1,14 +1,36 @@
-import {describe, it, expect} from "vitest";
+import {describe, it, expect, beforeAll, vi} from "vitest";
 import { render, screen } from "@testing-library/react";
 
-import App from "../src/App";
+import {useRoutes, Routes, Route ,Switch, RouterProvider, MemoryRouter, LocationProvider, createMemory, createMemoryRouter, useNavigate, createBrowserRouter } from 'react-router-dom'
+import App from "../src/components/App";
+import Header from "../src/components/Header";
+import router, { routesArr } from "../src/components/router";
+import HomePage from "../src/components/FrontPage";
+import { act } from "react";
+import { pageLoader } from "../src/utilities/DataFetch";
 
-describe('App', () => {
+describe('App tests', () => {
+  
+  it ('renders App', async () => {
+    const testRouter = createMemoryRouter(routesArr);
 
-  it('App renders', () => {
-    render(<App title='Shopping Cart'/>);
+    render(
+      <MemoryRouter initialEntries={['/home']}>
+        <Routes>
+        <Route path="/" element={<App />}> 
+          <Route path="home" element={<HomePage />} loader={pageLoader}/>
+        </Route>
+        </Routes>
+      </MemoryRouter>
+      // <RouterProvider router={testRouter} />
+    )
 
-    expect(screen.getByRole('heading').textContent).toMatch('Shopping Cart')
+    screen.debug()
+
+    const offers = await screen.findByText('SPECIAL OFFERS');
+    expect(offers).toBeInTheDocument();
   })
+
+  
 
 })

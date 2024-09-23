@@ -1,6 +1,6 @@
 // React
-import { useRef, useState } from "react";
-import { useLoaderData, Outlet, useParams, useOutletContext, useNavigate, useLocation } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { useLoaderData, Outlet, useParams, useOutletContext, useNavigate, useLocation, Navigate } from "react-router-dom";
 import PropTypes from 'prop-types';
 
 // Scripts
@@ -292,9 +292,17 @@ UserProfile.propTypes = {
 }
 
 const Profile = function () {
-  const { profileData } = useLoaderData();
   const navigate = useNavigate();
   const location = useLocation();
+  const {loggedIn, pathRef} = useOutletContext();
+
+  // Navigate to login page if not logged in
+  useEffect(() => {
+    pathRef.current = location.pathname;
+    if (!loggedIn) navigate('/login');
+  })
+  
+  const { profileData } = useLoaderData();
   const [activeTab, setActiveTab] = useState('to-ship');
 
   const handleChangePurchaseTab = function (event) {
@@ -349,4 +357,5 @@ const Profile = function () {
   )
 }
 
-export { Profile, PurchaseDisplay}
+export default Profile
+export { PurchaseDisplay }

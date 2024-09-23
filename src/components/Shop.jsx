@@ -550,4 +550,5 @@ const ProductDetails = function () {
 }
  // Render a specific item page (end)
 
-export { Shop, ShopCatalog, ProductsOnPage, ItemPage, ProductDetails}
+export default Shop
+export { ShopCatalog, ProductsOnPage, ItemPage, ProductDetails}

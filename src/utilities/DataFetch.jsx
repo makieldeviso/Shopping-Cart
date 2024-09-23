@@ -1,8 +1,10 @@
 import { categories } from "./products";
+import defaultTestUser from "./profiles";
 
 const LOCAL_STORAGE_NAME = 'shoppingByMakieldeviso';
 
 let PRODUCTS_DATA = [];
+let CATEGORIES_DATA = [];
 
 // Removes data stored in local storage under LOCAL_STORAGE_NAME
 const deleteLocalStorage = async function () {
@@ -28,7 +30,7 @@ const getProductsData = async function (...titles) {
   // Note: title must be inside array since logic uses Array.map
   // If no argument use categories array exported from products jsx
   const callArray = titles ? categories : [titles];
-
+ 
   try {
     if (PRODUCTS_DATA.length === 0) {
       const fetchCalls = callArray.map(async (category) => {
@@ -89,19 +91,23 @@ const getProductsData = async function (...titles) {
 // Get categories
 const getCategories = async function () {
   try {
-    const url = encodeURI('https://jsonplaceholder.typicode.com/albums');
-    const mockData = await fetch(url, 
-      {
-        method: 'GET',
-        mode: 'cors'
-      }
-    )
 
-    // Mock getting categories from server
-    let mockCategories = await mockData.json();
-    mockCategories = categories;
+    if (CATEGORIES_DATA.length === 0) {
+      const url = encodeURI('https://jsonplaceholder.typicode.com/albums');
+      const mockData = await fetch(url, 
+        {
+          method: 'GET',
+          mode: 'cors'
+        }
+      )
 
-    return mockCategories;
+      // Mock getting categories from server
+      let mockCategories = await mockData.json();
+      mockCategories = categories;
+      CATEGORIES_DATA = mockCategories
+    }
+
+    return CATEGORIES_DATA;
 
   } catch (error) {
     console.log(error.message);
@@ -155,6 +161,23 @@ const getProfileData = async function (enableAbort) {
   } catch (error) {
     console.log(error.message)
   }
+}
+
+// Mock login
+const logInProfile = async function (credentials) {
+  const {username, password} = credentials
+
+  const usersMatch = defaultTestUser.filter(user => user.username === username );
+
+  let result = false
+  if (usersMatch.length === 0 ) {
+    result = false;
+  } else {
+    const loginUser = usersMatch.find(user => user.password === password);
+    result = loginUser ? true : false 
+  }
+
+  return result
 }
 
 // Update profile
@@ -309,6 +332,7 @@ export {
   changeCartItemQuantity,
   addCheckoutItems,
   getProductsData,
+  logInProfile,
 
   // loaders
   shopLoader,

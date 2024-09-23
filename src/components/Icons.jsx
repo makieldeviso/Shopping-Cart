@@ -73,7 +73,8 @@ import {
   mdiCreationOutline, 
   mdiFilterVariant,
   mdiChevronUp,
-  mdiChevronDown
+  mdiChevronDown,
+  mdiHelp
 } from '@mdi/js';
 
 const NewIcon = function ({assignClass}) {
@@ -133,6 +134,10 @@ const NewIcon = function ({assignClass}) {
 
     case 'github':
       assignPath = mdiGithub;
+      break;
+
+    case 'help':
+      assignPath = mdiHelp;
       break;
   
     case 'line':
@@ -199,14 +204,15 @@ NewIcon.propTypes = {
   assignClass: PropTypes.string
 }
 
-const CategoryIcon = function ({assignClass}) {
+const CategoryIcon = function ({assignClass, assignAltText}) {
   return (
-    <img src={importIcons[assignClass]} alt="" className={`animal-icon ${assignClass}`}/>
+    <img src={importIcons[assignClass]} alt={assignAltText} className={`animal-icon ${assignClass}`}/>
   )
 } 
 
 CategoryIcon.propTypes = {
-  assignClass: PropTypes.string
+  assignClass: PropTypes.string,
+  assignAltText: PropTypes.string
 }
 
 const AnimalImage = function ({assignClass}) {

@@ -1,5 +1,5 @@
 // React
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState, Suspense } from "react";
 import { useLoaderData, useNavigate, useNavigation } from "react-router-dom";
 import PropTypes from 'prop-types';
 
@@ -12,6 +12,7 @@ import heroImg from '../assets/hero-2.jpg';
 // Components
 import { AnimalImage, NewIcon } from "./Icons";
 import { ProductsBanner, ArrowButton, PageNodes } from "./ProductsDisplay";
+import { LoadingScreen } from "./LoadingScreen";
 
 // Context
 const HomePageContext = createContext();
@@ -58,7 +59,7 @@ const HeroBanner = function () {
             >Shop now
           </button>
         </div>
-        <img src={heroImg} alt='' className='hero-image'/>
+        <img src={heroImg} alt='hero banner' className='hero-image'/>
     </div>
   )
 }

@@ -1,6 +1,6 @@
 // React
 import { useContext, useState } from "react"
-import { NavLink } from "react-router-dom"
+import { NavLink, useNavigate } from "react-router-dom"
 
 // Components
 import { NewIcon } from "./Icons"
@@ -29,7 +29,7 @@ const PageBanner = function () {
   return (
     <div className="page-banner">
       <NavLink to='/'>
-        <CategoryIcon assignClass={'logo'}/>
+        <CategoryIcon assignClass={'logo'} assignAltText={'Page logo'}/>
         <span className="page-title">A-TIER.com</span>
         <span className='page-subtitle'>Physical Games Store</span>
       </NavLink>
@@ -38,8 +38,9 @@ const PageBanner = function () {
 }
 
 const PageNav = function () {
-  const {cartCount, setCartCount} = useContext(PageContext);
-  
+  const {cartCount, setCartCount, loggedIn} = useContext(PageContext);
+  const navigate = useNavigate();
+
   useState(() => {
     const assignCountData = async () => {
       const profileData = await getProfileData();
@@ -52,19 +53,35 @@ const PageNav = function () {
   return(
     <nav className="page-nav">
       <ul>
-        <li title='Profile'>
-          <NavLink to='profile'><NewIcon assignClass={'profile'}/></NavLink>
-        </li>
+        
         <li title='Shop'><NavLink to='shop'>
           <NewIcon assignClass={'shop'}/></NavLink>
         </li>
-        <li title='Cart'><NavLink to='cart'>
-          <NewIcon assignClass={'cart'}/></NavLink>
-          <p>{cartCount}</p>
-        </li>
+
+        
+        {loggedIn
+          ? 
+          <>
+            <li title='Cart'><NavLink to='cart'>
+              <NewIcon assignClass={'cart'}/></NavLink>
+              <p>{cartCount}</p>
+            </li>
+
+            <li title='Profile'>
+              <NavLink to='profile'><NewIcon assignClass={'profile'}/></NavLink>
+            </li>
+          </>
+          : 
+          <li title='Log in' className="login">
+            <button onClick={() => navigate('login')}>Log in</button>
+          </li>
+        }
+        
       </ul>
     </nav>
   )
 }
+
+
 
 export default Header

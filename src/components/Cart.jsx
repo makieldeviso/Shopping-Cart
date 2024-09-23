@@ -498,4 +498,4 @@ ConfirmCheckoutDialog.propTypes = {
   handleCheckout: PropTypes.func
 }
 
-export {Cart}
+export default Cart

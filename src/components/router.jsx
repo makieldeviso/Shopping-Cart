@@ -1,21 +1,28 @@
 // React
 import { createBrowserRouter, Navigate } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
 
 // Components
 import App from './App'
-import HomePage from './FrontPage';
-import { Profile, PurchaseDisplay } from './Profile';
-import { Shop, ShopCatalog, ProductsOnPage, ItemPage, ProductDetails } from './Shop';
-import { Cart } from './Cart';
+
+import {PurchaseDisplay } from './Profile';
+import { ShopCatalog, ProductsOnPage, ItemPage, ProductDetails } from './Shop';
 import ErrorPage from './ErrorPage';
+
+const HomePage = lazy(() => import('./FrontPage'));
+const Profile = lazy(() => import('./Profile'));
+const Shop = lazy(() => import('./Shop'));
+const Cart = lazy(() => import('./Cart'));
+const LogIn = lazy(() => import('./LogIn'));
 
 // Data fetch
 import { shopLoader, cartLoader, profileLoader, pageLoader } from '../utilities/DataFetch';
+import { LoadingScreen } from './LoadingScreen';
 
-const router = createBrowserRouter([
+const routesArr = [
   {
     path: '/',
-    element: <App/>,
+    element:  <App/>,
     errorElement: <ErrorPage/>,
     children: [
       {
@@ -25,13 +32,19 @@ const router = createBrowserRouter([
       // Homepage ----------
       {
         path: 'home',
-        element: <HomePage/>,
+        element: 
+          <Suspense fallback={<LoadingScreen/>}>
+            <HomePage/>
+          </Suspense>,
         loader: pageLoader
       },
       // Profile ----------
       {
         path: 'profile',
-        element: <Profile/>,
+        element: 
+          <Suspense fallback={<LoadingScreen/>}>
+            <Profile/>
+          </Suspense>,
         loader: profileLoader,  
         children: [
           {
@@ -47,7 +60,10 @@ const router = createBrowserRouter([
       // Shop ----------
       {
         path: 'shop',
-        element: <Shop/>,
+        element: 
+          <Suspense fallback={<LoadingScreen/>}>
+            <Shop/>
+          </Suspense>,
         loader: shopLoader,
         children: [
           {
@@ -85,11 +101,26 @@ const router = createBrowserRouter([
       // Cart ----------
       {
         path: 'cart',
-        element: <Cart/>,
+        element: 
+          <Suspense fallback={<LoadingScreen/>}>
+            <Cart/>
+          </Suspense>,
         loader: cartLoader
       },
+
+      // Log in page
+      {
+        path: 'login',
+        element: 
+          <Suspense fallback={<LoadingScreen/>}>
+            <LogIn/>
+          </Suspense>
+      }
     ]
   }
-])
+]
+
+const router = createBrowserRouter(routesArr);
 
 export default router 
+export {routesArr}
