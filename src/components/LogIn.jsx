@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate, useOutletContext } from "react-router-dom"
+import { useNavigate, useOutletContext } from "react-router-dom"
+import PropTypes from 'prop-types';
 
 import { logInProfile } from "../utilities/DataFetch";
 
@@ -171,6 +172,11 @@ const LogInStatus = function ({loginStatus, setLoginStatus}) {
       <p>{loginMessage}</p>
     </div>
   )
+}
+
+LogInStatus.propTypes = {
+  loginStatus: PropTypes.string,
+  setLoginStatus: PropTypes.func
 }
 
 export default LogIn

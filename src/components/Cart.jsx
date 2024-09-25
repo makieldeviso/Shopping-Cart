@@ -434,8 +434,7 @@ const CheckOutCounter = function ({profileData, itemsForCheckout, checkoutAmount
 
         <button 
           ref = {checkoutBtnRef}
-          className="checkout-btn"
-          // onClick = {() => handleCheckout(mailingRef.current)} 
+          className="checkout-btn" 
           onClick = {() => handleCheckoutConfirm(mailingRef.current)} 
           disabled = {itemsForCheckout.length <= 0 ? true : false}
         >
@@ -464,7 +463,8 @@ CheckOutCounter.propTypes = {
   }),
   itemsForCheckout: PropTypes.array,
   checkoutAmount: PropTypes.number,
-  handleCheckout: PropTypes.func
+  handleCheckout: PropTypes.func,
+  handleCheckoutConfirm: PropTypes.func
 }
 
 // Dialog for final confirmation of checkout

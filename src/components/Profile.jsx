@@ -1,6 +1,6 @@
 // React
 import { useEffect, useRef, useState } from "react";
-import { useLoaderData, Outlet, useParams, useOutletContext, useNavigate, useLocation, Navigate } from "react-router-dom";
+import { useLoaderData, Outlet, useParams, useOutletContext, useNavigate, useLocation } from "react-router-dom";
 import PropTypes from 'prop-types';
 
 // Scripts
@@ -303,7 +303,7 @@ const Profile = function () {
     if (!loggedIn) navigate('/login');
   })
   // Authentication (end)
-  
+
   const { profileData } = useLoaderData();
   const [activeTab, setActiveTab] = useState('to-ship');
 

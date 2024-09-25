@@ -1,6 +1,6 @@
 // React
-import { createContext, useContext, useEffect, useRef, useState, Suspense } from "react";
-import { useLoaderData, useNavigate, useNavigation } from "react-router-dom";
+import { createContext, useContext, useEffect, useState } from "react";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import PropTypes from 'prop-types';
 
 // Scripts
@@ -12,7 +12,6 @@ import heroImg from '../assets/hero-2.jpg';
 // Components
 import { AnimalImage, NewIcon } from "./Icons";
 import { ProductsBanner, ArrowButton, PageNodes } from "./ProductsDisplay";
-import { LoadingScreen } from "./LoadingScreen";
 
 // Context
 const HomePageContext = createContext();
