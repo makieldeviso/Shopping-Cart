@@ -1,6 +1,6 @@
 // React
-import { useState, createContext, Suspense, useRef} from "react";
-import { Navigate, Outlet, useNavigate, useNavigation } from "react-router-dom";
+import { useState, createContext, useRef} from "react";
+import { Outlet, useNavigation } from "react-router-dom";
 import { LoadingScreen } from "./LoadingScreen";
 
 // Components
@@ -12,7 +12,7 @@ export const PageContext = createContext();
 
 const App = function () {
   const [cartCount, setCartCount] = useState(0);
-  const [loggedIn, setLoggedIn] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(true);
   const pathRef = useRef('/');
   const {state} = useNavigation();
 

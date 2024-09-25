@@ -8,6 +8,13 @@ import { NewIcon } from "./Icons";
 const LogIn = function () {
   const navigate = useNavigate();
   const {loggedIn, setLoggedIn, pathRef} = useOutletContext();
+
+  // Navigate to profile page if login page was opened while
+  // already logged in
+  useEffect(() => {
+    if (loggedIn) navigate('/profile');
+  }, []);
+
   const [ username, setUsername ] = useState('');
   const [ password, setPassword ] = useState('');
   
