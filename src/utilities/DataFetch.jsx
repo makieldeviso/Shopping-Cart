@@ -83,7 +83,7 @@ const getProductsData = async function (...titles) {
 
   } catch (error) {
     console.log(error.message);
-    return ([])
+    return error
   }  
 
 }
@@ -111,7 +111,7 @@ const getCategories = async function () {
 
   } catch (error) {
     console.log(error.message);
-    return [];
+    return error;
   }
 }
 
@@ -123,7 +123,7 @@ const getProfileData = async function (enableAbort) {
 
   if (controller && enableAbort) {
     controller.abort({message: 'Request overwritten'});
-  }
+  } 
 
   controller = new AbortController();
   const signal = controller.signal;
@@ -139,7 +139,7 @@ const getProfileData = async function (enableAbort) {
     );
 
     const userData = await mockData.json();
-
+    
     let savedProfile = localStorage.getItem(LOCAL_STORAGE_NAME);
 
     if (!savedProfile) {
@@ -159,7 +159,8 @@ const getProfileData = async function (enableAbort) {
     return JSON.parse(savedProfile);
 
   } catch (error) {
-    console.log(error.message)
+    console.log(error);
+    return error
   }
 }
 
@@ -204,7 +205,7 @@ const updateProfileData = async function (updateObj) {
     return JSON.parse(savedProfile);
 
   } catch (error) {
-    console.log(error.message)
+    console.log(error.message);
   }
 }
 

@@ -24,6 +24,10 @@ const Shop = function () {
   const {setCartCount} = useOutletContext();
   const itemsPerPage = 36;
 
+  if (productsData.length === 0) {
+    throw new Error('Failed to retrieve data');
+  }
+
   const contextValues = { 
     productsData, 
     categoriesData, 

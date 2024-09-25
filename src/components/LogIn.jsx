@@ -12,14 +12,36 @@ const LogIn = function () {
   const [ username, setUsername ] = useState('');
   const [ password, setPassword ] = useState('');
   
+  const [loginStatus, setLoginStatus] = useState('none');
+  const loginRef = useRef();
+  const passwordRef = useRef();
+  const inputRefArr = [loginRef, passwordRef];
+
   const handleLogIn = async function () {
     const loginResult = await logInProfile({username, password});
     
     if (loginResult) {
       setLoggedIn(true);
-      navigate(pathRef.current)
+      setLoginStatus('success');
+      navigate(pathRef.current);
+
+    } else if (!loginResult) {
+      setLoginStatus('unsuccessful');
     }
-    
+  }
+
+  const handleEnterPress = function (event) {
+    if (event.keyCode === 13) {
+      event.target.blur();
+
+      const currentInputIndex = Number(event.target.dataset.index);
+  
+      if (currentInputIndex < inputRefArr.length - 1) {
+        inputRefArr[currentInputIndex + 1].current.focus();
+      } else {
+        handleLogIn();
+      }
+    }
   }
 
   return (
@@ -30,6 +52,9 @@ const LogIn = function () {
           <div className="input-cont">
             <label htmlFor="login-username">Username</label>
             <input type="text" id='login-username' name='login-username'
+              data-index = {0}
+              ref={loginRef}
+              onKeyDown={handleEnterPress}
               value={username} onChange={(e) => setUsername(e.target.value)}
             />
           </div>
@@ -37,6 +62,9 @@ const LogIn = function () {
           <div className="input-cont">
             <label htmlFor="login-password">Password</label>
             <input type="password" id='login-password' name='login-password'
+              data-index = {1}
+              ref={passwordRef}
+              onKeyDown={handleEnterPress}
               value={password} onChange={(e) => setPassword(e.target.value)}
             />
           </div>
@@ -49,6 +77,10 @@ const LogIn = function () {
         </div>
 
         <HelpMessage/>
+
+        {loginStatus !== 'none' && 
+        <LogInStatus loginStatus={loginStatus} setLoginStatus={setLoginStatus}/>
+        }
         
       </div>
     </div>
@@ -101,7 +133,38 @@ const HelpMessage = function () {
   )
 }
 
+const LogInStatus = function ({loginStatus, setLoginStatus}) {
+  
+  let loginMessage = '';
+  switch (loginStatus) {
+    case 'none':
+      loginMessage = ''
+      break;
+    
+    case 'success':
+      loginMessage = 'Logged in.'
+      break;
+    
+    case 'unsuccessful':
+      loginMessage = 'Log in unsuccessful. Incorrect username or password.'
+      break;
+  
+    default:
+      loginMessage = ''
+      break;
+  }
 
-
+  return (
+    <div className='login-message'
+      onAnimationEnd = {(e) => {
+        e.target.style.display = 'none'
+        setLoginStatus('none')
+        }
+      }
+    >
+      <p>{loginMessage}</p>
+    </div>
+  )
+}
 
 export default LogIn

@@ -2566,6 +2566,7 @@ dialog::backdrop {
 .login-page {
   max-width: 1024px;
   margin: auto;
+  position: relative;
 }
 
 .login-cont {
@@ -2639,6 +2640,8 @@ dialog::backdrop {
   font-size: 0.8rem;
   text-align: center;
   color: var(--lightest-color);
+  line-height: 1rem;
+  padding: 0 var(--padding);
 }
 
 .login-help-btn{
@@ -2676,11 +2679,28 @@ dialog::backdrop {
   border: 1px solid var(--darker-color);
   width: max-content;
   padding: var(--padding);
-  margin: auto;
+  margin: var(--padding) auto 0;
 }
 
 .login-cred p {
   text-align: start;
+}
+
+.login-message {
+  background-color: var(--lightest-color);
+  border: 1px solid var(--comp-color-1);
+  padding: var(--padding);
+  width: 300px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  animation: fade-out 0.2s 1.5s ease-in-out 1;
+}
+
+.login-message p {
+  color: var(--comp-color-1);
+  font-size: 1rem;
+  text-align: center;
 }
 
 
@@ -2747,6 +2767,66 @@ dialog::backdrop {
 }
 
 /* Loading Screen (end) */
+
+/* Error page (start) */
+.error-page {
+  width: 100%;
+  max-width: 1024px;
+  margin: auto;
+  margin-top: 75px;
+}
+
+.error-cont {
+  width: max-content;
+  margin: auto;
+}
+
+.error-cont h1 {
+  color: var(--base-color);
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: var(--margin);
+}
+
+.error-cont p {
+  color: var(--lightest-color);
+  text-align: center;
+  font-size: 1.2rem;
+  margin-bottom: var(--margin);
+}
+
+.error-cont .home-link {
+  color: var(--darker-color);
+  font-family: var(--title-font);
+  text-decoration: none;
+  font-size: 1.3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: calc(var(--margin) * 2) auto;
+}
+
+.error-cont .home-link:visited {
+  color: var(--darker-color);
+}
+
+.error-cont .home-link:hover {
+  color: var(--base-color);
+}
+
+.error-cont .home-link:active{
+  color: var(--base-color);
+}
+
+.error-cont .home-link svg {
+  width: 25px;
+  height: 25px;
+  margin: 0 5px;
+}
+
+/* Error page (end) */
+
+
 
 /* Footer  (start)*/
 footer {

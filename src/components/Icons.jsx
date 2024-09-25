@@ -74,7 +74,8 @@ import {
   mdiFilterVariant,
   mdiChevronUp,
   mdiChevronDown,
-  mdiHelp
+  mdiHelp,
+  mdiHomeOutline
 } from '@mdi/js';
 
 const NewIcon = function ({assignClass}) {
@@ -138,6 +139,10 @@ const NewIcon = function ({assignClass}) {
 
     case 'help':
       assignPath = mdiHelp;
+      break;
+
+    case 'home':
+      assignPath = mdiHomeOutline;
       break;
   
     case 'line':
