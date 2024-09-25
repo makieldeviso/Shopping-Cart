@@ -292,6 +292,7 @@ UserProfile.propTypes = {
 }
 
 const Profile = function () {
+  // Authentication (start)
   const navigate = useNavigate();
   const location = useLocation();
   const {loggedIn, pathRef} = useOutletContext();
@@ -301,6 +302,7 @@ const Profile = function () {
     pathRef.current = location.pathname;
     if (!loggedIn) navigate('/login');
   })
+  // Authentication (end)
   
   const { profileData } = useLoaderData();
   const [activeTab, setActiveTab] = useState('to-ship');

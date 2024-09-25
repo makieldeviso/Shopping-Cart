@@ -1,6 +1,6 @@
 // React
 import { useContext, useState, useRef, useEffect, createContext } from "react";
-import { Outlet, useLoaderData, useParams, useNavigate, useOutletContext } from "react-router-dom";
+import { Outlet, useLoaderData, useParams, useNavigate, useOutletContext, useLocation } from "react-router-dom";
 import PropTypes from 'prop-types';
 
 // Data fetch
@@ -21,7 +21,7 @@ const Shop = function () {
   const { productsData, categoriesData } = useLoaderData();
   const [filter, setFilter] = useState('all');
   const [shopItems, setShopItems] = useState(productsData);
-  const {setCartCount} = useOutletContext();
+  const {loggedIn, pathRef, setCartCount} = useOutletContext();
   const itemsPerPage = 36;
 
   if (productsData.length === 0) {
@@ -29,12 +29,13 @@ const Shop = function () {
   }
 
   const contextValues = { 
+    loggedIn, pathRef,
     productsData, 
     categoriesData, 
     filter, setFilter, 
     shopItems, setShopItems, 
     itemsPerPage,
-    setCartCount 
+    setCartCount,
   }
 
   return (
@@ -326,9 +327,11 @@ const ItemPage = function () {
 
 // Renders product details on the item page
 const ProductDetails = function () {
-  const {productsData} = useContext(ShopContext);
-  const { id } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const {loggedIn, pathRef, productsData} = useContext(ShopContext);
 
+  const { id } = useParams();
   const successRef = useRef(null);
   const preCartRef = useRef(null);
   const itemData = productsData.find(item => Number(item.gameID) === Number(id));
@@ -336,7 +339,15 @@ const ProductDetails = function () {
   
   // Open add to cart dialog (pre-cart)
   const handlePreAddCart = function () {
-    preCartRef.current.showModal();
+
+    if (loggedIn) {
+      preCartRef.current.showModal();
+
+    } else {
+      pathRef.current = location.pathname;
+      navigate('/login');
+    }
+
   }
 
   // Item/ Products details display
@@ -366,7 +377,7 @@ const ProductDetails = function () {
           </div>
 
           <button className="item-desc add-btn" onClick={handlePreAddCart}>
-            Add to cart
+            {loggedIn ? 'Add to cart' : 'Log in to buy'}
           </button>
         </div>
         

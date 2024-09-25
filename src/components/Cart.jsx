@@ -1,6 +1,6 @@
 // React
 import { useEffect, useState, useRef } from "react";
-import { useLoaderData, useNavigate, useOutletContext } from "react-router-dom";
+import { useLoaderData, useLocation, useNavigate, useOutletContext } from "react-router-dom";
 import PropTypes from 'prop-types';
 
 // Data fetch
@@ -22,6 +22,18 @@ const ORDER_CONST = {
 
 // // Cart main component
 const Cart = function () {
+  // Authentication (start)
+  const navigate = useNavigate();
+  const location = useLocation();
+  const {loggedIn, pathRef} = useOutletContext();
+
+  // Navigate to login page if not logged in
+  useEffect(() => {
+    pathRef.current = location.pathname;
+    if (!loggedIn) navigate('/login');
+  })
+  // Authentication (end)
+
   const { profileData } = useLoaderData();
   const [profile, setProfile] = useState(profileData);
   const { setCartCount } = useOutletContext();

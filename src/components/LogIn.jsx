@@ -5,7 +5,6 @@ import { logInProfile } from "../utilities/DataFetch";
 
 import { NewIcon } from "./Icons";
 
-
 const LogIn = function () {
   const navigate = useNavigate();
   const {loggedIn, setLoggedIn, pathRef} = useOutletContext();

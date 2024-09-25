@@ -1,5 +1,3 @@
-
-
 const defaultTestUser = [
   {
     username: 'default',

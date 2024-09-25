@@ -12,7 +12,7 @@ export const PageContext = createContext();
 
 const App = function () {
   const [cartCount, setCartCount] = useState(0);
-  const [loggedIn, setLoggedIn] = useState(true);
+  const [loggedIn, setLoggedIn] = useState(false);
   const pathRef = useRef('/');
   const {state} = useNavigation();
 
