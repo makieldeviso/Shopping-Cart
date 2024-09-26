@@ -926,8 +926,9 @@ button span {
 }
 
 .item-preview {
+  background-color: var(--black);
   grid-area: img;
-  /* min-width: 300px; */
+  min-height: 150px;
   max-height: 160px;
   width: 100%;
   object-fit: cover;
