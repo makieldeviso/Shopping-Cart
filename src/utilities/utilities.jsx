@@ -14,4 +14,19 @@ const amountFormat = function (amount) {
   return `$${Number.parseFloat(amount).toFixed(2)}`;
 }
 
-export { capitalizeString, amountFormat }
+const handleInputMove = function (event, inputsRefArr, endFunc) {
+  if (event.keyCode === 13) {
+    event.target.blur();
+
+    const currentInputIndex = Number(event.target.dataset.index);
+
+    if (currentInputIndex < inputsRefArr.length - 1) {
+      inputsRefArr[currentInputIndex + 1].current.focus();
+    } else {
+      endFunc();
+    }
+  }
+}
+
+
+export { capitalizeString, amountFormat, handleInputMove }

@@ -1,9 +1,16 @@
+// React
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom"
 import PropTypes from 'prop-types';
 
+// Data fetch
 import { logInProfile } from "../utilities/DataFetch";
 
+// Scripts
+import { handleInputMove } from "../utilities/utilities";
+
+
+// Components
 import { NewIcon } from "./Icons";
 
 const LogIn = function () {
@@ -20,9 +27,9 @@ const LogIn = function () {
   const [ password, setPassword ] = useState('');
   
   const [loginStatus, setLoginStatus] = useState('none');
-  const loginRef = useRef();
-  const passwordRef = useRef();
-  const inputRefArr = [loginRef, passwordRef];
+  const usernameRef = useRef(null);
+  const passwordRef = useRef(null);
+  const inputsRefArr = [usernameRef, passwordRef];
 
   const handleLogIn = async function () {
     const loginResult = await logInProfile({username, password});
@@ -38,17 +45,8 @@ const LogIn = function () {
   }
 
   const handleEnterPress = function (event) {
-    if (event.keyCode === 13) {
-      event.target.blur();
-
-      const currentInputIndex = Number(event.target.dataset.index);
-  
-      if (currentInputIndex < inputRefArr.length - 1) {
-        inputRefArr[currentInputIndex + 1].current.focus();
-      } else {
-        handleLogIn();
-      }
-    }
+    // Conditional script when pressing enter on input fields
+    handleInputMove(event, inputsRefArr, handleLogIn);
   }
 
   return (
@@ -60,7 +58,7 @@ const LogIn = function () {
             <label htmlFor="login-username">Username</label>
             <input type="text" id='login-username' name='login-username'
               data-index = {0}
-              ref={loginRef}
+              ref={usernameRef}
               onKeyDown={handleEnterPress}
               value={username} onChange={(e) => setUsername(e.target.value)}
             />

@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 
 // Scripts
 import { format } from "date-fns";
-import { capitalizeString } from "../utilities/utilities";
+import { capitalizeString, handleInputMove } from "../utilities/utilities";
 
 // Data fetch
 import { updateProfileData } from "../utilities/DataFetch";
@@ -151,28 +151,26 @@ const UserProfile = function ({profileData}) {
     const [tempName, setTempName] = useState(name);
     const [tempPhone, setTempPhone] = useState(phone);
     const [tempAddress, setTempAddress] = useState(address);
-    
-    const handleSaveProfileChange = async function (event) {
-      const btnAction = event.target.value;
 
-      if (btnAction === 'save') {
-        updateProfileData({
-          name: tempName,
-          address: tempAddress,
-          phone: tempPhone,
-        })
+    const handleSaveProfileChange = async function () {
+      updateProfileData({
+        name: tempName,
+        address: tempAddress,
+        phone: tempPhone,
+      })
 
-        // Update profileDataRef with new saved profile
-        setName(tempName) ;
-        setPhone(tempPhone);
-        setAddress(tempAddress);
+      // Update profileDataRef with new saved profile
+      setName(tempName) ;
+      setPhone(tempPhone);
+      setAddress(tempAddress);
+      
+      editDialogRef.current.close();
+    }
 
-      } else if (btnAction === 'cancel') {
-        setTempName(name);
-        setTempPhone(phone);
-        setTempAddress(address);
-      }
-    
+    const handleCancelProfileChange = function () {
+      setTempName(name);
+      setTempPhone(phone);
+      setTempAddress(address);
       editDialogRef.current.close();
     }
 
@@ -234,7 +232,7 @@ const UserProfile = function ({profileData}) {
           </div>
 
           <div className="action-btns">
-            <button className='cancel-btn' value='cancel' type='button' onClick={handleSaveProfileChange}>Cancel</button>
+            <button className='cancel-btn' value='cancel' type='button' onClick={handleCancelProfileChange}>Cancel</button>
             <button 
               className='save-btn' value='save' type='button' 
               onClick = { handleSaveProfileChange }

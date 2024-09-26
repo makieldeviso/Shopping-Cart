@@ -201,8 +201,7 @@ const updateProfileData = async function (updateObj) {
     
     // Mock successful patch, save to local storage
     localStorage.setItem(LOCAL_STORAGE_NAME, JSON.stringify(updatedProfile));
-    
-    return JSON.parse(savedProfile);
+    return savedProfile;
 
   } catch (error) {
     console.log(error.message);
