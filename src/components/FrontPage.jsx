@@ -139,7 +139,7 @@ const CategoriesBanner = function () {
   const navigate = useNavigate();
 
   const handleItemDisplay = function () {
-    const SCREEN = { SMALL: 375 };
+    const SCREEN = { SMALL: 767 };
     
     if (screen.width <= SCREEN.SMALL) {
       // When in smaller screens, display all items in a scrollable flex
