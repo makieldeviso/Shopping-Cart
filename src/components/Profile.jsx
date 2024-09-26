@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 
 // Scripts
 import { format } from "date-fns";
-import { capitalizeString, handleInputMove } from "../utilities/utilities";
+import { capitalizeString } from "../utilities/utilities";
 
 // Data fetch
 import { updateProfileData } from "../utilities/DataFetch";
@@ -140,11 +140,12 @@ Delivered.propTypes = {
   })
 }
 
-const UserProfile = function ({profileData}) {
+const UserProfile = function ({profileData, setLoggedIn}) {
   const [name, setName] = useState(profileData.name);
   const [address, setAddress] = useState(profileData.address);
   const [phone, setPhone] = useState(profileData.phone);
 
+  const navigate = useNavigate();
   const editDialogRef = useRef(null);
 
   const EditDialog = function () {
@@ -246,6 +247,20 @@ const UserProfile = function ({profileData}) {
       </dialog>
     )
   }
+
+  const LogoutButton = function () {
+    return (
+      <button className="logout-btn"
+        onClick={() => {
+          setLoggedIn(false);
+          navigate('/login')
+        }}
+      >
+        <NewIcon assignClass={'logout'}/>
+        Log out
+      </button>
+    )
+  }
   
   const ProfileInfo = function ({assignLabel, assignState}) {
     return (
@@ -276,6 +291,9 @@ const UserProfile = function ({profileData}) {
       >
         <NewIcon assignClass={'edit'}/>
       </button>
+
+      <LogoutButton setLoggedIn={setLoggedIn}/>
+
       <EditDialog/>
     </div>
   )
@@ -286,14 +304,17 @@ UserProfile.propTypes = {
     name: PropTypes.string,
     phone: PropTypes.string,
     address: PropTypes.string,
-  })
+  }),
+  setLoggedIn: PropTypes.func
+
 }
+
 
 const Profile = function () {
   // Authentication (start)
   const navigate = useNavigate();
   const location = useLocation();
-  const {loggedIn, pathRef} = useOutletContext();
+  const {loggedIn, setLoggedIn, pathRef} = useOutletContext();
 
   // Navigate to login page if not logged in
   useEffect(() => {
@@ -323,7 +344,7 @@ const Profile = function () {
       <h2>Profile</h2>
 
       <div className="profile-display">
-        <UserProfile profileData={profileData}/>
+        <UserProfile profileData={profileData} setLoggedIn={setLoggedIn}/>
 
         <div className='purchase-tabs'>
           <button value='to-ship' onClick={handleChangePurchaseTab}

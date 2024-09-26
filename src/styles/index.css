@@ -2127,12 +2127,38 @@ dialog.confirm-checkout {
   margin-bottom: var(--margin);
 }
 
+.logout-btn {
+  font-size: 0.8rem;
+  font-family: var(--title-font);
+  padding: calc(var(--padding) * 0.5);
+  width: max-content;
+  justify-self: end;
+  grid-column: 1 / 3;
+  margin-top: var(--margin);
+  border: 1px solid transparent;
+  background-color: var(--darker-color);
+  color: var(--lightest-color);
+  display: flex;
+  align-items: center;
+}
+
+.logout-btn:hover{
+  filter: brightness(1.1);
+}
+
+.logout-btn svg {
+  width: 15px;
+  height: 15px;
+  margin: 0 5px;
+}
+
 .user-profile {
   grid-area: profile;
   background-color: #30615a;
   width: 350px;
   height: max-content;
   padding: var(--padding);
+  position: relative;
 
   display: grid;
   grid-template-columns: 1fr max-content;
@@ -2570,7 +2596,6 @@ dialog::backdrop {
 }
 
 .login-cont {
-  width: max-content;
   max-width: 350px;
   margin: auto;
   padding:var(--padding);
@@ -2614,7 +2639,7 @@ dialog::backdrop {
   text-shadow: 0 2px 3px var(--darkest-color);
   font-size: 1rem;
   font-family: var(--title-font);
-  padding: var(--padding);
+  padding: var(--padding) calc(var(--padding) * 2);
   border: 1px solid transparent;
   width: max-content;
   margin: var(--margin) auto 0;

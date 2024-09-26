@@ -75,7 +75,8 @@ import {
   mdiChevronUp,
   mdiChevronDown,
   mdiHelp,
-  mdiHomeOutline
+  mdiHomeOutline,
+  mdiLogout
 } from '@mdi/js';
 
 const NewIcon = function ({assignClass}) {
@@ -151,6 +152,10 @@ const NewIcon = function ({assignClass}) {
 
     case 'location':
       assignPath = mdiMapMarkerOutline;
+      break;
+    
+    case 'logout':
+      assignPath = mdiLogout;
       break;
 
     case 'next':

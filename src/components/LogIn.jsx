@@ -77,7 +77,7 @@ const LogIn = function () {
           <button className='login-btn'
             onClick={handleLogIn}
           >
-            Log In
+            Start
           </button>
         </div>
 

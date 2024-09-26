@@ -35,6 +35,11 @@
     margin-right: var(--margin);
   }
 
+  .page-nav li.login button {
+    font-size: 0.8rem;
+    padding: calc(var(--padding) * 0.5);
+  }
+
   .page-nav a {
     width: 25px;
     height: 25px;
@@ -222,6 +227,15 @@
     padding: var(--padding);
     font-size: 1.2rem;
     margin-bottom: 0;
+  }
+
+  .logout-btn {
+    font-size: 0.6rem;
+  }
+
+  .logout-btn svg {
+    width: 12px;
+    height: 12px;
   }
 
   .user-details-cont p {
@@ -567,6 +581,29 @@
     font-size: 0.7rem;
   }
   /* Cart (end)*/
+
+  /* Login page (start) */
+  .login-cont {
+    max-width: unset;
+  }
+
+  .login-header {
+    font-size: 1.1rem;
+  }
+
+  .login-cont label {
+    font-size: 0.8rem;
+  }
+
+  .login-help p {
+    font-size: 0.6rem;
+  }
+
+
+
+  /* Login page (end) */
+
+
 
   /* Footer (start) */
   div.footer-content {
