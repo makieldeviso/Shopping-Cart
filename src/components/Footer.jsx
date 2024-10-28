@@ -7,7 +7,7 @@ const AuthorContent = function () {
   return (
     <div className="author-info">
           <NewIcon assignClass={'copyright'}/>
-          <p>2024</p>
+          <p>{(new Date()).getFullYear()}</p>
           <p>Fred Mark Baldeviso</p>
           <a className='github-link' href="https://github.com/makieldeviso" target="_blank">
             <NewIcon assignClass={'github'}/>
